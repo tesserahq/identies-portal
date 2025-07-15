@@ -1,0 +1,55 @@
+import { AppPreloader } from '@/components/misc/AppPreloader'
+import { Button } from '@/components/ui/button'
+import { SITE_CONFIG } from '@/constants/brand'
+import { useAuth0 } from '@auth0/auth0-react'
+import type { MetaFunction } from '@remix-run/node'
+import { Navigate, useSearchParams } from '@remix-run/react'
+import { useEffect } from 'react'
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: `${SITE_CONFIG.siteTitle}` },
+    { name: 'description', content: SITE_CONFIG.siteDescription },
+  ]
+}
+
+export default function Index() {
+  const { isAuthenticated, isLoading, error, loginWithRedirect } = useAuth0()
+  const [searchParams] = useSearchParams()
+
+  useEffect(() => {
+    if (searchParams.get('autologin')) {
+      loginWithRedirect()
+    }
+  }, [])
+
+  if (error) {
+    return <div>Oops... {error.message}</div>
+  }
+
+  if (isLoading) {
+    return <AppPreloader className="h-screen" />
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/home" />
+  }
+
+  return (
+    <div className="flex h-screen w-full animate-slide-up flex-col items-center justify-center gap-5 bg-white lg:flex-row">
+      <img src="/images/login.png" alt="login" className="rounded-lg lg:w-96" />
+      <div className="max-w-[500px] flex-col items-center lg:items-start">
+        <h1 className="mt-3 text-3xl font-semibold dark:text-foreground">
+          Welcome back!
+        </h1>
+        <p className="mt-1 text-base opacity-70 dark:text-foreground">
+          Access Identies to manage authentication, user identities, and metadata — all in
+          one secure and centralized platform.
+        </p>
+        <div className="mt-5">
+          <Button onClick={() => loginWithRedirect()}>Login</Button>
+        </div>
+      </div>
+    </div>
+  )
+}
