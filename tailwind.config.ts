@@ -28,7 +28,7 @@ const config = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-    'node_modules/@llamaindex/chat-ui/**/*.{ts,tsx}',
+    'node_modules/core-ui/src/**/*.{ts,tsx}',
   ],
   prefix: '',
   theme: {
