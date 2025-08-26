@@ -3,7 +3,7 @@ import { useRequestInfo } from '@/hooks/useRequestInfo'
 import { ROUTE_PATH as THEME_PATH } from '@/routes/resources+/update-theme'
 import { cn } from '@/utils/misc'
 import { Link, useNavigate, useSubmit } from '@remix-run/react'
-import { IdentiesProvider, ProfileMenu } from 'core-ui'
+import { ProfileMenu } from 'core-ui'
 import { Grip } from 'lucide-react'
 import { useState } from 'react'
 import { Avatar, AvatarImage } from '../ui/avatar'
@@ -13,9 +13,7 @@ import Separator from '../ui/separator'
 import MenuToggle from './MenuToggle'
 
 interface IHeaderProps {
-  identiesApiUrl: string
   identiesHostUrl: string
-  token: string
   action?: React.ReactNode
   withSidebar?: boolean
   isExpanded?: boolean
@@ -27,9 +25,7 @@ export default function Header({
   setIsExpanded,
   action,
   withSidebar,
-  identiesApiUrl,
   identiesHostUrl,
-  token,
 }: IHeaderProps) {
   const requestInfo = useRequestInfo()
   const submit = useSubmit()
@@ -126,19 +122,13 @@ export default function Header({
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <IdentiesProvider
-                config={{
-                  identiesApiUrl: identiesApiUrl,
-                  token: token,
-                }}>
-                <ProfileMenu
-                  defaultAvatar="/images/default-avatar.jpg"
-                  selectedTheme={requestInfo.userPrefs.theme || 'system'}
-                  onSetTheme={(theme) => onSetTheme(theme)}
-                  actionLogout={() => navigate('/logout')}
-                  actionProfile={() => window.open(identiesHostUrl, '_blank')}
-                />
-              </IdentiesProvider>
+              <ProfileMenu
+                defaultAvatar="/images/default-avatar.jpg"
+                selectedTheme={requestInfo.userPrefs.theme || 'system'}
+                onSetTheme={(theme) => onSetTheme(theme)}
+                actionLogout={() => navigate('/logout')}
+                actionProfile={() => window.open(identiesHostUrl, '_blank')}
+              />
             </div>
           </div>
         </div>
