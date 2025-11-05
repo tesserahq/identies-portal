@@ -14,12 +14,16 @@ import { toast } from 'sonner'
 
 export function loader() {
   const apiUrl = process.env.API_URL
+  const quoreHostUrl = process.env.QUORE_HOST_URL
+  const custosHostUrl = process.env.CUSTOS_HOST_URL
+  const vaultaHostUrl = process.env.VAULTA_HOST_URL
 
-  return { apiUrl }
+  return { apiUrl, quoreHostUrl, custosHostUrl, vaultaHostUrl }
 }
 
 export default function Layout() {
-  const { apiUrl } = useLoaderData<typeof loader>()
+  const { apiUrl, quoreHostUrl, custosHostUrl, vaultaHostUrl } =
+    useLoaderData<typeof loader>()
   const [isExpanded, setIsExpanded] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
@@ -99,7 +103,14 @@ export default function Layout() {
             />
           </div>
 
-          <Header withSidebar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
+          <Header
+            withSidebar
+            isExpanded={isExpanded}
+            setIsExpanded={setIsExpanded}
+            quoreHostUrl={quoreHostUrl!}
+            custosHostUrl={custosHostUrl!}
+            vaultaHostUrl={vaultaHostUrl!}
+          />
 
           <main className="main-content w-full">
             <div className="max-width-screen h-full">

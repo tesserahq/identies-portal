@@ -67,7 +67,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const clientID = process.env.AUTH0_CLIENT_ID
   const domain = process.env.AUTH0_DOMAIN
   const audience = process.env.AUTH0_AUDIENCE
-  const organizationID = process.env.AUTH0_ORGANIZATION_ID
   const hostUrl = process.env.HOST_URL
 
   return data(
@@ -80,7 +79,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
       clientID,
       domain,
       audience,
-      organizationID,
       requestInfo: {
         hints: getHints(request),
         origin: getDomainUrl(request),

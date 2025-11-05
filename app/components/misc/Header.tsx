@@ -13,6 +13,9 @@ import Separator from '../ui/separator'
 import MenuToggle from './MenuToggle'
 
 interface IHeaderProps {
+  quoreHostUrl: string
+  custosHostUrl: string
+  vaultaHostUrl: string
   action?: React.ReactNode
   withSidebar?: boolean
   isExpanded?: boolean
@@ -24,6 +27,9 @@ export default function Header({
   setIsExpanded,
   action,
   withSidebar,
+  quoreHostUrl,
+  custosHostUrl,
+  vaultaHostUrl,
 }: IHeaderProps) {
   const requestInfo = useRequestInfo()
   const submit = useSubmit()
@@ -44,15 +50,15 @@ export default function Header({
   const apps = [
     {
       name: 'quore',
-      link: 'https://quore.estate-buddy.com?autologin=true',
+      link: `${quoreHostUrl}?autologin=true`,
     },
     {
       name: 'custos',
-      link: 'https://custos.estate-buddy.com?autologin=true',
+      link: `${custosHostUrl}?autologin=true`,
     },
     {
       name: 'vaulta',
-      link: 'https://vaulta.estate-buddy.com?autologin=true',
+      link: `${vaultaHostUrl}?autologin=true`,
     },
   ]
 
