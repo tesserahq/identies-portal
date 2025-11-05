@@ -13,6 +13,8 @@ const alertVariants = cva(
           'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
         warning:
           'bg-yellow-50 text-yellow-800 border-yellow-300 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-700 [&>svg]:text-yellow-800',
+        success:
+          'bg-green-50 text-green-800 border-green-400 dark:bg-green-700 dark:bg-opacity-50 dark:text-green-200 dark:border-green-500 [&>svg]:text-green-800',
       },
     },
     defaultVariants: {

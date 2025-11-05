@@ -32,12 +32,12 @@ export default function Index() {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/home" />
+    return <Navigate to="/preferences" />
   }
 
   return (
-    <div className="flex h-screen w-full animate-slide-up flex-col items-center justify-center gap-5 bg-white lg:flex-row">
-      <img src="/images/login.png" alt="login" className="rounded-lg lg:w-96" />
+    <div className="flex h-screen w-full animate-slide-up flex-col items-center justify-center gap-5 bg-white dark:bg-background lg:flex-row">
+      <img src="/images/login.png" alt="login" className="w-72 rounded-lg lg:w-96" />
       <div className="max-w-[500px] flex-col items-center lg:items-start">
         <h1 className="mt-3 text-3xl font-semibold dark:text-foreground">
           Welcome back!

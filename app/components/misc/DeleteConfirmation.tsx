@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -10,103 +9,97 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Form, useFetcher, useNavigation } from '@remix-run/react'
-import React, { forwardRef, useImperativeHandle, useState } from 'react'
 import { cn } from '@/utils/misc'
+import { FetcherWithComponents } from '@remix-run/react'
+import { Trash2 } from 'lucide-react'
+import { useState } from 'react'
 
-interface FuncProps {
-  onOpen: () => void
-  onClose: () => void
-}
-interface IModalDeleteProps {
+interface DeleteConfirmationProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
   title: string
-  alert: string
-  error?: string
-  data?: any
+  description: string
+  onDelete: () => void
+  fetcher: FetcherWithComponents<unknown>
+  showInputValidation?: boolean
 }
 
-const ModalDelete: React.ForwardRefRenderFunction<FuncProps, IModalDeleteProps> = (
-  { title, error, data, alert },
-  ref,
-) => {
-  const { formMethod, state } = useNavigation()
-  const [open, setOpen] = useState<boolean>(false)
+export default function DeleteConfirmation({
+  open,
+  onOpenChange,
+  title,
+  description,
+  onDelete,
+  fetcher,
+  showInputValidation,
+}: DeleteConfirmationProps) {
   const [confirmMsg, setConfirmMsg] = useState<string>('')
-  const [fieldError, setFieldError] = useState<string>(error || '')
-  const fetcher = useFetcher()
 
-  const isLoading = state === 'submitting' || fetcher.state === 'loading'
-
-  useImperativeHandle(ref, () => ({
-    onOpen() {
-      setOpen(true)
-    },
-    onClose() {
-      setOpen(false)
-    },
-  }))
+  const handleOpenChange = (newOpen: boolean) => {
+    onOpenChange(newOpen)
+    if (!newOpen) {
+      setConfirmMsg('')
+    }
+  }
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={() => {
-        setOpen(false)
-        setFieldError('')
-        setConfirmMsg('')
-      }}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete {alert}</DialogTitle>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="max-w-md border-t-4 border-t-destructive">
+        <DialogHeader className="flex flex-col items-center">
+          <div className="-mt-16 flex h-16 w-16 items-center justify-center rounded-full bg-destructive p-3">
+            <Trash2 size={100} className="text-white" />
+          </div>
+          <DialogTitle className="hidden"></DialogTitle>
         </DialogHeader>
-        <DialogDescription className="px-3">
+        <DialogDescription className="px-3" asChild>
           <div className="flex flex-col items-center">
-            <div className="h-32 w-32 overflow-hidden rounded-full bg-slate-100 p-5">
-              <img src="/images/warning.svg" alt="image-warning" className="w-full" />
-            </div>
-            <h1 className="mb-3 mt-3 text-2xl font-medium text-black dark:text-secondary-foreground">
+            <h1 className="text-3xl font-semibold text-black dark:text-secondary-foreground">
               {title}
             </h1>
-            <p className="mb-3 text-sm">
-              To confirm, type &quot;delete&quot; in the box below
+            <p
+              className={cn(
+                'mt-3 text-center text-lg text-black dark:text-secondary-foreground',
+                !showInputValidation && 'mb-3 text-base text-secondary-foreground',
+              )}>
+              {description}
             </p>
-            <Input
-              name="delete_confirm"
-              className={cn('mb-2 text-black', fieldError && 'input-error')}
-              onChange={(e) => setConfirmMsg(e.target.value)}
-            />
+            {showInputValidation && (
+              <div>
+                <p className="mb-3 mt-5 text-sm">
+                  To confirm, type &quot;delete&quot; in the box below
+                </p>
+                <Input
+                  name="delete_confirm"
+                  className="text-center text-black dark:text-white"
+                  value={confirmMsg}
+                  onChange={(e) => setConfirmMsg(e.target.value)}
+                />
+              </div>
+            )}
           </div>
         </DialogDescription>
 
         <DialogFooter className="mt-3">
           <div className="flex w-full justify-center gap-2">
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Form method="DELETE">
-              <input
-                name="delete_confirm"
-                value={confirmMsg.toLowerCase()}
-                className="hidden"
-              />
-              {Object.entries(data).map(([key, value]: any) => {
-                return (
-                  <input key={key} name={key} value={value || ''} className="hidden" />
-                )
-              })}
-              <Button
-                variant="destructive"
-                disabled={
-                  (formMethod === 'DELETE' && isLoading) ||
-                  confirmMsg.toLocaleLowerCase() !== 'delete'
-                }>
-                {formMethod === 'DELETE' && isLoading ? 'Deleting...' : 'Delete'}
+              <Button variant="outline" className="w-full">
+                Cancel
               </Button>
-            </Form>
+            </DialogClose>
+
+            <Button
+              variant="destructive"
+              className="w-full"
+              onClick={onDelete}
+              disabled={
+                fetcher?.state !== 'idle' ||
+                (showInputValidation && confirmMsg.toLowerCase() !== 'delete')
+              }>
+              {fetcher?.state !== 'idle' ? 'Deleting...' : 'Confirm'}
+            </Button>
           </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   )
 }
-
-export default forwardRef(ModalDelete)

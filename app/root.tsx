@@ -140,7 +140,7 @@ function Document({
 }
 
 export default function AppWithProviders() {
-  const { locale, toast, csrfToken, clientID, domain, audience, hostUrl, organizationID } =
+  const { locale, toast, csrfToken, clientID, domain, audience, hostUrl } =
     useLoaderData<typeof loader>()
 
   const nonce = useNonce()
@@ -166,7 +166,7 @@ export default function AppWithProviders() {
           }}
           authorizationParams={{
             redirect_uri: hostUrl || 'http://localhost:3000',
-            organization: organizationID,
+            // organization: organizationID,
             audience: audience,
           }}>
           <Outlet />
