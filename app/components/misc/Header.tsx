@@ -13,7 +13,9 @@ import Separator from '../ui/separator'
 import MenuToggle from './MenuToggle'
 
 interface IHeaderProps {
-  identiesHostUrl: string
+  quoreHostUrl: string
+  custosHostUrl: string
+  vaultaHostUrl: string
   action?: React.ReactNode
   withSidebar?: boolean
   isExpanded?: boolean
@@ -25,7 +27,9 @@ export default function Header({
   setIsExpanded,
   action,
   withSidebar,
-  identiesHostUrl,
+  quoreHostUrl,
+  custosHostUrl,
+  vaultaHostUrl,
 }: IHeaderProps) {
   const requestInfo = useRequestInfo()
   const submit = useSubmit()
@@ -46,15 +50,15 @@ export default function Header({
   const apps = [
     {
       name: 'quore',
-      link: 'https://quore.estate-buddy.com?autologin=true',
+      link: `${quoreHostUrl}?autologin=true`,
     },
     {
       name: 'custos',
-      link: 'https://custos.estate-buddy.com?autologin=true',
+      link: `${custosHostUrl}?autologin=true`,
     },
     {
       name: 'vaulta',
-      link: 'https://vaulta.estate-buddy.com?autologin=true',
+      link: `${vaultaHostUrl}?autologin=true`,
     },
   ]
 
@@ -64,7 +68,7 @@ export default function Header({
         <div className="header-container relative flex w-full print:hidden">
           <div className="flex w-full items-center justify-between space-x-5">
             {/* Left content */}
-            <div className={cn('flex items-center gap-2', withSidebar && 'ml-4')}>
+            <div className={cn('flex items-center gap-2', withSidebar && 'ml-0')}>
               {withSidebar ? (
                 <MenuToggle onClick={() => setIsExpanded!(!isExpanded)} />
               ) : (
@@ -127,7 +131,7 @@ export default function Header({
                 selectedTheme={requestInfo.userPrefs.theme || 'system'}
                 onSetTheme={(theme) => onSetTheme(theme)}
                 actionLogout={() => navigate('/logout')}
-                actionProfile={() => window.open(identiesHostUrl, '_blank')}
+                actionProfile={() => navigate('/preferences')}
               />
             </div>
           </div>

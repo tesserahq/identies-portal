@@ -8,20 +8,22 @@ import { cn } from '@/utils/misc'
 import { useAuth0 } from '@auth0/auth0-react'
 import { Outlet, useLoaderData, useNavigate } from '@remix-run/react'
 import { CoreUIProvider } from 'core-ui'
-import { Home } from 'lucide-react'
+import { Key, User } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 export function loader() {
   const apiUrl = process.env.API_URL
-  const identiesApiUrl = process.env.IDENTIES_API_URL
-  const identiesHosturl = process.env.IDENTIES_HOST_URL
+  const quoreHostUrl = process.env.QUORE_HOST_URL
+  const custosHostUrl = process.env.CUSTOS_HOST_URL
+  const vaultaHostUrl = process.env.VAULTA_HOST_URL
 
-  return { apiUrl, identiesApiUrl, identiesHosturl }
+  return { apiUrl, quoreHostUrl, custosHostUrl, vaultaHostUrl }
 }
 
 export default function Layout() {
-  const { identiesApiUrl, identiesHosturl } = useLoaderData<typeof loader>()
+  const { apiUrl, quoreHostUrl, custosHostUrl, vaultaHostUrl } =
+    useLoaderData<typeof loader>()
   const [isExpanded, setIsExpanded] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
@@ -30,9 +32,14 @@ export default function Layout() {
 
   const menuItems: IMenuItemProps[] = [
     {
-      title: 'Home',
-      path: `/home`,
-      icon: <Home size={18} />,
+      title: 'Preferences',
+      path: '/preferences',
+      icon: <User size={18} />,
+    },
+    {
+      title: 'API Keys',
+      path: '/api-keys',
+      icon: <Key size={18} />,
     },
   ]
 
@@ -76,7 +83,7 @@ export default function Layout() {
   return (
     <CoreUIProvider
       token={token}
-      identiesApiUrl={identiesApiUrl!}
+      identiesApiUrl={apiUrl!}
       isAuthenticated={isAuthenticated}
       callbacktUnauthorized={() => navigate('/', { replace: true })}>
       <div
@@ -97,14 +104,18 @@ export default function Layout() {
           </div>
 
           <Header
-            identiesHostUrl={identiesHosturl!}
             withSidebar
             isExpanded={isExpanded}
             setIsExpanded={setIsExpanded}
+            quoreHostUrl={quoreHostUrl!}
+            custosHostUrl={custosHostUrl!}
+            vaultaHostUrl={vaultaHostUrl!}
           />
 
           <main className="main-content w-full">
-            <Outlet />
+            <div className="max-width-screen h-full">
+              <Outlet key={location.pathname} />
+            </div>
           </main>
         </div>
       </div>
