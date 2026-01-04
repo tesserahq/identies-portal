@@ -14,11 +14,11 @@ export default [
       index('routes/main/preferences/index.tsx'),
     ]),
 
-    route('/api-keys', 'routes/main/api-keys/layout.tsx', [
-      index('routes/main/api-keys/index.tsx'),
-      route('new', 'routes/main/api-keys/new.tsx'),
-      route(':id', 'routes/main/api-keys/detail.tsx'),
-      route(':id/edit', 'routes/main/api-keys/edit.tsx'),
-    ]),
+    // route('/api-keys', 'routes/main/api-keys/layout.tsx', [
+    //   index('routes/main/api-keys/index.tsx'),
+    //   route('new', 'routes/main/api-keys/new.tsx'),
+    //   route(':id', 'routes/main/api-keys/detail.tsx'),
+    //   route(':id/edit', 'routes/main/api-keys/edit.tsx'),
+    // ]),
   ]),
 ] satisfies RouteConfig
