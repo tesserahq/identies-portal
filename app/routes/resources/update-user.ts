@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs } from 'react-router';
+import type { ActionFunctionArgs } from 'react-router'
 import { fetchApi } from '@/libraries/fetch'
 
 export const ROUTE_PATH = '/resources/update-user' as const
@@ -17,7 +17,7 @@ export async function action({ request }: ActionFunctionArgs) {
           description: 'Please login first',
         },
       },
-      { status: 401 },
+      { status: 401 }
     )
   }
 
@@ -36,7 +36,7 @@ export async function action({ request }: ActionFunctionArgs) {
         },
         response: updatedUser.theme_preference,
       },
-      { status: 200 },
+      { status: 200 }
     )
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
@@ -53,7 +53,7 @@ export async function action({ request }: ActionFunctionArgs) {
           description: convertError.error,
         },
       },
-      { status: convertError.status },
+      { status: convertError.status }
     )
   }
 }
