@@ -8,42 +8,51 @@ import {
   data,
   useLoaderData,
   useNavigate,
-} from '@remix-run/react'
-import type { LinksFunction, LoaderFunctionArgs, TypedResponse } from '@remix-run/node'
-import { useChangeLanguage } from 'remix-i18next/react'
+} from 'react-router'
+import type { LinksFunction, LoaderFunctionArgs } from 'react-router'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { AuthenticityTokenProvider } from 'remix-utils/csrf/react'
 
 // Import global CSS styles for the application
 // The ?url query parameter tells the bundler to handle this as a URL import
+import SpinnerCSS from '@/styles/spinner.css?url'
 import RootCSS from '@/styles/root.css?url'
-import SpinnerCSS from '@/styles/customs/spinner.css?url'
-import { SITE_CONFIG } from '@/constants/brand'
-import { combineHeaders, getDomainUrl } from '@/utils/misc.server'
-import { getToastSession } from '@/utils/toast.server'
-import { csrf } from '@/utils/csrf.server'
+import 'react-day-picker/style.css'
+import { combineHeaders, getDomainUrl } from '@/utils/helpers/misc.helper'
+import { getToastSession } from '@/utils/cookies/toast.server'
+import { csrf } from '@/utils/cookies/csrf.server'
 import { getHints } from '@/hooks/useHints'
 import { getTheme, Theme, useTheme } from '@/hooks/useTheme'
 import i18nServer, { localeCookie } from '@/modules/i18n/i18n.server'
-import { Toaster } from '@/components/ui/sonner'
+import { Toaster } from '@shadcn/ui/sonner'
 import { ClientHintCheck } from '@/components/misc/ClientHints'
 import { useNonce } from '@/hooks/useNonce'
 import { useToast } from '@/hooks/useToast'
 import { GenericErrorBoundary } from '@/components/misc/ErrorBoundary'
-import { ProgressBar } from './components/misc/ProgressBar'
+import { ProgressBar } from '@/components/loader/progress-bar'
+import { metaObject } from '@/utils/helpers/meta.helper'
+import { AppProvider } from '@/context/AppContext'
+import { ReactQueryProvider } from './modules/react-query'
 
 export const handle = { i18n: ['translation'] }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  return [
-    {
-      title: data ? `${SITE_CONFIG.siteTitle}` : `Error | ${SITE_CONFIG.siteTitle}`,
-    },
-    {
-      name: 'description',
-      content: SITE_CONFIG.siteDescription,
-    },
-  ]
+export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
+  // Get the current page title from the pathname
+  const getPageTitle = () => {
+    const path = location.pathname
+    // Remove leading slash and convert to title case
+    if (path === '/') return 'Home'
+
+    const pageName = path.split('/').pop() || ''
+    return pageName
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
+
+  const pageTitle = getPageTitle()
+
+  return metaObject(data ? pageTitle : 'Error')
 }
 
 export const links: LinksFunction = () => {
@@ -53,10 +62,7 @@ export const links: LinksFunction = () => {
   ]
 }
 
-export type LoaderData = Exclude<
-  Awaited<ReturnType<typeof loader>>,
-  Response | TypedResponse<unknown>
->
+export type LoaderData = Exclude<Awaited<ReturnType<typeof loader>>, Response>
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const user = null
@@ -68,6 +74,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const domain = process.env.AUTH0_DOMAIN
   const audience = process.env.AUTH0_AUDIENCE
   const hostUrl = process.env.HOST_URL
+  const identiesApiUrl = process.env.API_URL
+  const nodeEnv = process.env.NODE_ENV
+  const organizationID = process.env.AUTH0_ORGANIZATION_ID
 
   return data(
     {
@@ -79,6 +88,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
       clientID,
       domain,
       audience,
+      identiesApiUrl,
+      nodeEnv,
+      organizationID,
       requestInfo: {
         hints: getHints(request),
         origin: getDomainUrl(request),
@@ -90,9 +102,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
       headers: combineHeaders(
         { 'Set-Cookie': await localeCookie.serialize(locale) },
         toastHeaders,
-        csrfCookieHeader ? { 'Set-Cookie': csrfCookieHeader } : null,
+        csrfCookieHeader ? { 'Set-Cookie': csrfCookieHeader } : null
       ),
-    },
+    }
   )
 }
 
@@ -138,15 +150,22 @@ function Document({
 }
 
 export default function AppWithProviders() {
-  const { locale, toast, csrfToken, clientID, domain, audience, hostUrl } =
-    useLoaderData<typeof loader>()
+  const {
+    locale,
+    toast,
+    csrfToken,
+    clientID,
+    domain,
+    audience,
+    hostUrl,
+    identiesApiUrl,
+    nodeEnv,
+    organizationID,
+  } = useLoaderData<typeof loader>()
 
   const nonce = useNonce()
   const theme = useTheme()
   const navigate = useNavigate()
-
-  // Updates the i18n instance language.
-  useChangeLanguage(locale)
 
   // Renders toast (if any).
   useToast(toast)
@@ -158,16 +177,19 @@ export default function AppWithProviders() {
         <Auth0Provider
           domain={domain ?? ''}
           clientId={clientID ?? ''}
-          // useRefreshTokens={true}
           onRedirectCallback={() => {
             navigate(hostUrl || 'http://localhost:3000')
           }}
           authorizationParams={{
             redirect_uri: hostUrl || 'http://localhost:3000',
-            // organization: organizationID,
+            organization: organizationID,
             audience: audience,
           }}>
-          <Outlet />
+          <AppProvider identiesApiUrl={identiesApiUrl!} nodeEnv={nodeEnv}>
+            <ReactQueryProvider>
+              <Outlet />
+            </ReactQueryProvider>
+          </AppProvider>
         </Auth0Provider>
       </AuthenticityTokenProvider>
     </Document>
@@ -182,9 +204,7 @@ export function ErrorBoundary() {
     <Document nonce={nonce} theme={theme}>
       <GenericErrorBoundary
         statusHandlers={{
-          403: ({ error }) => (
-            <p>You are not allowed to do that: {error?.data.message}</p>
-          ),
+          403: ({ error }) => <p>You are not allowed to do that: {error?.data.message}</p>,
         }}
       />
     </Document>
