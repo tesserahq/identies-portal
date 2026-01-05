@@ -7,7 +7,7 @@ import { UserQueryConfig, UserFormData, UserType } from './user.type'
 export async function fetchUser(config: UserQueryConfig) {
   const { apiUrl, token, nodeEnv } = config
 
-  const response = await fetchApi(`${apiUrl}/user`, token, nodeEnv)
+  const response = await fetchApi(`${apiUrl}/me`, token, nodeEnv)
 
   return response as UserType
 }
@@ -18,7 +18,7 @@ export async function fetchUser(config: UserQueryConfig) {
 export async function updateUser(config: UserQueryConfig, updateData: Partial<UserFormData>) {
   const { apiUrl, token, nodeEnv } = config
 
-  const response = await fetchApi(`${apiUrl}/user`, token, nodeEnv, {
+  const response = await fetchApi(`${apiUrl}/me`, token, nodeEnv, {
     method: 'PUT',
     body: JSON.stringify(updateData),
   })
