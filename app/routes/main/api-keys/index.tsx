@@ -23,6 +23,7 @@ import { useApiKeys, useDeleteApiKey, apiKeyQueryKeys } from '@/resources/hooks/
 import { useQueryClient } from '@tanstack/react-query'
 import { ensureCanonicalPagination } from '@/utils/helpers/pagination.helper'
 import type { ApiKeyType } from '@/resources/queries/api-keys'
+import { Pagination } from '@/components/data-table/data-pagination'
 
 export function loader({ request }: LoaderFunctionArgs) {
   const identiesApiUrl = process.env.API_URL
@@ -97,7 +98,7 @@ export default function APIKeys() {
     }
   }, [deleteApiKeyMutation.isPending, apiKeyDelete])
 
-  if (isLoading) {
+  if (isLoading || !token) {
     return <AppPreloader />
   }
 
@@ -131,105 +132,118 @@ export default function APIKeys() {
           </Button>
         </EmptyContent>
       ) : (
-        apiKeys.map((apiKey: ApiKeyType) => {
-          const isRevoked = apiKey.revoked
-          const isExpired = apiKey?.expires_at && new Date() > new Date(apiKey?.expires_at)
+        <div className="space-y-3 w-full">
+          {apiKeys.map((apiKey: ApiKeyType) => {
+            const isRevoked = apiKey.revoked
+            const isExpired = apiKey?.expires_at && new Date() > new Date(apiKey?.expires_at)
 
-          return (
-            <Card key={apiKey.id} className="mb-3 w-full shadow-card">
-              <CardContent className="flex items-center gap-2 pt-4">
-                <div className="flex-1">
-                  <div className="flex items-start gap-2">
-                    <Link
-                      to={apiKey.id}
-                      className="mb-1 text-base font-medium text-black hover:text-primary
-                        hover:underline dark:text-primary-foreground">
-                      {apiKey.name}
-                    </Link>
-                    {apiKey?.revoked && (
-                      <Badge
-                        variant="outline"
-                        className="border border-destructive text-destructive">
-                        <span className="text-xs">Revoked</span>
-                      </Badge>
-                    )}
+            return (
+              <Card key={apiKey.id} className="mb-3 w-full shadow-card">
+                <CardContent className="flex items-center gap-2 pt-4">
+                  <div className="flex-1">
+                    <div className="flex items-start gap-2">
+                      <Link
+                        to={apiKey.id}
+                        className="mb-1 text-base font-medium text-black hover:text-primary
+                          hover:underline dark:text-primary-foreground">
+                        {apiKey.name}
+                      </Link>
+                      {apiKey?.revoked && (
+                        <Badge
+                          variant="outline"
+                          className="border border-destructive text-destructive">
+                          <span className="text-xs">Revoked</span>
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center text-xs text-slate-500 dark:text-slate-400">
+                      {isExpired ? (
+                        <TooltipProvider delayDuration={100}>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <span className="text-xs font-semibold text-destructive">
+                                Expired
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="bottom">
+                              <span className="text-xs text-muted-foreground">
+                                Expired at {format(apiKey?.expires_at + 'z', 'PPPpp')}
+                              </span>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ) : (
+                        <span>
+                          {apiKey.expires_at
+                            ? `Expires At ${format(apiKey?.expires_at + 'z', 'PPP')}`
+                            : 'No expiration'}
+                        </span>
+                      )}
+                      <Separator orientation="vertical" className="mx-2 h-4" />
+                      <span>Created {format(apiKey?.created_at + 'z', 'PPP')}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center text-xs text-slate-500 dark:text-slate-400">
-                    {isExpired ? (
-                      <TooltipProvider delayDuration={100}>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <span className="text-xs font-semibold text-destructive">Expired</span>
-                          </TooltipTrigger>
-                          <TooltipContent side="bottom">
-                            <span className="text-xs text-muted-foreground">
-                              Expired at {format(apiKey?.expires_at + 'z', 'PPPpp')}
-                            </span>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    ) : (
-                      <span>
-                        {apiKey.expires_at
-                          ? `Expires At ${format(apiKey?.expires_at + 'z', 'PPP')}`
-                          : 'No expiration'}
-                      </span>
-                    )}
-                    <Separator orientation="vertical" className="mx-2 h-4" />
-                    <span>Created {format(apiKey?.created_at + 'z', 'PPP')}</span>
-                  </div>
-                </div>
-                <Popover>
-                  <PopoverTrigger>
-                    <Button variant="ghost" size="icon">
-                      <EllipsisVertical />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent align="start" side="left" className="w-44 p-2">
-                    <Button
-                      variant="ghost"
-                      className="flex w-full justify-start"
-                      onClick={() => navigate(`/api-keys/${apiKey.id}`)}>
-                      <Eye />
-                      <span>View</span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="flex w-full justify-start"
-                      onClick={() => navigate(`/api-keys/${apiKey.id}/edit`)}>
-                      <Pencil />
-                      <span>Edit</span>
-                    </Button>
-                    <revokeFetcher.Form method="PUT">
-                      <input name="token" value={token!} type="hidden" />
-                      <input name="id" value={apiKey.id} type="hidden" />
+                  <Popover>
+                    <PopoverTrigger>
+                      <Button variant="ghost" size="icon">
+                        <EllipsisVertical />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent align="start" side="left" className="w-44 p-2">
                       <Button
                         variant="ghost"
                         className="flex w-full justify-start"
-                        disabled={isRevoked || isExpired || revokeFetcher.state === 'submitting'}>
-                        <ShieldX />
-                        <span>
-                          {revokeFetcher.state === 'submitting'
-                            ? 'Revoking...'
-                            : isRevoked
-                              ? 'Revoked'
-                              : 'Revoke'}
-                        </span>
+                        onClick={() => navigate(`/api-keys/${apiKey.id}`)}>
+                        <Eye />
+                        <span>View</span>
                       </Button>
-                    </revokeFetcher.Form>
-                    <Button
-                      variant="ghost"
-                      className="flex w-full justify-start hover:bg-destructive hover:text-white"
-                      onClick={() => openApiKeyDeletion(apiKey)}>
-                      <Trash2 />
-                      <span>Remove</span>
-                    </Button>
-                  </PopoverContent>
-                </Popover>
-              </CardContent>
-            </Card>
-          )
-        })
+                      <Button
+                        variant="ghost"
+                        className="flex w-full justify-start"
+                        onClick={() => navigate(`/api-keys/${apiKey.id}/edit`)}>
+                        <Pencil />
+                        <span>Edit</span>
+                      </Button>
+                      <revokeFetcher.Form method="PUT">
+                        <input name="token" value={token!} type="hidden" />
+                        <input name="id" value={apiKey.id} type="hidden" />
+                        <Button
+                          variant="ghost"
+                          className="flex w-full justify-start"
+                          disabled={isRevoked || isExpired || revokeFetcher.state === 'submitting'}>
+                          <ShieldX />
+                          <span>
+                            {revokeFetcher.state === 'submitting'
+                              ? 'Revoking...'
+                              : isRevoked
+                                ? 'Revoked'
+                                : 'Revoke'}
+                          </span>
+                        </Button>
+                      </revokeFetcher.Form>
+                      <Button
+                        variant="ghost"
+                        className="flex w-full justify-start hover:bg-destructive hover:text-white"
+                        onClick={() => openApiKeyDeletion(apiKey)}>
+                        <Trash2 />
+                        <span>Remove</span>
+                      </Button>
+                    </PopoverContent>
+                  </Popover>
+                </CardContent>
+              </Card>
+            )
+          })}
+
+          <Pagination
+            meta={{
+              page: apiKeysData?.page || 1,
+              pages: apiKeysData?.pages || 1,
+              size: apiKeysData?.size || 1,
+              total: apiKeysData?.total || 1,
+            }}
+          />
+        </div>
       )}
 
       <DeleteConfirmation ref={deleteConfirmationRef} />

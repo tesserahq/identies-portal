@@ -64,8 +64,6 @@ export default function Index() {
   }, [systemTheme, selectedTheme, user?.theme_preference])
 
   useEffect(() => {
-    console.log('user ', user)
-
     setFormData({
       first_name: user?.first_name ?? '',
       last_name: user?.last_name ?? '',
@@ -92,17 +90,6 @@ export default function Index() {
       })
     }
   }, [userFetcher.data])
-
-  // useEffect(() => {
-  //   if (actionData?.errors) {
-  //     setErrors(actionData.errors)
-  //   }
-  //   if (actionData?.toast) {
-  //     toast.error(actionData.toast.description, {
-  //       duration: 10000,
-  //     })
-  //   }
-  // }, [actionData])
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -134,7 +121,6 @@ export default function Index() {
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    console.log('file ', file)
 
     if (!file) return
 
@@ -172,17 +158,6 @@ export default function Index() {
       method: 'POST',
       encType: 'multipart/form-data',
     })
-  }
-
-  const handleUserFormSubmit = () => {
-    // const form = new FormData()
-    // form.set('token', token || '')
-    // form.set('_method', 'put_user')
-    // form.set('first_name', formData?.first_name ?? '')
-    // form.set('last_name', formData?.last_name ?? '')
-    // userFetcher.submit(form, {
-    //   method: 'PUT',
-    // })
   }
 
   // Hooks must be called unconditionally

@@ -9,7 +9,7 @@ export async function fetchApiKeys(config: ApiKeyQueryConfig, params: ApiKeyQuer
   const { apiUrl, token, nodeEnv } = config
   const { page, size } = params
 
-  const url = new URL(`${apiUrl}/api-keys`)
+  const url = new URL(`${apiUrl}/me/api-keys`)
   url.searchParams.set('page', String(page))
   url.searchParams.set('size', String(size))
 
@@ -61,7 +61,7 @@ export async function createApiKey(config: ApiKeyQueryConfig, data: ApiKeyFormDa
     expires_at: expiresAtEndOfDay,
   }
 
-  const response = await fetchApi(`${apiUrl}/api-keys`, token, nodeEnv, {
+  const response = await fetchApi(`${apiUrl}/me/api-keys`, token, nodeEnv, {
     method: 'POST',
     body: JSON.stringify(payload),
   })

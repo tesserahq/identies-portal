@@ -40,7 +40,7 @@ export default function APIKeysIndex() {
   const { data: apiKey, isLoading } = useApiKeyDetail(
     {
       apiUrl: identiesApiUrl!,
-      token: token!,
+      token: token || '',
       nodeEnv: nodeEnv as any,
     },
     params.id!,
@@ -85,7 +85,7 @@ export default function APIKeysIndex() {
     }
   }, [deleteApiKeyMutation.isPending, apiKeyDelete])
 
-  if (isLoading) {
+  if (isLoading || !token) {
     return <AppPreloader />
   }
 
