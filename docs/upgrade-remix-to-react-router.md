@@ -139,13 +139,12 @@ import { ServerRouter } from "react-router";
 ### `app/entry.client.tsx`
 
 ```typescript
-import { HydratedRouter } from "react-router/dom";
+import { HydratedRouter } from 'react-router/dom'
 
 hydrateRoot(
   document,
   <StrictMode>
     <HydratedRouter />
-  </StrictMode>,
-);
-
+  </StrictMode>
+)
 ```
