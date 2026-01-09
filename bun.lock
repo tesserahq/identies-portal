@@ -56,13 +56,8 @@
         "remix-i18next": "^7.0.0",
         "remix-utils": "^9.0.0",
         "shiki": "^3.4.2",
-<<<<<<< HEAD
-        "sonner": "^1.7.2",
-        "tailwind-merge": "^3.0.0",
-=======
-        "sonner": "^2.0.0",
+        "sonner": "^2.0.7",
         "tailwind-merge": "^2.6.0",
->>>>>>> f2ded38 (fix(deps): update dependency sonner to v2)
         "tsx": "4.19.0",
         "zod": "^4.0.0",
       },
