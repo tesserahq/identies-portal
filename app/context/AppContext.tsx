@@ -37,10 +37,7 @@ export function AppProvider({ children, identiesApiUrl, nodeEnv }: IProviderProp
   const fetchToken = async () => {
     try {
       const token = await getAccessTokenSilently()
-      console.log('tok ', token)
-
       const user = await fetchApi(`${identiesApiUrl}/user`, token, nodeEnv)
-      console.log('user ', user)
 
       setUser(user)
       setToken(token)
