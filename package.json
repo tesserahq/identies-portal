@@ -68,7 +68,7 @@
     "shiki": "^3.4.2",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.0.0",
-    "tsx": "4.19.0",
+    "tsx": "4.21.0",
     "zod": "^4.0.0"
   },
   "devDependencies": {
