@@ -67,7 +67,7 @@
     "remix-utils": "^9.0.0",
     "shiki": "^3.4.2",
     "sonner": "^1.7.2",
-    "tailwind-merge": "^2.6.0",
+    "tailwind-merge": "^3.0.0",
     "tsx": "4.19.0",
     "zod": "^4.0.0"
   },
