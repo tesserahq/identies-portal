@@ -55,7 +55,7 @@ export function AppProvider({ children, identiesApiUrl, nodeEnv }: IProviderProp
     } else if (isAuthenticated) {
       fetchToken()
     }
-  }, [isLoading])
+  }, [isLoading, isAuthenticated])
 
   const contextPayload = React.useMemo(
     () => ({
