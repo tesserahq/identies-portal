@@ -33,6 +33,7 @@ export default [
         route('api-keys', 'routes/main/service-accounts/detail/api-keys/index.tsx'),
         route('api-keys/new', 'routes/main/service-accounts/detail/api-keys/new.tsx'),
         route('api-keys/:apiKeyId', 'routes/main/service-accounts/detail/api-keys/detail.tsx'),
+        route('api-keys/:apiKeyId/edit', 'routes/main/service-accounts/detail/api-keys/edit.tsx'),
       ]),
     ]),
   ]),

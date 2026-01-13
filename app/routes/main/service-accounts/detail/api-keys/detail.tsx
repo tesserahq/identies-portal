@@ -136,7 +136,9 @@ export default function ServiceAccountApiKeyDetail() {
         title="Error Fetching API Key Detail"
         image="/images/empty-api-keys.png"
         description={error.message}>
-        <Button onClick={() => navigate(-1)}>Back to API Keys</Button>
+        <Button onClick={() => navigate(`/service-accounts/${params.id}/api-keys`)}>
+          Back to API Keys
+        </Button>
       </EmptyContent>
     )
   }
