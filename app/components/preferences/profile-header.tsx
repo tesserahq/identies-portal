@@ -5,11 +5,11 @@ import { AvatarPreloader } from '@/components/loader/avatar-preloader'
 import { userProviders } from '@/constants/user-providers'
 import { cn } from '@shadcn/lib/utils'
 import { Mail, PenTool } from 'lucide-react'
-import { IUser } from '@/resources/types'
 import { FetcherWithComponents } from 'react-router'
+import { UserType } from '@/resources/queries/user'
 
 interface ProfileHeaderProps {
-  user: IUser
+  user: UserType
   avatarFetcher: FetcherWithComponents<any>
   loaded: boolean
   fileInputRef: React.RefObject<HTMLInputElement | null>
