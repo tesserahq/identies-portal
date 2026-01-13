@@ -17,7 +17,7 @@ export function DetailContent({ title, actions, children }: IDetailContentProps)
             {actions && <div>{actions}</div>}
           </div>
         </CardHeader>
-        <CardContent className="pt-0">{children}</CardContent>
+        <CardContent className="pt-0 px-6">{children}</CardContent>
       </Card>
     </div>
   )

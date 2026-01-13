@@ -58,8 +58,6 @@ export const ServiceAccountForm = ({
 
         <Form.Input field="last_name" label="Last Name" placeholder="Enter last name" required />
 
-        <Form.Input field="username" label="Username" placeholder="Enter username" />
-
         <div className="mt-5 flex items-center justify-end gap-2">
           <Button variant="secondary" type="button" onClick={() => navigate('/service-accounts')}>
             Cancel

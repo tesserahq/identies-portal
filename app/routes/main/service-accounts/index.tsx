@@ -90,10 +90,14 @@ export default function ServiceAccounts() {
   }
 
   const openServiceAccountDeletion = (deleteThisServiceAccount: ServiceAccountType): void => {
+    const displayName =
+      `${deleteThisServiceAccount.first_name} ${deleteThisServiceAccount.last_name}`.trim() ||
+      'Unnamed'
+
     setServiceAccountDelete(deleteThisServiceAccount)
     deleteConfirmationRef.current?.open({
       title: 'Delete Service Account?',
-      description: `You'll permanently lose the service account "${deleteThisServiceAccount.email || deleteThisServiceAccount.username}"`,
+      description: `You'll permanently lose the service account "${displayName}", this action cannot be undone.`,
       onDelete: () => {
         deleteConfirmationRef.current?.updateConfig({
           isLoading: true,
@@ -124,10 +128,7 @@ export default function ServiceAccounts() {
         <div className="space-y-3 w-full">
           {serviceAccounts.map((serviceAccount: ServiceAccountType) => {
             const displayName =
-              serviceAccount.email ||
-              serviceAccount.username ||
-              `${serviceAccount.first_name} ${serviceAccount.last_name}`.trim() ||
-              'Unnamed'
+              `${serviceAccount.first_name} ${serviceAccount.last_name}`.trim() || 'Unnamed'
 
             return (
               <Card key={serviceAccount.id} className="mb-3 w-full shadow-card">
@@ -151,22 +152,9 @@ export default function ServiceAccounts() {
                           <span className="text-xs">Verified</span>
                         </Badge>
                       )}
-                      {serviceAccount.service_account && (
-                        <Badge variant="outline" className="border border-blue-500 text-blue-600">
-                          <span className="text-xs">Service Account</span>
-                        </Badge>
-                      )}
                     </div>
                     <div className="flex items-center text-xs text-slate-500 dark:text-slate-400">
-                      {serviceAccount.username && (
-                        <>
-                          <span>{serviceAccount.username}</span>
-                          <Separator orientation="vertical" className="mx-2 h-4" />
-                        </>
-                      )}
-                      <span>
-                        {serviceAccount.first_name} {serviceAccount.last_name}
-                      </span>
+                      <span>{serviceAccount.email}</span>
                       <Separator orientation="vertical" className="mx-2 h-4" />
                       <div>
                         Created <DateTime date={serviceAccount.created_at + 'z'} />

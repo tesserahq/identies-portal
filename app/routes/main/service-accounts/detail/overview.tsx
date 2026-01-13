@@ -78,10 +78,14 @@ export default function ServiceAccountDetail() {
     'Unnamed'
 
   const openServiceAccountDeletion = (deleteThisServiceAccount: ServiceAccountType): void => {
+    const displayName =
+      `${deleteThisServiceAccount.first_name} ${deleteThisServiceAccount.last_name}`.trim() ||
+      'Unnamed'
+
     setServiceAccountDelete(deleteThisServiceAccount)
     deleteConfirmationRef.current?.open({
       title: 'Delete Service Account?',
-      description: `You'll permanently lose the service account "${deleteThisServiceAccount.email || deleteThisServiceAccount.username}"`,
+      description: `You'll permanently lose the service account "${displayName}, this action cannot be undone.`,
       onDelete: () => {
         deleteConfirmationRef.current?.updateConfig({
           isLoading: true,
@@ -96,52 +100,34 @@ export default function ServiceAccountDetail() {
       <DetailContent
         title={displayName}
         actions={
-          <div className="flex-1 gap-3 flex justify-between items-center">
-            <div className="space-x-2">
-              {serviceAccount?.verified && (
-                <Badge variant="outline" className="border border-green-500 text-green-600">
-                  Verified
-                </Badge>
-              )}
-              {serviceAccount?.service_account && (
-                <Badge variant="outline" className="border border-blue-500 text-blue-600">
-                  Service Account
-                </Badge>
-              )}
-            </div>
-            <Popover>
-              <PopoverTrigger>
-                <Button variant="ghost" size="icon">
-                  <EllipsisVertical />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent side="left" align="start" className="w-44 p-2">
-                <Button
-                  variant="ghost"
-                  className="flex w-full justify-start"
-                  onClick={() => navigate(`/service-accounts/${serviceAccount?.id}/edit`)}>
-                  <Pencil />
-                  <span>Edit</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="flex w-full justify-start hover:bg-destructive hover:text-white"
-                  onClick={() => serviceAccount && openServiceAccountDeletion(serviceAccount)}>
-                  <Trash2 />
-                  <span>Remove</span>
-                </Button>
-              </PopoverContent>
-            </Popover>
-          </div>
+          <Popover>
+            <PopoverTrigger>
+              <Button variant="ghost" size="icon">
+                <EllipsisVertical />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent side="left" align="start" className="w-44 p-2">
+              <Button
+                variant="ghost"
+                className="flex w-full justify-start"
+                onClick={() => navigate(`/service-accounts/${serviceAccount?.id}/edit`)}>
+                <Pencil />
+                <span>Edit</span>
+              </Button>
+              <Button
+                variant="ghost"
+                className="flex w-full justify-start hover:bg-destructive hover:text-white"
+                onClick={() => serviceAccount && openServiceAccountDeletion(serviceAccount)}>
+                <Trash2 />
+                <span>Remove</span>
+              </Button>
+            </PopoverContent>
+          </Popover>
         }>
         <div className="d-list">
           <div className="d-item">
             <dt className="d-label">Email</dt>
             <dd className="d-content">{serviceAccount!.email}</dd>
-          </div>
-          <div className="d-item">
-            <dt className="d-label">Username</dt>
-            <dd className="d-content">{serviceAccount!.username}</dd>
           </div>
           <div className="d-item">
             <dt className="d-label">First Name</dt>
@@ -168,8 +154,18 @@ export default function ServiceAccountDetail() {
             <dd className="d-content capitalize">{serviceAccount?.theme_preference || 'System'}</dd>
           </div>
           <div className="d-item">
-            <dt className="d-label">Verified</dt>
-            <dd className="d-content">{serviceAccount?.verified ? 'Yes' : 'No'}</dd>
+            <dt className="d-label">Status</dt>
+            <dd className="d-content">
+              {serviceAccount?.verified ? (
+                <Badge variant="outline" className="border border-green-500 text-green-600">
+                  <span className="text-xs">Verified</span>
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="border border-red-500 text-red-600">
+                  <span className="text-xs">Unverified</span>
+                </Badge>
+              )}
+            </dd>
           </div>
           {serviceAccount?.verified_at && (
             <div className="d-item">
