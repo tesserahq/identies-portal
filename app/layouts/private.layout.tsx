@@ -6,7 +6,7 @@ import { IMenuItemProps } from '@/components/sidebar/types'
 import '@/styles/sidebar.css'
 import { useAuth0 } from '@auth0/auth0-react'
 import { cn } from '@shadcn/lib/utils'
-import { Key, User } from 'lucide-react'
+import { Key, User, UserCog } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Outlet, useLoaderData, useNavigate } from 'react-router'
 import { toast } from 'sonner'
@@ -43,6 +43,11 @@ export default function Layout() {
       title: 'API Keys',
       path: '/api-keys',
       icon: <Key size={18} />,
+    },
+    {
+      title: 'Service Accounts',
+      path: '/service-accounts',
+      icon: <UserCog size={18} />,
     },
   ]
 

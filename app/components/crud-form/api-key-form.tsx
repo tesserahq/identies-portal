@@ -26,6 +26,7 @@ interface ApiKeyFormProps {
   onSubmit: (data: ApiKeyFormData) => Promise<void> | void
   submitLabel?: string
   isEdit?: boolean
+  onCancel?: () => void
 }
 
 // Expiration Select Component
@@ -118,6 +119,7 @@ export const ApiKeyForm = ({
   onSubmit,
   submitLabel = 'Save',
   isEdit = false,
+  onCancel,
 }: ApiKeyFormProps) => {
   const navigate = useNavigate()
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
@@ -138,6 +140,14 @@ export const ApiKeyForm = ({
     }
   }
 
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel()
+    } else {
+      navigate('/api-keys')
+    }
+  }
+
   return (
     <Form schema={apiKeyFormSchema} defaultValues={defaultValues} onSubmit={handleSubmit}>
       <FormLayout title={title}>
@@ -146,7 +156,7 @@ export const ApiKeyForm = ({
         <ExpirationSelect />
 
         <div className="mt-5 flex items-center justify-end gap-2">
-          <Button variant="secondary" type="button" onClick={() => navigate('/api-keys')}>
+          <Button variant="secondary" type="button" onClick={handleCancel}>
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>

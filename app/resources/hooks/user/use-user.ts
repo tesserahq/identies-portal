@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fetchUser, updateUser } from '@/resources/queries/user/user.queries'
 import { UserFormData, UserQueryConfig, UserType } from '@/resources/queries/user/user.type'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -48,8 +49,8 @@ export function useUser(
     queryFn: async () => {
       try {
         return await fetchUser(config)
-      } catch (error) {
-        throw new QueryError('Failed to fetch user', 'FETCH_ERROR', error)
+      } catch (error: any) {
+        throw new QueryError(error.message)
       }
     },
     staleTime: options?.staleTime || 5 * 60 * 1000, // 5 minutes

@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { DateTime } from '@/components/datetime'
 import DeleteConfirmation, {
   type DeleteConfirmationHandle,
 } from '@/components/delete-confirmation/delete-confirmation'
+import EmptyContent from '@/components/empty-content/empty-content'
 import { AppPreloader } from '@/components/loader'
 import { type RevokeConfirmationHandle } from '@/components/revoke-confirmation/revoke-confirmation'
 import { useApp } from '@/context/AppContext'
@@ -11,7 +13,6 @@ import { Badge } from '@shadcn/ui/badge'
 import { Button } from '@shadcn/ui/button'
 import { Card, CardContent, CardHeader } from '@shadcn/ui/card'
 import { Popover, PopoverContent, PopoverTrigger } from '@shadcn/ui/popover'
-import { format } from 'date-fns'
 import { EllipsisVertical, Pencil, ShieldX, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useLoaderData, useNavigate, useParams } from 'react-router'
@@ -23,7 +24,7 @@ export function loader() {
   return { identiesApiUrl, nodeEnv }
 }
 
-export default function APIKeysIndex() {
+export default function ServiceAccountApiKeyDetail() {
   const { identiesApiUrl, nodeEnv } = useLoaderData<typeof loader>()
   const params = useParams()
   const { token } = useApp()
@@ -34,15 +35,19 @@ export default function APIKeysIndex() {
   const [apiKeyDelete, setApiKeyDelete] = useState<ApiKeyType>()
 
   // React Query hooks
-  const { data: apiKey, isLoading } = useApiKey(
+  const {
+    data: apiKey,
+    isLoading,
+    error,
+  } = useApiKey(
     {
       apiUrl: identiesApiUrl!,
       token: token || '',
       nodeEnv: nodeEnv as any,
     },
-    params.id!,
+    params.apiKeyId!,
     {
-      enabled: !!token && !!params.id,
+      enabled: !!token && !!params.apiKeyId,
     }
   )
 
@@ -94,7 +99,7 @@ export default function APIKeysIndex() {
   }, [deleteApiKeyMutation.isPending, apiKeyDelete])
 
   if (isLoading || !token) {
-    return <AppPreloader />
+    return <AppPreloader className="min-h-screen" />
   }
 
   const openApiKeyRevoke = (revokeThisApiKey: ApiKeyType): void => {
@@ -123,6 +128,19 @@ export default function APIKeysIndex() {
         deleteApiKeyMutation.mutate(deleteThisApiKey.id)
       },
     })
+  }
+
+  if (error) {
+    return (
+      <EmptyContent
+        title="Error Fetching API Key Detail"
+        image="/images/empty-api-keys.png"
+        description={error.message}>
+        <Button onClick={() => navigate(`/service-accounts/${params.id}/api-keys`)}>
+          Back to API Keys
+        </Button>
+      </EmptyContent>
+    )
   }
 
   return (
@@ -182,19 +200,23 @@ export default function APIKeysIndex() {
             <div className="d-item">
               <dt className="d-label">Expires At</dt>
               <dd className="d-content">
-                {apiKey?.expires_at ? format(apiKey?.expires_at + 'z', 'PPPpp') : 'No expiration'}
+                {apiKey?.expires_at ? (
+                  <DateTime date={apiKey?.expires_at + 'z'} />
+                ) : (
+                  'No expiration'
+                )}
               </dd>
             </div>
             <div className="d-item">
               <dt className="d-label">Last Used At</dt>
               <dd className="d-content">
-                {apiKey?.last_used_at ? format(apiKey?.last_used_at + 'z', 'PPPpp') : 'Never'}
+                {apiKey?.last_used_at ? <DateTime date={apiKey?.last_used_at + 'z'} /> : 'Never'}
               </dd>
             </div>
             <div className="d-item">
               <dt className="d-label">Created At</dt>
               <dd className="d-content">
-                {apiKey?.created_at && format(apiKey?.created_at + 'z', 'PPPpp')}
+                {apiKey?.created_at && <DateTime date={apiKey?.created_at + 'z'} />}
               </dd>
             </div>
           </div>

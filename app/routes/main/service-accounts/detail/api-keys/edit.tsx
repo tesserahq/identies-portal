@@ -15,11 +15,11 @@ export function loader() {
   return { apiUrl, nodeEnv }
 }
 
-export default function ApiKeyEdit() {
+export default function ServiceAccountApiKeyEdit() {
   const { apiUrl, nodeEnv } = useLoaderData<typeof loader>()
   const { token } = useApp()
   const navigate = useNavigate()
-  const { id: apiKeyId } = useParams()
+  const params = useParams()
 
   // Fetch API key detail
   const {
@@ -32,9 +32,9 @@ export default function ApiKeyEdit() {
       token: token!,
       nodeEnv: nodeEnv as any,
     },
-    apiKeyId!,
+    params.apiKeyId!,
     {
-      enabled: !!token && !!apiKeyId,
+      enabled: !!token && !!params.apiKeyId,
     }
   )
 
@@ -45,7 +45,7 @@ export default function ApiKeyEdit() {
       token: token!,
       nodeEnv: nodeEnv as any,
     },
-    apiKeyId!,
+    params.apiKeyId!,
     {
       onSuccess: (data: ApiKeyType) => {
         navigate(`/api-keys/${data.id}`)
@@ -67,7 +67,9 @@ export default function ApiKeyEdit() {
         title="Error Fetching API Key Detail"
         image="/images/empty-api-keys.png"
         description={error?.message}>
-        <Button onClick={() => navigate('/api-keys')}>Back to API Keys</Button>
+        <Button onClick={() => navigate(`/service-accounts/${params.id}/api-keys`)}>
+          Back to API Keys
+        </Button>
       </EmptyContent>
     )
   }

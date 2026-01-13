@@ -8,39 +8,39 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@shadcn/ui/dialog'
-import { Loader2, Trash2 } from 'lucide-react'
+import { Loader2, ShieldX } from 'lucide-react'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 
-export interface DeleteConfirmationHandle {
-  open: (config?: DeleteConfirmationConfig) => void
+export interface RevokeConfirmationHandle {
+  open: (config?: RevokeConfirmationConfig) => void
   close: () => void
-  updateConfig: (updates: Partial<DeleteConfirmationConfig>) => void
+  updateConfig: (updates: Partial<RevokeConfirmationConfig>) => void
 }
 
-export interface DeleteConfirmationConfig {
+export interface RevokeConfirmationConfig {
   title: string
   description: string
-  onDelete: () => void | Promise<void>
+  onRevoke: () => void | Promise<void>
   isLoading?: boolean
 }
 
-interface DeleteConfirmationProps {
-  defaultConfig?: DeleteConfirmationConfig
+interface RevokeConfirmationProps {
+  defaultConfig?: RevokeConfirmationConfig
 }
 
-const DeleteConfirmation = forwardRef<DeleteConfirmationHandle, DeleteConfirmationProps>(
+const RevokeConfirmation = forwardRef<RevokeConfirmationHandle, RevokeConfirmationProps>(
   ({ defaultConfig }, ref) => {
     const [open, setOpen] = useState(false)
-    const [config, setConfig] = useState<DeleteConfirmationConfig>(
+    const [config, setConfig] = useState<RevokeConfirmationConfig>(
       defaultConfig || {
         title: '',
         description: '',
-        onDelete: () => {},
+        onRevoke: () => {},
       }
     )
 
     useImperativeHandle(ref, () => ({
-      open: (newConfig?: DeleteConfirmationConfig) => {
+      open: (newConfig?: RevokeConfirmationConfig) => {
         if (newConfig) {
           setConfig(newConfig)
         }
@@ -49,7 +49,7 @@ const DeleteConfirmation = forwardRef<DeleteConfirmationHandle, DeleteConfirmati
       close: () => {
         setOpen(false)
       },
-      updateConfig: (updates: Partial<DeleteConfirmationConfig>) => {
+      updateConfig: (updates: Partial<RevokeConfirmationConfig>) => {
         setConfig((prev) => ({ ...prev, ...updates }))
       },
     }))
@@ -58,8 +58,8 @@ const DeleteConfirmation = forwardRef<DeleteConfirmationHandle, DeleteConfirmati
       setOpen(newOpen)
     }
 
-    const handleDelete = async () => {
-      await config.onDelete()
+    const handleRevoke = async () => {
+      await config.onRevoke()
     }
 
     return (
@@ -69,20 +69,18 @@ const DeleteConfirmation = forwardRef<DeleteConfirmationHandle, DeleteConfirmati
             <div
               className="bg-destructive -mt-16 flex h-16 w-16 items-center justify-center
                 rounded-full p-3">
-              <Trash2 size={100} className="text-white" />
+              <ShieldX size={100} className="text-white" />
             </div>
             <DialogTitle className="hidden"></DialogTitle>
           </DialogHeader>
           <DialogDescription className="px-3" asChild>
-            <div className="flex flex-col items-center max-w-md wrap-break-word">
+            <div className="flex flex-col items-center">
               <h1
                 className="dark:text-secondary-foreground text-center text-3xl font-semibold
                   text-black">
                 {config.title}
               </h1>
-              <p
-                className="dark:text-secondary-foreground mt-3 text-center text-base text-black
-                  max-w-sm wrap-break-word overflow-hidden text-ellipsis">
+              <p className="dark:text-secondary-foreground mt-3 text-center text-base text-black">
                 {config.description}
               </p>
             </div>
@@ -97,14 +95,14 @@ const DeleteConfirmation = forwardRef<DeleteConfirmationHandle, DeleteConfirmati
               </DialogClose>
 
               <Button
-                variant="destructive"
-                className="w-full"
-                onClick={handleDelete}
+                variant="default"
+                className="w-full bg-destructive hover:bg-warning/90"
+                onClick={handleRevoke}
                 disabled={config.isLoading}>
                 {config.isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Deleting...
+                    Revoking...
                   </>
                 ) : (
                   <>Confirm</>
@@ -118,6 +116,6 @@ const DeleteConfirmation = forwardRef<DeleteConfirmationHandle, DeleteConfirmati
   }
 )
 
-DeleteConfirmation.displayName = 'DeleteConfirmation'
+RevokeConfirmation.displayName = 'RevokeConfirmation'
 
-export default DeleteConfirmation
+export default RevokeConfirmation

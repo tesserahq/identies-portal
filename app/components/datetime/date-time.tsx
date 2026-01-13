@@ -3,7 +3,7 @@ import { formatInTimeZone, toZonedTime } from 'date-fns-tz'
 import { enUS } from 'date-fns/locale'
 
 const DEFAULT_TIMEZONE = 'America/New_York'
-const DEFAULT_FORMAT = 'dd/MM/yyyy'
+const DEFAULT_FORMAT = 'E, MM MMM yyyy, p zzzz'
 
 /**
  * Gets the timezone abbreviation (e.g., "PST", "EST")

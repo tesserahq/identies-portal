@@ -72,7 +72,6 @@ export const FormEmail = ({
               placeholder={placeholder}
               autoFocus={autoFocus}
               disabled={disabled}
-              className={cn(form.formState.errors[field] && 'border-destructive', className)}
             />
           </FormControl>
           <FormMessage />

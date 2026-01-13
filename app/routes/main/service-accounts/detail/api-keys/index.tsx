@@ -1,53 +1,47 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AppPreloader } from '@/components/loader'
-import CreateButton from '@/components/new-button/new-button'
+import { DateTime } from '@/components/datetime'
 import DeleteConfirmation, {
   type DeleteConfirmationHandle,
 } from '@/components/delete-confirmation/delete-confirmation'
+import EmptyContent from '@/components/empty-content/empty-content'
+import { AppPreloader } from '@/components/loader'
+import CreateButton from '@/components/new-button/new-button'
 import RevokeConfirmation, {
   type RevokeConfirmationHandle,
 } from '@/components/revoke-confirmation/revoke-confirmation'
-import EmptyContent from '@/components/empty-content/empty-content'
+import { useApp } from '@/context/AppContext'
+import { useDeleteApiKey, useRevokeApiKey } from '@/resources/hooks/api-keys'
+import {
+  serviceAccountQueryKeys,
+  useServiceAccountApiKeys,
+} from '@/resources/hooks/service-accounts'
+import type { ApiKeyType } from '@/resources/queries/api-keys'
 import { Badge } from '@shadcn/ui/badge'
 import { Button } from '@shadcn/ui/button'
 import { Card, CardContent } from '@shadcn/ui/card'
 import { Popover, PopoverContent, PopoverTrigger } from '@shadcn/ui/popover'
 import { Separator } from '@shadcn/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@shadcn/ui/tooltip'
-import { LoaderFunctionArgs } from 'react-router'
-import { Link, useLoaderData, useNavigate } from 'react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { EllipsisVertical, Eye, Pencil, ShieldX, Trash2 } from 'lucide-react'
-import { useEffect, useState, useRef } from 'react'
-import { useApp } from '@/context/AppContext'
-import {
-  useApiKeys,
-  useDeleteApiKey,
-  useRevokeApiKey,
-  apiKeyQueryKeys,
-} from '@/resources/hooks/api-keys'
-import { ensureCanonicalPagination } from '@/utils/helpers/pagination.helper'
-import type { ApiKeyType } from '@/resources/queries/api-keys'
-import { Pagination } from '@/components/data-table/data-pagination'
-import { DateTime } from '@/components/datetime'
+import { useEffect, useRef, useState } from 'react'
+import { useLoaderData, useNavigate, useParams } from 'react-router'
 
-export function loader({ request }: LoaderFunctionArgs) {
+export function loader() {
   const identiesApiUrl = process.env.API_URL
   const nodeEnv = process.env.NODE_ENV
 
-  const pagination = ensureCanonicalPagination(request, { defaultSize: 25, defaultPage: 1 })
-
-  if (pagination instanceof Response) {
-    return pagination
-  }
-
-  return { identiesApiUrl, nodeEnv, pagination }
+  return { identiesApiUrl, nodeEnv }
 }
 
-export default function APIKeys() {
-  const { identiesApiUrl, nodeEnv, pagination } = useLoaderData<typeof loader>()
+export default function ServiceAccountApiKeys() {
+  const { identiesApiUrl, nodeEnv } = useLoaderData<typeof loader>()
   const { token } = useApp()
+  const params = useParams()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const serviceAccountId = params.id as string
 
   const revokeConfirmationRef = useRef<RevokeConfirmationHandle>(null)
   const deleteConfirmationRef = useRef<DeleteConfirmationHandle>(null)
@@ -55,18 +49,15 @@ export default function APIKeys() {
   const [apiKeyDelete, setApiKeyDelete] = useState<ApiKeyType>()
 
   // React Query hooks
-  const { data: apiKeysData, isLoading } = useApiKeys(
+  const { data: apiKeysData, isLoading } = useServiceAccountApiKeys(
     {
       apiUrl: identiesApiUrl!,
       token: token || '',
       nodeEnv: nodeEnv as any,
     },
+    serviceAccountId,
     {
-      page: pagination.page,
-      size: pagination.size,
-    },
-    {
-      enabled: !!token,
+      enabled: !!token && !!serviceAccountId,
     }
   )
 
@@ -80,6 +71,10 @@ export default function APIKeys() {
       onSuccess: () => {
         setApiKeyRevoke(undefined)
         revokeConfirmationRef.current?.close()
+        // Invalidate service account API keys list
+        queryClient.invalidateQueries({
+          queryKey: serviceAccountQueryKeys.apiKeysList(serviceAccountId),
+        })
       },
     }
   )
@@ -94,11 +89,15 @@ export default function APIKeys() {
       onSuccess: () => {
         setApiKeyDelete(undefined)
         deleteConfirmationRef.current?.close()
+        // Invalidate service account API keys list
+        queryClient.invalidateQueries({
+          queryKey: serviceAccountQueryKeys.apiKeysList(serviceAccountId),
+        })
       },
     }
   )
 
-  const apiKeys = apiKeysData?.items || []
+  const apiKeys = Array.isArray(apiKeysData?.items) ? apiKeysData?.items : []
 
   // Update RevokeConfirmation loading state
   useEffect(() => {
@@ -151,18 +150,25 @@ export default function APIKeys() {
   }
 
   return (
-    <div className="flex w-full flex-col items-center page-content">
+    <div className="flex w-full flex-col items-center p-3 animate-slide-up">
       <div className="mb-5 flex w-full items-center justify-between">
         <h1 className="page-title">API Keys</h1>
-        {apiKeys.length > 0 && <CreateButton label="New API Key" onClick={() => navigate('new')} />}
+        {apiKeys.length > 0 && (
+          <CreateButton
+            label="New API Key"
+            onClick={() => navigate(`/service-accounts/${serviceAccountId}/api-keys/new`)}
+          />
+        )}
       </div>
       {apiKeys.length === 0 ? (
         <EmptyContent
-          image="/images/empty-api-keys.png"
+          image="/images/empty-service-accounts.png"
           title="No API Keys found"
           description="Click the button below to start creating API Keys">
-          <Button variant="black" onClick={() => navigate('new')}>
-            Start Now
+          <Button
+            variant="black"
+            onClick={() => navigate(`/service-accounts/${serviceAccountId}/api-keys/new`)}>
+            Start Creating
           </Button>
         </EmptyContent>
       ) : (
@@ -176,13 +182,15 @@ export default function APIKeys() {
                 <CardContent className="flex items-center gap-2 pt-4">
                   <div className="flex-1">
                     <div className="flex items-start gap-2">
-                      <Link
-                        to={apiKey.id}
+                      <div
                         className="mb-1 text-base font-medium text-black hover:text-primary
-                          hover:underline dark:text-primary-foreground">
+                          hover:underline dark:text-primary-foreground cursor-pointer"
+                        onClick={() =>
+                          navigate(`/service-accounts/${serviceAccountId}/api-keys/${apiKey.id}`)
+                        }>
                         {apiKey.name}
-                      </Link>
-                      {apiKey?.revoked && (
+                      </div>
+                      {isRevoked && (
                         <Badge
                           variant="outline"
                           className="border border-destructive text-destructive">
@@ -229,14 +237,20 @@ export default function APIKeys() {
                       <Button
                         variant="ghost"
                         className="flex w-full justify-start"
-                        onClick={() => navigate(`/api-keys/${apiKey.id}`)}>
+                        onClick={() =>
+                          navigate(`/service-accounts/${serviceAccountId}/api-keys/${apiKey.id}`)
+                        }>
                         <Eye />
                         <span>View</span>
                       </Button>
                       <Button
                         variant="ghost"
                         className="flex w-full justify-start"
-                        onClick={() => navigate(`/api-keys/${apiKey.id}/edit`)}>
+                        onClick={() =>
+                          navigate(
+                            `/service-accounts/${serviceAccountId}/api-keys/${apiKey.id}/edit`
+                          )
+                        }>
                         <Pencil />
                         <span>Edit</span>
                       </Button>
@@ -267,15 +281,6 @@ export default function APIKeys() {
               </Card>
             )
           })}
-
-          <Pagination
-            meta={{
-              page: apiKeysData?.page || 1,
-              pages: apiKeysData?.pages || 1,
-              size: apiKeysData?.size || 1,
-              total: apiKeysData?.total || 1,
-            }}
-          />
         </div>
       )}
 
