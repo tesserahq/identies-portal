@@ -1,14 +1,13 @@
 import { useRequestInfo } from '@/hooks/useRequestInfo'
 import { ROUTE_PATH as THEME_PATH } from '@/routes/resources/update-theme'
+import { SITE_CONFIG } from '@/utils/config/site.config'
 import { Avatar, AvatarImage } from '@shadcn/ui/avatar'
 import { Button } from '@shadcn/ui/button'
-import Separator from '@shadcn/ui/separator'
+import { Separator } from '@shadcn/ui/separator'
 import { PanelLeft } from 'lucide-react'
-import { useState } from 'react'
-import { Link, useNavigate, useSubmit } from 'react-router'
+import { Link, useSubmit } from 'react-router'
 import AppMenus, { IAppMenusProps } from '../app-menus/app-menus'
 import { ProfileMenu } from '../profile-menu/profile-menu'
-import { SITE_CONFIG } from '@/utils/config/site.config'
 
 interface IHeaderProps {
   appHostUrls: IAppMenusProps

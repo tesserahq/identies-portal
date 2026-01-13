@@ -12,6 +12,7 @@ export type ApiKeyType = {
   created_at: string
   last_used_at: string | null
   revoked: boolean
+  full_key?: string
 }
 
 /**

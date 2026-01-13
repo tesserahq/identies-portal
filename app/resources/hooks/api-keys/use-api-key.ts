@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  fetchApiKeys,
-  fetchApiKeyDetail,
   createApiKey,
-  updateApiKey,
   deleteApiKey,
+  fetchApiKeyDetail,
+  fetchApiKeys,
+  revokeApiKey,
+  updateApiKey,
 } from '@/resources/queries/api-keys/api-key.queries'
 import {
+  ApiKeyFormData,
   ApiKeyQueryConfig,
   ApiKeyQueryParams,
   ApiKeyType,
-  ApiKeyFormData,
 } from '@/resources/queries/api-keys/api-key.type'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -55,17 +57,17 @@ export function useApiKeys(
     staleTime?: number
   }
 ) {
-  if (!config.token) {
-    throw new QueryError('Token is required', 'TOKEN_REQUIRED')
-  }
-
   return useQuery({
     queryKey: apiKeyQueryKeys.list(config, params),
     queryFn: async () => {
       try {
+        if (!config.token) {
+          throw new QueryError('Token is required', 'TOKEN_REQUIRED')
+        }
+
         return await fetchApiKeys(config, params)
-      } catch (error) {
-        throw new QueryError('Failed to fetch API keys', 'FETCH_ERROR', error)
+      } catch (error: any) {
+        throw new QueryError(error.message)
       }
     },
     staleTime: options?.staleTime || 5 * 60 * 1000, // 5 minutes
@@ -79,7 +81,7 @@ export function useApiKeys(
  * @config - API key query configuration
  * @options - API key query options
  */
-export function useApiKeyDetail(
+export function useApiKey(
   config: ApiKeyQueryConfig,
   apiKeyId: string,
   options?: {
@@ -87,17 +89,17 @@ export function useApiKeyDetail(
     staleTime?: number
   }
 ) {
-  if (!config.token) {
-    throw new QueryError('Token is required', 'TOKEN_REQUIRED')
-  }
-
   return useQuery({
     queryKey: apiKeyQueryKeys.detail(apiKeyId),
     queryFn: async () => {
       try {
+        if (!config.token) {
+          throw new QueryError('Token is required', 'TOKEN_REQUIRED')
+        }
+
         return await fetchApiKeyDetail(apiKeyId, config)
-      } catch (error) {
-        throw new QueryError('Failed to fetch API key detail', 'FETCH_ERROR', error)
+      } catch (error: any) {
+        throw new QueryError(error.message)
       }
     },
     staleTime: options?.staleTime || 5 * 60 * 1000, // 5 minutes
@@ -156,12 +158,12 @@ export function useUpdateApiKey(
 ) {
   const queryClient = useQueryClient()
 
-  if (!config.token) {
-    throw new QueryError('Token is required', 'TOKEN_REQUIRED')
-  }
-
   return useMutation({
     mutationFn: async (updateData: Partial<ApiKeyFormData>): Promise<ApiKeyType> => {
+      if (!config.token) {
+        throw new QueryError('Token is required', 'TOKEN_REQUIRED')
+      }
+
       return await updateApiKey(config, apiKeyId, updateData)
     },
     onSuccess: (data) => {
@@ -186,6 +188,47 @@ export function useUpdateApiKey(
 }
 
 /**
+ * Hook for revoking API key
+ */
+export function useRevokeApiKey(
+  config: ApiKeyQueryConfig,
+  options?: {
+    onSuccess?: (data: ApiKeyType) => void
+    onError?: (error: QueryError) => void
+  }
+) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (apiKeyId: string): Promise<ApiKeyType> => {
+      if (!config.token) {
+        throw new QueryError('Token is required', 'TOKEN_REQUIRED')
+      }
+
+      return await revokeApiKey(config, apiKeyId)
+    },
+    onSuccess: (data, apiKeyId) => {
+      // Update specific item cache
+      queryClient.setQueryData(apiKeyQueryKeys.detail(apiKeyId), data)
+
+      // Invalidate and refetch API keys lists
+      queryClient.invalidateQueries({ queryKey: apiKeyQueryKeys.lists() })
+
+      toast.success('API key revoked successfully!')
+
+      options?.onSuccess?.(data)
+    },
+    onError: (error: QueryError) => {
+      toast.error('Failed to revoke API key', {
+        description: error?.message || 'Please try again.',
+      })
+
+      options?.onError?.(error)
+    },
+  })
+}
+
+/**
  * Hook for deleting API key
  */
 export function useDeleteApiKey(
@@ -197,12 +240,12 @@ export function useDeleteApiKey(
 ) {
   const queryClient = useQueryClient()
 
-  if (!config.token) {
-    throw new QueryError('Token is required', 'TOKEN_REQUIRED')
-  }
-
   return useMutation({
     mutationFn: async (apiKeyId: string): Promise<void> => {
+      if (!config.token) {
+        throw new QueryError('Token is required', 'TOKEN_REQUIRED')
+      }
+
       return await deleteApiKey(config, apiKeyId)
     },
     onSuccess: (_, apiKeyId) => {

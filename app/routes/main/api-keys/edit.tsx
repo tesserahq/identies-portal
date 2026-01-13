@@ -2,9 +2,11 @@
 import { AppPreloader } from '@/components/loader'
 import { ApiKeyForm } from '@/components/crud-form/api-key-form'
 import { useApp } from '@/context/AppContext'
-import { useApiKeyDetail, useUpdateApiKey } from '@/resources/hooks/api-keys'
+import { useApiKey, useUpdateApiKey } from '@/resources/hooks/api-keys'
 import { ApiKeyFormData, ApiKeyType, apiKeyToFormValues } from '@/resources/queries/api-keys'
 import { LoaderFunctionArgs, useLoaderData, useNavigate, useParams } from 'react-router'
+import EmptyContent from '@/components/empty-content/empty-content'
+import { Button } from '@/modules/shadcn/ui/button'
 
 export function loader() {
   const apiUrl = process.env.API_URL
@@ -20,7 +22,11 @@ export default function ApiKeyEdit() {
   const { id: apiKeyId } = useParams()
 
   // Fetch API key detail
-  const { data: apiKey, isLoading } = useApiKeyDetail(
+  const {
+    data: apiKey,
+    isLoading,
+    error,
+  } = useApiKey(
     {
       apiUrl: apiUrl!,
       token: token!,
@@ -51,8 +57,19 @@ export default function ApiKeyEdit() {
     await updateApiKey(data)
   }
 
-  if (isLoading || !apiKey) {
+  if (isLoading) {
     return <AppPreloader />
+  }
+
+  if (error || !apiKey) {
+    return (
+      <EmptyContent
+        title="Error Fetching API Key Detail"
+        image="/images/empty-api-keys.png"
+        description={error?.message}>
+        <Button onClick={() => navigate('/api-keys')}>Back to API Keys</Button>
+      </EmptyContent>
+    )
   }
 
   return (

@@ -4,6 +4,7 @@ export {
   fetchApiKeyDetail,
   createApiKey,
   updateApiKey,
+  revokeApiKey,
   deleteApiKey,
 } from './api-key.queries'
 

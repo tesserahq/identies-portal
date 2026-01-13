@@ -5,7 +5,7 @@ interface IProps {
   orientation?: 'horizontal' | 'vertical'
 }
 
-export default function Separator({ className, orientation = 'horizontal' }: IProps) {
+export function Separator({ className, orientation = 'horizontal' }: IProps) {
   return (
     <div
       className={cn(

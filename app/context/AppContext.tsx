@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useHandleApiError } from '@/hooks/useHandleApiError'
 import { fetchApi, NodeENVType } from '@/libraries/fetch'
-import { IUser } from '@/resources/types'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
+import { UserType } from '@/resources/queries/user'
 
 export interface IContextProps {
-  user: IUser | null
+  user: UserType | null
   token: string | null
   isLoading: boolean
-  setUser: (user: IUser) => void
+  setUser: (user: UserType) => void
 }
 
 const AppContext = React.createContext<IContextProps>({
@@ -28,7 +28,7 @@ interface IProviderProps {
 
 export function AppProvider({ children, identiesApiUrl, nodeEnv }: IProviderProps) {
   const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0()
-  const [user, setUser] = useState<IUser | null>(null)
+  const [user, setUser] = useState<UserType | null>(null)
   const navigate = useNavigate()
   const [token, setToken] = useState<string | null>(null)
   const handleApiError = useHandleApiError()
@@ -62,7 +62,7 @@ export function AppProvider({ children, identiesApiUrl, nodeEnv }: IProviderProp
       token: token,
       user: user || null,
       isLoading: loadingAuth0,
-      setUser: (user: IUser) => setUser(user),
+      setUser: (user: UserType) => setUser(user),
     }),
     [user, token, loadingAuth0]
   )

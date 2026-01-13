@@ -5,17 +5,13 @@ import { MAX_AVATAR_FILE_SIZE } from '@/constants/file'
 import { useTheme } from '@/hooks/useTheme'
 import { fetchApi } from '@/libraries/fetch'
 import { ROUTE_PATH as THEME_PATH } from '@/routes/resources/update-theme'
-import { userSchema } from '@/resources/schemas/user'
 import { handleFetcherData } from '@/utils/helpers/fetcher.helper'
-import { cn } from '@shadcn/lib/utils'
 import { ActionFunctionArgs, useLoaderData } from 'react-router'
 import { useActionData, useFetcher, useSubmit } from 'react-router'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { useApp } from '@/context/AppContext'
-import { Form } from '@/components/form'
 import { TAsset } from '@/resources/types/asset'
-import { UserForm } from '@/components/user-form'
 import { useUpdateUser, useUpdateTheme } from '@/resources/hooks/user'
 import { UserFormData, userToFormValues } from '@/resources/queries/user'
 import { ProfileInformation, Appearance, ProfileHeader } from '@/components/preferences'
@@ -97,27 +93,6 @@ export default function Index() {
     }, 1000)
     return () => clearTimeout(timeout)
   }, [loaded])
-
-  const handleFieldChange = (name: string) => (value: string) => {
-    setFormData((prevData) => {
-      const updatedData = { ...prevData, [name]: value }
-      const field = userSchema.safeParse(updatedData)
-      if (!field.success) {
-        setErrors(field.error.flatten().fieldErrors)
-      } else {
-        setErrors({})
-      }
-      return updatedData
-    })
-  }
-
-  const handleReset = () => {
-    setFormData({
-      first_name: user?.first_name ?? '',
-      last_name: user?.last_name ?? '',
-    })
-    setErrors({})
-  }
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -224,43 +199,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
   try {
     switch (_method) {
-      case 'put_user': {
-        const first_name = formData.get('first_name')
-        const last_name = formData.get('last_name')
-
-        const validated = userSchema.safeParse({ first_name, last_name })
-        if (!validated.success) {
-          return Response.json(
-            {
-              toast: {
-                type: 'error',
-                title: 'error',
-                description: 'please fill the form accordingly',
-              },
-              errors: validated.error.flatten().fieldErrors,
-            },
-            { status: 400 }
-          )
-        }
-        const response = await fetchApi(`${apiUrl}/user`, token.toString(), nodeEnv, {
-          method: 'PUT',
-          body: JSON.stringify({
-            first_name,
-            last_name,
-          }),
-        })
-        return Response.json(
-          {
-            toast: {
-              type: 'success',
-              title: 'Success',
-              description: 'Successfully update user data',
-            },
-            response,
-          },
-          { status: 200 }
-        )
-      }
       case 'upload_avatar': {
         const full_name = formData.get('full_name')
         const user_id = formData.get('user_id')

@@ -114,6 +114,19 @@ export async function updateApiKey(
 }
 
 /**
+ * Revoke an API key.
+ */
+export async function revokeApiKey(config: ApiKeyQueryConfig, apiKeyId: string) {
+  const { apiUrl, token, nodeEnv } = config
+
+  const response = await fetchApi(`${apiUrl}/api-keys/${apiKeyId}/revoke`, token, nodeEnv, {
+    method: 'PUT',
+  })
+
+  return response as ApiKeyType
+}
+
+/**
  * Delete an API key.
  */
 export async function deleteApiKey(config: ApiKeyQueryConfig, apiKeyId: string) {
