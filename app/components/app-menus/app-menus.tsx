@@ -16,11 +16,12 @@ export interface IAppMenusProps {
   custosHostUrl: string
   vaultaHostUrl: string
   looplyHostUrl: string
+  orchaHostUrl: string
 }
 
 export default function AppMenus({ appHostUrls }: { appHostUrls: IAppMenusProps }) {
   const [isOpenAppMenu, setIsOpenAppMenu] = useState(false)
-  const { quoreHostUrl, custosHostUrl, vaultaHostUrl, looplyHostUrl } = appHostUrls
+  const { quoreHostUrl, custosHostUrl, vaultaHostUrl, looplyHostUrl, orchaHostUrl } = appHostUrls
 
   const apps = useMemo(() => {
     return [
@@ -37,11 +38,15 @@ export default function AppMenus({ appHostUrls }: { appHostUrls: IAppMenusProps 
         link: `${vaultaHostUrl}?autologin=true`,
       },
       {
-        name: 'identies',
+        name: 'looply',
         link: `${looplyHostUrl}?autologin=true`,
       },
+      {
+        name: 'orcha',
+        link: `${orchaHostUrl}?autologin=true`,
+      },
     ]
-  }, [vaultaHostUrl, custosHostUrl, looplyHostUrl])
+  }, [vaultaHostUrl, custosHostUrl, looplyHostUrl, orchaHostUrl])
 
   return (
     <DropdownMenu open={isOpenAppMenu} onOpenChange={setIsOpenAppMenu}>

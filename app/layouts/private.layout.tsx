@@ -12,25 +12,28 @@ import { Outlet, useLoaderData, useNavigate } from 'react-router'
 import { toast } from 'sonner'
 
 export function loader() {
-  const hostUrl = process.env.HOST_URL
-  const apiUrl = process.env.API_URL
-  const nodeEnv = process.env.NODE_ENV
   // App host URL
   const quoreHostUrl = process.env.QUORE_HOST_URL
   const custosHostUrl = process.env.CUSTOS_HOST_URL
   const vaultaHostUrl = process.env.VAULTA_HOST_URL
   const looplyHostUrl = process.env.LOOPLY_HOST_URL
+  const orchaHostUrl = process.env.ORCHA_HOST_URL
 
-  return { hostUrl, apiUrl, nodeEnv, quoreHostUrl, custosHostUrl, vaultaHostUrl, looplyHostUrl }
+  return {
+    quoreHostUrl,
+    custosHostUrl,
+    vaultaHostUrl,
+    looplyHostUrl,
+    orchaHostUrl,
+  }
 }
 
 export default function Layout() {
-  const { hostUrl, apiUrl, nodeEnv, quoreHostUrl, custosHostUrl, vaultaHostUrl, looplyHostUrl } =
+  const { quoreHostUrl, custosHostUrl, vaultaHostUrl, looplyHostUrl, orchaHostUrl } =
     useLoaderData<typeof loader>()
   const [isExpanded, setIsExpanded] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
-  const navigate = useNavigate()
-  const { getAccessTokenSilently, isLoading, isAuthenticated } = useAuth0()
+  const { getAccessTokenSilently, isLoading } = useAuth0()
   const [token, setToken] = useState<string>('')
 
   const menuItems: IMenuItemProps[] = [
@@ -107,6 +110,7 @@ export default function Layout() {
             custosHostUrl: custosHostUrl!,
             vaultaHostUrl: vaultaHostUrl!,
             looplyHostUrl: looplyHostUrl!,
+            orchaHostUrl: orchaHostUrl!,
           }}
         />
 
