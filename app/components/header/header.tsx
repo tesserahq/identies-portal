@@ -6,11 +6,11 @@ import { Button } from '@shadcn/ui/button'
 import { Separator } from '@shadcn/ui/separator'
 import { PanelLeft } from 'lucide-react'
 import { Link, useSubmit } from 'react-router'
-import AppMenus, { IAppMenusProps } from '../app-menus/app-menus'
+import { AppMenu, AppMenuProps } from 'tessera-ui'
 import { ProfileMenu } from '../profile-menu/profile-menu'
 
 interface IHeaderProps {
-  appHostUrls: IAppMenusProps
+  apps: AppMenuProps[]
   action?: React.ReactNode
   withSidebar?: boolean
   isExpanded?: boolean
@@ -22,7 +22,7 @@ export default function Header({
   setIsExpanded,
   action,
   withSidebar,
-  appHostUrls,
+  apps,
 }: IHeaderProps) {
   const requestInfo = useRequestInfo()
   const submit = useSubmit()
@@ -75,7 +75,7 @@ export default function Header({
             {/* Right content */}
             <div className="-mr-1 flex items-center space-x-5">
               {/* Apps Menu */}
-              <AppMenus appHostUrls={appHostUrls} />
+              <AppMenu apps={apps || []} />
 
               <ProfileMenu
                 selectedTheme={requestInfo.userPrefs.theme || 'system'}

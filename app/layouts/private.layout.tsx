@@ -1,15 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { AppPreloader } from '@/components/loader'
 import Header from '@/components/header/header'
+import { AppPreloader } from '@/components/loader'
 import { SidebarPanel, SidebarPanelMin } from '@/components/sidebar'
 import { IMenuItemProps } from '@/components/sidebar/types'
 import '@/styles/sidebar.css'
 import { useAuth0 } from '@auth0/auth0-react'
 import { cn } from '@shadcn/lib/utils'
 import { Key, User, UserCog } from 'lucide-react'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Outlet, useLoaderData, useNavigate } from 'react-router'
-import { toast } from 'sonner'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Outlet, useLoaderData } from 'react-router'
 
 export function loader() {
   // App host URL
@@ -33,8 +31,7 @@ export default function Layout() {
     useLoaderData<typeof loader>()
   const [isExpanded, setIsExpanded] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
-  const { getAccessTokenSilently, isLoading } = useAuth0()
-  const [token, setToken] = useState<string>('')
+  const { isLoading } = useAuth0()
 
   const menuItems: IMenuItemProps[] = [
     {
@@ -54,6 +51,31 @@ export default function Layout() {
     },
   ]
 
+  const apps = useMemo(() => {
+    return [
+      {
+        name: 'quore',
+        link: `${quoreHostUrl}?autologin=true`,
+      },
+      {
+        name: 'custos',
+        link: `${custosHostUrl}?autologin=true`,
+      },
+      {
+        name: 'vaulta',
+        link: `${vaultaHostUrl}?autologin=true`,
+      },
+      {
+        name: 'looply',
+        link: `${looplyHostUrl}?autologin=true`,
+      },
+      {
+        name: 'orcha',
+        link: `${orchaHostUrl}?autologin=true`,
+      },
+    ]
+  }, [vaultaHostUrl, custosHostUrl, looplyHostUrl, orchaHostUrl, quoreHostUrl])
+
   const onResize = useCallback(() => {
     if (containerRef.current) {
       if (containerRef.current.offsetWidth <= 1280) {
@@ -61,15 +83,6 @@ export default function Layout() {
       }
     }
   }, [])
-
-  const fetchToken = async () => {
-    try {
-      const token = await getAccessTokenSilently()
-      setToken(token)
-    } catch (error: any) {
-      toast.error(error.message)
-    }
-  }
 
   useEffect(() => {
     onResize()
@@ -80,12 +93,6 @@ export default function Layout() {
       window.removeEventListener('resize', onResize)
     }
   }, [onResize])
-
-  useEffect(() => {
-    if (!isLoading) {
-      fetchToken()
-    }
-  }, [isLoading])
 
   if (isLoading) {
     return <AppPreloader className="min-h-screen" />
@@ -101,18 +108,7 @@ export default function Layout() {
           <SidebarPanelMin menuItems={menuItems} />
         </div>
 
-        <Header
-          withSidebar
-          isExpanded={isExpanded}
-          setIsExpanded={setIsExpanded}
-          appHostUrls={{
-            quoreHostUrl: quoreHostUrl!,
-            custosHostUrl: custosHostUrl!,
-            vaultaHostUrl: vaultaHostUrl!,
-            looplyHostUrl: looplyHostUrl!,
-            orchaHostUrl: orchaHostUrl!,
-          }}
-        />
+        <Header withSidebar isExpanded={isExpanded} setIsExpanded={setIsExpanded} apps={apps} />
 
         <main className="main-content w-full">
           <div className="max-width-screen h-full">
