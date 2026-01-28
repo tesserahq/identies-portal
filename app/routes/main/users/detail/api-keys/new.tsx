@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ApiKeyPreview } from '@/components/api-key-preview/api-key-preview'
 import { ApiKeyForm } from '@/components/crud-form/api-key-form'
 import { useApp } from '@/context/AppContext'
-import { useCreateApiKey } from '@/resources/hooks/api-keys'
+import { useCreateUserApiKey } from '@/resources/hooks/users'
 import { ApiKeyFormData, ApiKeyType } from '@/resources/queries/api-keys'
 import { defaultApiKeyFormValues } from '@/resources/queries/api-keys/api-key.schema'
-import { LoaderFunctionArgs, useLoaderData, useNavigate } from 'react-router'
+import { useState } from 'react'
+import { useLoaderData, useNavigate, useParams } from 'react-router'
 
 export function loader() {
   const apiUrl = process.env.API_URL
@@ -13,18 +15,19 @@ export function loader() {
   return { apiUrl, nodeEnv }
 }
 
-export default function ApiKeyNew() {
+export default function UserApiKeyNew() {
   const { apiUrl, nodeEnv } = useLoaderData<typeof loader>()
   const { token } = useApp()
+  const params = useParams()
   const navigate = useNavigate()
+  const [apiKey, setApiKey] = useState<ApiKeyType>()
 
   // API key create mutation
-  const { mutateAsync: createApiKey } = useCreateApiKey(
+  const { mutateAsync: createApiKey } = useCreateUserApiKey(
     { apiUrl: apiUrl!, token: token!, nodeEnv: nodeEnv as any },
+    params.id as string,
     {
-      onSuccess: (data: ApiKeyType) => {
-        navigate(`/api-keys/${data.id}`)
-      },
+      onSuccess: setApiKey,
     }
   )
 
@@ -32,5 +35,15 @@ export default function ApiKeyNew() {
     await createApiKey(data)
   }
 
-  return <ApiKeyForm onSubmit={handleSubmit} defaultValues={defaultApiKeyFormValues} />
+  const onCancel = () => navigate(-1)
+
+  return apiKey ? (
+    <ApiKeyPreview apiKey={apiKey} backTo={`/users/${params.id}/api-keys`} />
+  ) : (
+    <ApiKeyForm
+      onSubmit={handleSubmit}
+      defaultValues={defaultApiKeyFormValues}
+      onCancel={onCancel}
+    />
+  )
 }

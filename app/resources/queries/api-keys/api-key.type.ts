@@ -16,24 +16,6 @@ export type ApiKeyType = {
 }
 
 /**
- * API Key query configuration
- * Required configuration for API queries (apiUrl, token, nodeEnv)
- */
-export interface ApiKeyQueryConfig {
-  apiUrl: string
-  token: string
-  nodeEnv: NodeENVType
-}
-
-/**
- * API Key query parameters for pagination
- */
-export interface ApiKeyQueryParams {
-  page: number
-  size: number
-}
-
-/**
  * API Key form data for API requests
  */
 export type ApiKeyFormData = {

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { fetchUser, updateUser } from '@/resources/queries/user/user.queries'
-import { UserFormData, UserQueryConfig, UserType } from '@/resources/queries/user/user.type'
+import { IQueryConfig } from '@/resources/queries'
+import { UserFormData, UserType } from '@/resources/queries/users'
+import { fetchMe, updateMe } from '@/resources/queries/users/user.queries'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -34,21 +35,21 @@ export const userQueryKeys = {
  * @options - User query options
  */
 export function useUser(
-  config: UserQueryConfig,
+  config: IQueryConfig,
   options?: {
     enabled?: boolean
     staleTime?: number
   }
 ) {
-  if (!config.token) {
-    throw new QueryError('Token is required', 'TOKEN_REQUIRED')
-  }
-
   return useQuery({
     queryKey: userQueryKeys.detail(),
     queryFn: async () => {
       try {
-        return await fetchUser(config)
+        if (!config.token) {
+          throw new QueryError('Token is required', 'TOKEN_REQUIRED')
+        }
+
+        return await fetchMe(config)
       } catch (error: any) {
         throw new QueryError(error.message)
       }
@@ -62,7 +63,7 @@ export function useUser(
  * Hook for updating user
  */
 export function useUpdateUser(
-  config: UserQueryConfig,
+  config: IQueryConfig,
   options?: {
     onSuccess?: (data: UserType) => void
     onError?: (error: QueryError) => void
@@ -77,7 +78,7 @@ export function useUpdateUser(
       if (!config.token) {
         throw new QueryError('Token is required', 'TOKEN_REQUIRED')
       }
-      return await updateUser(config, updateData)
+      return await updateMe(config, updateData)
     },
     onSuccess: (data: UserType) => {
       // Update user cache

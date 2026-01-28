@@ -10,15 +10,32 @@ export default [
 
   // Private Layout
   layout('layouts/private.layout.tsx', [
-    route('/preferences', 'routes/main/preferences/layout.tsx', [
-      index('routes/main/preferences/index.tsx'),
+    route('/accounts', 'routes/main/accounts/layout.tsx', [
+      index('routes/main/accounts/index.tsx'),
+
+      route('preferences', 'routes/main/accounts/preferences/layout.tsx', [
+        index('routes/main/accounts/preferences/index.tsx'),
+      ]),
+
+      route('api-keys', 'routes/main/accounts/api-keys/layout.tsx', [
+        index('routes/main/accounts/api-keys/index.tsx'),
+        route('new', 'routes/main/accounts/api-keys/new.tsx'),
+        route(':id', 'routes/main/accounts/api-keys/detail.tsx'),
+        route(':id/edit', 'routes/main/accounts/api-keys/edit.tsx'),
+      ]),
     ]),
 
-    route('/api-keys', 'routes/main/api-keys/layout.tsx', [
-      index('routes/main/api-keys/index.tsx'),
-      route('new', 'routes/main/api-keys/new.tsx'),
-      route(':id', 'routes/main/api-keys/detail.tsx'),
-      route(':id/edit', 'routes/main/api-keys/edit.tsx'),
+    route('/users', 'routes/main/users/layout.tsx', [
+      index('routes/main/users/index.tsx'),
+      route(':id', 'routes/main/users/detail/layout.tsx', [
+        index('routes/main/users/detail/index.tsx'),
+        route('overview', 'routes/main/users/detail/overview.tsx'),
+
+        route('api-keys', 'routes/main/users/detail/api-keys/index.tsx'),
+        route('api-keys/new', 'routes/main/users/detail/api-keys/new.tsx'),
+        route('api-keys/:apiKeyId', 'routes/main/users/detail/api-keys/detail.tsx'),
+        route('api-keys/:apiKeyId/edit', 'routes/main/users/detail/api-keys/edit.tsx'),
+      ]),
     ]),
 
     route('/service-accounts', 'routes/main/service-accounts/layout.tsx', [

@@ -1,11 +1,8 @@
-import { NodeENVType } from '@/libraries/fetch'
-
 /**
  * User Type
  */
 export type UserType = {
   email: string
-  username: string
   avatar_url: string
   avatar_asset_id: string
   first_name: string
@@ -18,16 +15,7 @@ export type UserType = {
   id: string
   created_at: string
   updated_at: string
-}
-
-/**
- * User query configuration
- * Required configuration for API queries (apiUrl, token, nodeEnv)
- */
-export interface UserQueryConfig {
-  apiUrl: string
-  token: string
-  nodeEnv: NodeENVType
+  service_account?: boolean
 }
 
 /**
@@ -35,7 +23,6 @@ export interface UserQueryConfig {
  */
 export type UserFormData = {
   email: string
-  username?: string
   avatar_url?: string
   avatar_asset_id?: string
   first_name: string

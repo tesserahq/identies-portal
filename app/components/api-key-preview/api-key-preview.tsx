@@ -10,7 +10,7 @@ import { Check, CheckCircle2Icon, Copy } from 'lucide-react'
 import { ApiKeyType } from '@/resources/queries/api-keys'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { DateTime } from '../datetime'
+import { DateTime } from 'tessera-ui/components'
 import { Card, CardContent } from '@/modules/shadcn/ui/card'
 
 interface Props {
@@ -70,13 +70,13 @@ export function ApiKeyPreview({ apiKey, backTo }: Props) {
           <dl className="d-item">
             <dt className="d-label">Created At</dt>
             <dd className="d-content">
-              {apiKey?.created_at && <DateTime date={apiKey?.created_at + 'z'} />}
+              {apiKey?.created_at && <DateTime date={apiKey?.created_at} />}
             </dd>
           </dl>
           <dl className="d-item">
             <dt className="d-label">Expires At</dt>
             <dd className="d-content">
-              {apiKey?.expires_at ? <DateTime date={apiKey?.expires_at + 'z'} /> : 'No expiration'}
+              {apiKey?.expires_at ? <DateTime date={apiKey?.expires_at} /> : 'No expiration'}
             </dd>
           </dl>
         </div>

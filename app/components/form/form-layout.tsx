@@ -13,7 +13,7 @@ export function FormLayout({ title, children }: IProps) {
         <CardHeader>
           <CardTitle>{title}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">{children}</CardContent>
+        <CardContent className="space-y-4 px-6">{children}</CardContent>
       </Card>
     </div>
   )

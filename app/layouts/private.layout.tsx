@@ -3,11 +3,11 @@ import { AppPreloader } from '@/components/loader'
 import { SidebarPanel, SidebarPanelMin } from '@/components/sidebar'
 import { IMenuItemProps } from '@/components/sidebar/types'
 import '@/styles/sidebar.css'
-import { useAuth0 } from '@auth0/auth0-react'
+import { useApp } from '@/context/AppContext'
 import { cn } from '@shadcn/lib/utils'
-import { Key, User, UserCog } from 'lucide-react'
+import { Key, User, UserCog, Users } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Outlet, useLoaderData } from 'react-router'
+import { Outlet, useLoaderData, useLocation } from 'react-router'
 
 export function loader() {
   // App host URL
@@ -31,23 +31,34 @@ export default function Layout() {
     useLoaderData<typeof loader>()
   const [isExpanded, setIsExpanded] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
-  const { isLoading } = useAuth0()
+  const { isLoading } = useApp()
+  const location = useLocation()
+
+  const isAccounts = location.pathname.startsWith('/accounts')
 
   const menuItems: IMenuItemProps[] = [
     {
-      title: 'Preferences',
-      path: '/preferences',
-      icon: <User size={18} />,
-    },
-    {
-      title: 'API Keys',
-      path: '/api-keys',
-      icon: <Key size={18} />,
+      title: 'Users',
+      path: '/users',
+      icon: <Users size={18} />,
     },
     {
       title: 'Service Accounts',
       path: '/service-accounts',
       icon: <UserCog size={18} />,
+    },
+  ]
+
+  const accountsMenuItems: IMenuItemProps[] = [
+    {
+      title: 'Preferences',
+      path: '/accounts/preferences',
+      icon: <User size={18} />,
+    },
+    {
+      title: 'API Keys',
+      path: '/accounts/api-keys',
+      icon: <Key size={18} />,
     },
   ]
 
@@ -104,8 +115,14 @@ export default function Layout() {
       className={cn('has-min-sidebar is-header-blur', isExpanded && 'is-sidebar-open')}>
       <div id="root" className="min-h-100vh flex grow">
         <div className="sidebar print:hidden">
-          <SidebarPanel menuItems={menuItems} />
-          <SidebarPanelMin menuItems={menuItems} />
+          <SidebarPanel
+            menuItems={isAccounts ? accountsMenuItems : menuItems}
+            type={isAccounts ? 'accounts' : 'main'}
+          />
+          <SidebarPanelMin
+            menuItems={isAccounts ? accountsMenuItems : menuItems}
+            type={isAccounts ? 'accounts' : 'main'}
+          />
         </div>
 
         <Header withSidebar isExpanded={isExpanded} setIsExpanded={setIsExpanded} apps={apps} />

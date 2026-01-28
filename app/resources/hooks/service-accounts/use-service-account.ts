@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { IQueryConfig, IQueryParams } from '@/resources/queries'
 import { ApiKeyType } from '@/resources/queries/api-keys'
 import { ApiKeyFormData } from '@/resources/queries/api-keys'
 import {
@@ -11,8 +12,6 @@ import {
   fetchServiceAccountApiKeys,
 } from '@/resources/queries/service-accounts/service-account.queries'
 import {
-  ServiceAccountQueryConfig,
-  ServiceAccountQueryParams,
   ServiceAccountType,
   ServiceAccountFormData,
 } from '@/resources/queries/service-accounts/service-account.type'
@@ -40,7 +39,7 @@ class QueryError extends Error {
 export const serviceAccountQueryKeys = {
   all: ['service-accounts'] as const,
   lists: () => [...serviceAccountQueryKeys.all, 'list'] as const,
-  list: (config: ServiceAccountQueryConfig, params: ServiceAccountQueryParams) =>
+  list: (config: IQueryConfig, params: IQueryParams) =>
     [...serviceAccountQueryKeys.lists(), config, params] as const,
   details: () => [...serviceAccountQueryKeys.all, 'detail'] as const,
   detail: (id: string) => [...serviceAccountQueryKeys.details(), id] as const,
@@ -57,8 +56,8 @@ export const serviceAccountQueryKeys = {
  * @options - Service account query options
  */
 export function useServiceAccounts(
-  config: ServiceAccountQueryConfig,
-  params: ServiceAccountQueryParams,
+  config: IQueryConfig,
+  params: IQueryParams,
   options?: {
     enabled?: boolean
     staleTime?: number
@@ -89,7 +88,7 @@ export function useServiceAccounts(
  * @options - Service account query options
  */
 export function useServiceAccount(
-  config: ServiceAccountQueryConfig,
+  config: IQueryConfig,
   serviceAccountId: string,
   options?: {
     enabled?: boolean
@@ -118,7 +117,7 @@ export function useServiceAccount(
  * Hook for creating service account
  */
 export function useCreateServiceAccount(
-  config: ServiceAccountQueryConfig,
+  config: IQueryConfig,
   options?: {
     onSuccess?: (data: ServiceAccountType) => void
     onError?: (error: QueryError) => void
@@ -156,7 +155,7 @@ export function useCreateServiceAccount(
  * Hook for updating service account
  */
 export function useUpdateServiceAccount(
-  config: ServiceAccountQueryConfig,
+  config: IQueryConfig,
   serviceAccountId: string,
   options?: {
     onSuccess?: (data: ServiceAccountType) => void
@@ -200,7 +199,7 @@ export function useUpdateServiceAccount(
  * Hook for deleting service account
  */
 export function useDeleteServiceAccount(
-  config: ServiceAccountQueryConfig,
+  config: IQueryConfig,
   options?: {
     onSuccess?: () => void
     onError?: (error: QueryError) => void
@@ -242,7 +241,7 @@ export function useDeleteServiceAccount(
  */
 
 export function useServiceAccountApiKeys(
-  config: ServiceAccountQueryConfig,
+  config: IQueryConfig,
   serviceAccountId: string,
   options?: {
     enabled?: boolean
@@ -264,7 +263,7 @@ export function useServiceAccountApiKeys(
 }
 
 export function useCreateServiceAccountApiKey(
-  config: ServiceAccountQueryConfig,
+  config: IQueryConfig,
   serviceAccountId: string,
   options?: {
     onSuccess?: (data: ApiKeyType) => void

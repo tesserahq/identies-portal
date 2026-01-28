@@ -1,8 +1,8 @@
 // Query functions
-export { fetchUser, updateUser } from './user.queries'
+export { fetchUsers, fetchMe, updateMe } from './user.queries'
 
 // Types
-export type { UserType, UserFormData, UserQueryConfig, UpdateUserData } from './user.type'
+export type { UserType, UserFormData, UpdateUserData } from './user.type'
 
 // Schemas
 export {

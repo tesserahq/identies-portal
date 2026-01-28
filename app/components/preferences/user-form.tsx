@@ -6,7 +6,7 @@ import {
   UserFormData,
   userFormSchema,
   UserFormValue,
-} from '@/resources/queries/user'
+} from '@/resources/queries/users'
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { useNavigate } from 'react-router'

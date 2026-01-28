@@ -23,24 +23,6 @@ export type ServiceAccountType = {
 }
 
 /**
- * Service Account query configuration
- * Required configuration for API queries (apiUrl, token, nodeEnv)
- */
-export interface ServiceAccountQueryConfig {
-  apiUrl: string
-  token: string
-  nodeEnv: NodeENVType
-}
-
-/**
- * Service Account query parameters for pagination
- */
-export interface ServiceAccountQueryParams {
-  page: number
-  size: number
-}
-
-/**
  * Service Account form data for API requests
  */
 export type ServiceAccountFormData = {
