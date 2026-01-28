@@ -12,8 +12,8 @@ import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { useApp } from '@/context/AppContext'
 import { TAsset } from '@/resources/types/asset'
-import { useUpdateUser, useUpdateTheme } from '@/resources/hooks/user'
-import { UserFormData, userToFormValues } from '@/resources/queries/user'
+import { useUpdateUser, useUpdateTheme } from '@/resources/hooks/users'
+import { UserFormData, userToFormValues } from '@/resources/queries/users'
 import { ProfileInformation, Appearance, ProfileHeader } from '@/components/preferences'
 
 export function loader() {

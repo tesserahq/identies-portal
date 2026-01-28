@@ -4,7 +4,7 @@ import { fetchApi, NodeENVType } from '@/libraries/fetch'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
-import { UserType } from '@/resources/queries/user'
+import { UserType } from '@/resources/queries/users'
 
 export interface IContextProps {
   user: UserType | null
@@ -37,7 +37,7 @@ export function AppProvider({ children, identiesApiUrl, nodeEnv }: IProviderProp
   const fetchToken = async () => {
     try {
       const token = await getAccessTokenSilently()
-      const user = await fetchApi(`${identiesApiUrl}/user`, token, nodeEnv)
+      const user = await fetchApi(`${identiesApiUrl}/me`, token, nodeEnv)
 
       setUser(user)
       setToken(token)

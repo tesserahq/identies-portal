@@ -117,9 +117,12 @@ export function ProfileMenu({ selectedTheme, onSetTheme, menus }: Props) {
           <div className="flex flex-col gap-1">
             <div className="border-y py-1">
               <button
-                className="hover:bg-muted flex w-full flex-row items-center gap-2 rounded-sm px-3
-                  py-2"
-                onClick={() => {}}>
+                className="hover:bg-muted flex w-full flex-row cursor-pointer items-center gap-2
+                  rounded-sm px-3 py-2"
+                onClick={() => {
+                  navigate('/accounts/preferences')
+                  setIsDropdownOpen(false)
+                }}>
                 <UserCog size={16} />
                 <span>Your Profile</span>
               </button>
@@ -129,8 +132,8 @@ export function ProfileMenu({ selectedTheme, onSetTheme, menus }: Props) {
                 return (
                   <div key={menu.label} className="border-b pb-1">
                     <button
-                      className="hover:bg-muted flex w-full flex-row items-center gap-2 rounded-sm
-                        px-3 py-2"
+                      className="hover:bg-muted cursor-pointer flex w-full flex-row items-center
+                        gap-2 rounded-sm px-3 py-2"
                       onClick={menu.onClick}>
                       {menu.icon}
                       <span>{menu.label}</span>
@@ -139,8 +142,8 @@ export function ProfileMenu({ selectedTheme, onSetTheme, menus }: Props) {
                 )
               })}
             <button
-              className="hover:bg-destructive flex w-full flex-row items-center gap-2 rounded-sm
-                px-3 py-2 transition-all duration-200 hover:text-white"
+              className="hover:bg-destructive cursor-pointer flex w-full flex-row items-center gap-2
+                rounded-sm px-3 py-2 transition-all duration-200 hover:text-white"
               onClick={() => navigate('/logout', { replace: true })}>
               <LogOut size={16} />
               Logout

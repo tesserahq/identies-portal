@@ -144,7 +144,7 @@ export const ApiKeyForm = ({
     if (onCancel) {
       onCancel()
     } else {
-      navigate('/api-keys')
+      navigate('/accounts/api-keys')
     }
   }
 

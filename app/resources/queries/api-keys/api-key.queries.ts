@@ -1,11 +1,12 @@
 import { fetchApi } from '@/libraries/fetch'
-import { ApiKeyQueryParams, ApiKeyQueryConfig, ApiKeyType, ApiKeyFormData } from './api-key.type'
+import { ApiKeyType, ApiKeyFormData } from './api-key.type'
 import { IPaging } from '@/resources/types'
+import { IQueryConfig, IQueryParams } from '..'
 
 /**
  * List all API keys with pagination.
  */
-export async function fetchApiKeys(config: ApiKeyQueryConfig, params: ApiKeyQueryParams) {
+export async function fetchApiKeys(config: IQueryConfig, params: IQueryParams) {
   const { apiUrl, token, nodeEnv } = config
   const { page, size } = params
 
@@ -23,7 +24,7 @@ export async function fetchApiKeys(config: ApiKeyQueryConfig, params: ApiKeyQuer
 /**
  * Get an API key by ID.
  */
-export async function fetchApiKeyDetail(apiKeyId: string, config: ApiKeyQueryConfig) {
+export async function fetchApiKeyDetail(apiKeyId: string, config: IQueryConfig) {
   const { apiUrl, token, nodeEnv } = config
 
   const response = await fetchApi(`${apiUrl}/api-keys/${apiKeyId}`, token, nodeEnv)
@@ -34,7 +35,7 @@ export async function fetchApiKeyDetail(apiKeyId: string, config: ApiKeyQueryCon
 /**
  * Create a new API key.
  */
-export async function createApiKey(config: ApiKeyQueryConfig, data: ApiKeyFormData) {
+export async function createApiKey(config: IQueryConfig, data: ApiKeyFormData) {
   const { apiUrl, token, nodeEnv } = config
 
   // Convert expires_at to end of day (23:59:59.999Z) or null for no expiration
@@ -73,7 +74,7 @@ export async function createApiKey(config: ApiKeyQueryConfig, data: ApiKeyFormDa
  * Update an API key.
  */
 export async function updateApiKey(
-  config: ApiKeyQueryConfig,
+  config: IQueryConfig,
   apiKeyId: string,
   updateData: Partial<ApiKeyFormData>
 ) {
@@ -116,7 +117,7 @@ export async function updateApiKey(
 /**
  * Revoke an API key.
  */
-export async function revokeApiKey(config: ApiKeyQueryConfig, apiKeyId: string) {
+export async function revokeApiKey(config: IQueryConfig, apiKeyId: string) {
   const { apiUrl, token, nodeEnv } = config
 
   const response = await fetchApi(`${apiUrl}/api-keys/${apiKeyId}/revoke`, token, nodeEnv, {
@@ -129,7 +130,7 @@ export async function revokeApiKey(config: ApiKeyQueryConfig, apiKeyId: string) 
 /**
  * Delete an API key.
  */
-export async function deleteApiKey(config: ApiKeyQueryConfig, apiKeyId: string) {
+export async function deleteApiKey(config: IQueryConfig, apiKeyId: string) {
   const { apiUrl, token, nodeEnv } = config
 
   const response = await fetchApi(`${apiUrl}/api-keys/${apiKeyId}`, token, nodeEnv, {

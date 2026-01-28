@@ -1,15 +1,16 @@
-import { useUpdateUser } from './use-user'
-import { UserQueryConfig, UserType } from '@/resources/queries/user/user.type'
+import { useUpdateUser } from './use-me'
+import { UserType } from '@/resources/queries/users/user.type'
 import { useSubmit } from 'react-router'
 import { ROUTE_PATH as THEME_PATH } from '@/routes/resources/update-theme'
 import { useTheme as useSystemTheme } from '@/hooks/useTheme'
+import { IQueryConfig } from '@/resources/queries'
 
 /**
  * Hook for updating user theme preference
  * Updates both the API and the web theme cookie
  */
 export function useUpdateTheme(
-  config: UserQueryConfig,
+  config: IQueryConfig,
   options?: {
     onSuccess?: (data: UserType) => void
     onError?: (error: Error) => void

@@ -8,12 +8,7 @@ export {
 } from './service-account.queries'
 
 // Types
-export type {
-  ServiceAccountType,
-  ServiceAccountFormData,
-  ServiceAccountQueryConfig,
-  ServiceAccountQueryParams,
-} from './service-account.type'
+export type { ServiceAccountType, ServiceAccountFormData } from './service-account.type'
 
 // Schemas
 export {

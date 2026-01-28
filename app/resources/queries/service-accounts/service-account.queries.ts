@@ -1,20 +1,13 @@
 import { fetchApi } from '@/libraries/fetch'
-import {
-  ServiceAccountQueryParams,
-  ServiceAccountQueryConfig,
-  ServiceAccountType,
-  ServiceAccountFormData,
-} from './service-account.type'
+import { ServiceAccountType, ServiceAccountFormData } from './service-account.type'
 import { IPaging } from '@/resources/types'
 import { ApiKeyFormData, ApiKeyType } from '../api-keys'
+import { IQueryConfig, IQueryParams } from '..'
 
 /**
  * List all service accounts with pagination.
  */
-export async function fetchServiceAccounts(
-  config: ServiceAccountQueryConfig,
-  params: ServiceAccountQueryParams
-) {
+export async function fetchServiceAccounts(config: IQueryConfig, params: IQueryParams) {
   const { apiUrl, token, nodeEnv } = config
   const { page, size } = params
 
@@ -32,10 +25,7 @@ export async function fetchServiceAccounts(
 /**
  * Get a service account by ID.
  */
-export async function fetchServiceAccountDetail(
-  serviceAccountId: string,
-  config: ServiceAccountQueryConfig
-) {
+export async function fetchServiceAccountDetail(serviceAccountId: string, config: IQueryConfig) {
   const { apiUrl, token, nodeEnv } = config
 
   const response = await fetchApi(`${apiUrl}/service-accounts/${serviceAccountId}`, token, nodeEnv)
@@ -46,10 +36,7 @@ export async function fetchServiceAccountDetail(
 /**
  * Create a new service account.
  */
-export async function createServiceAccount(
-  config: ServiceAccountQueryConfig,
-  data: ServiceAccountFormData
-) {
+export async function createServiceAccount(config: IQueryConfig, data: ServiceAccountFormData) {
   const { apiUrl, token, nodeEnv } = config
 
   const payload = {
@@ -78,7 +65,7 @@ export async function createServiceAccount(
  * Update a service account.
  */
 export async function updateServiceAccount(
-  config: ServiceAccountQueryConfig,
+  config: IQueryConfig,
   serviceAccountId: string,
   updateData: Partial<ServiceAccountFormData>
 ) {
@@ -115,10 +102,7 @@ export async function updateServiceAccount(
 /**
  * Delete a service account.
  */
-export async function deleteServiceAccount(
-  config: ServiceAccountQueryConfig,
-  serviceAccountId: string
-) {
+export async function deleteServiceAccount(config: IQueryConfig, serviceAccountId: string) {
   const { apiUrl, token, nodeEnv } = config
 
   const response = await fetchApi(
@@ -140,10 +124,7 @@ export async function deleteServiceAccount(
 /**
  * Get service account api-keys
  */
-export async function fetchServiceAccountApiKeys(
-  serviceAccountId: string,
-  config: ServiceAccountQueryConfig
-) {
+export async function fetchServiceAccountApiKeys(serviceAccountId: string, config: IQueryConfig) {
   const { apiUrl, token, nodeEnv } = config
 
   const response = await fetchApi(
@@ -159,7 +140,7 @@ export async function fetchServiceAccountApiKeys(
  * Create service account api-keys
  */
 export async function createServiceAccountApiKey(
-  config: ServiceAccountQueryConfig,
+  config: IQueryConfig,
   serviceAccountId: string,
   data: ApiKeyFormData
 ) {

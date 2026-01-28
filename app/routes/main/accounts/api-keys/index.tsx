@@ -1,35 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AppPreloader } from '@/components/loader'
-import CreateButton from '@/components/new-button/new-button'
+import { Pagination } from '@/components/data-table/data-pagination'
 import DeleteConfirmation, {
   type DeleteConfirmationHandle,
 } from '@/components/delete-confirmation/delete-confirmation'
+import { AppPreloader } from '@/components/loader'
+import CreateButton from '@/components/new-button/new-button'
 import RevokeConfirmation, {
   type RevokeConfirmationHandle,
 } from '@/components/revoke-confirmation/revoke-confirmation'
-import EmptyContent from '@/components/empty-content/empty-content'
+import { useApp } from '@/context/AppContext'
+import { useApiKeys, useDeleteApiKey, useRevokeApiKey } from '@/resources/hooks/api-keys'
+import type { ApiKeyType } from '@/resources/queries/api-keys'
+import { ensureCanonicalPagination } from '@/utils/helpers/pagination.helper'
 import { Badge } from '@shadcn/ui/badge'
 import { Button } from '@shadcn/ui/button'
 import { Card, CardContent } from '@shadcn/ui/card'
 import { Popover, PopoverContent, PopoverTrigger } from '@shadcn/ui/popover'
 import { Separator } from '@shadcn/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@shadcn/ui/tooltip'
-import { LoaderFunctionArgs } from 'react-router'
-import { Link, useLoaderData, useNavigate } from 'react-router'
 import { format } from 'date-fns'
 import { EllipsisVertical, Eye, Pencil, ShieldX, Trash2 } from 'lucide-react'
-import { useEffect, useState, useRef } from 'react'
-import { useApp } from '@/context/AppContext'
-import {
-  useApiKeys,
-  useDeleteApiKey,
-  useRevokeApiKey,
-  apiKeyQueryKeys,
-} from '@/resources/hooks/api-keys'
-import { ensureCanonicalPagination } from '@/utils/helpers/pagination.helper'
-import type { ApiKeyType } from '@/resources/queries/api-keys'
-import { Pagination } from '@/components/data-table/data-pagination'
-import { DateTime } from '@/components/datetime'
+import { useEffect, useRef, useState } from 'react'
+import { Link, LoaderFunctionArgs, useLoaderData, useNavigate } from 'react-router'
+import { DateTime, EmptyContent } from 'tessera-ui/components'
 
 export function loader({ request }: LoaderFunctionArgs) {
   const identiesApiUrl = process.env.API_URL
@@ -201,21 +194,23 @@ export default function APIKeys() {
                             </TooltipTrigger>
                             <TooltipContent side="bottom">
                               <span className="text-xs text-muted-foreground">
-                                Expired at {format(apiKey?.expires_at + 'z', 'PPPpp')}
+                                Expired at <DateTime date={apiKey.expires_at} />
                               </span>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
                       ) : (
                         <span>
-                          {apiKey.expires_at
-                            ? `Expires At ${format(apiKey?.expires_at + 'z', 'PPP')}`
-                            : 'No expiration'}
+                          {apiKey.expires_at ? (
+                            <DateTime date={apiKey.expires_at} />
+                          ) : (
+                            'No expiration'
+                          )}
                         </span>
                       )}
                       <Separator orientation="vertical" className="mx-2 h-4" />
                       <div>
-                        Created <DateTime date={apiKey.created_at + 'z'} />
+                        Created <DateTime date={apiKey.created_at} />
                       </div>
                     </div>
                   </div>

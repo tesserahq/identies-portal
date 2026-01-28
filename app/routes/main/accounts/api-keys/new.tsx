@@ -23,7 +23,7 @@ export default function ApiKeyNew() {
     { apiUrl: apiUrl!, token: token!, nodeEnv: nodeEnv as any },
     {
       onSuccess: (data: ApiKeyType) => {
-        navigate(`/api-keys/${data.id}`)
+        navigate(`/accounts/api-keys/${data.id}`)
       },
     }
   )

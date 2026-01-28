@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { IQueryConfig, IQueryParams } from '@/resources/queries'
 import {
   createApiKey,
   deleteApiKey,
@@ -7,12 +8,7 @@ import {
   revokeApiKey,
   updateApiKey,
 } from '@/resources/queries/api-keys/api-key.queries'
-import {
-  ApiKeyFormData,
-  ApiKeyQueryConfig,
-  ApiKeyQueryParams,
-  ApiKeyType,
-} from '@/resources/queries/api-keys/api-key.type'
+import { ApiKeyFormData, ApiKeyType } from '@/resources/queries/api-keys/api-key.type'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -37,7 +33,7 @@ class QueryError extends Error {
 export const apiKeyQueryKeys = {
   all: ['api-keys'] as const,
   lists: () => [...apiKeyQueryKeys.all, 'list'] as const,
-  list: (config: ApiKeyQueryConfig, params: ApiKeyQueryParams) =>
+  list: (config: IQueryConfig, params: IQueryParams) =>
     [...apiKeyQueryKeys.lists(), config, params] as const,
   details: () => [...apiKeyQueryKeys.all, 'detail'] as const,
   detail: (id: string) => [...apiKeyQueryKeys.details(), id] as const,
@@ -50,8 +46,8 @@ export const apiKeyQueryKeys = {
  * @options - API key query options
  */
 export function useApiKeys(
-  config: ApiKeyQueryConfig,
-  params: ApiKeyQueryParams,
+  config: IQueryConfig,
+  params: IQueryParams,
   options?: {
     enabled?: boolean
     staleTime?: number
@@ -82,7 +78,7 @@ export function useApiKeys(
  * @options - API key query options
  */
 export function useApiKey(
-  config: ApiKeyQueryConfig,
+  config: IQueryConfig,
   apiKeyId: string,
   options?: {
     enabled?: boolean
@@ -111,7 +107,7 @@ export function useApiKey(
  * Hook for creating API key
  */
 export function useCreateApiKey(
-  config: ApiKeyQueryConfig,
+  config: IQueryConfig,
   options?: {
     onSuccess?: (data: ApiKeyType) => void
     onError?: (error: QueryError) => void
@@ -149,7 +145,7 @@ export function useCreateApiKey(
  * Hook for updating API key
  */
 export function useUpdateApiKey(
-  config: ApiKeyQueryConfig,
+  config: IQueryConfig,
   apiKeyId: string,
   options?: {
     onSuccess?: (data: ApiKeyType) => void
@@ -191,7 +187,7 @@ export function useUpdateApiKey(
  * Hook for revoking API key
  */
 export function useRevokeApiKey(
-  config: ApiKeyQueryConfig,
+  config: IQueryConfig,
   options?: {
     onSuccess?: (data: ApiKeyType) => void
     onError?: (error: QueryError) => void
@@ -232,7 +228,7 @@ export function useRevokeApiKey(
  * Hook for deleting API key
  */
 export function useDeleteApiKey(
-  config: ApiKeyQueryConfig,
+  config: IQueryConfig,
   options?: {
     onSuccess?: () => void
     onError?: (error: QueryError) => void

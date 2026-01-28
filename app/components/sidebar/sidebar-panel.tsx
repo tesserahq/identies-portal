@@ -1,8 +1,10 @@
 import { cn } from '@shadcn/lib/utils'
 import { Link, useLocation } from 'react-router'
 import { ISidebarPanelProps } from './types'
+import { ArrowLeftIcon } from 'lucide-react'
+import { Separator } from '@/modules/shadcn/ui/separator'
 
-export function SidebarPanel({ menuItems }: ISidebarPanelProps) {
+export function SidebarPanel({ menuItems, type }: ISidebarPanelProps) {
   const { pathname } = useLocation()
 
   const isMenuActive = (menuPath: string) => {
@@ -17,6 +19,21 @@ export function SidebarPanel({ menuItems }: ISidebarPanelProps) {
         {/* Sidebar Panel Body */}
         <div className="sidebar-body">
           <div className="is-scrollbar-hidden grow overflow-y-auto">
+            {type === 'accounts' && (
+              <>
+                <Link to="/users" className="px-4 py-3 flex items-center gap-2 group">
+                  <ArrowLeftIcon className="size-4 group-hover:text-primary text-muted-foreground" />
+                  <span
+                    className="text-xs font-medium text-muted-foreground group-hover:text-primary">
+                    Back to home
+                  </span>
+                </Link>
+                <Separator />
+                <div className="px-5 pt-4 pb-1 block text-xs uppercase text-muted-foreground">
+                  <h2>Account Settings</h2>
+                </div>
+              </>
+            )}
             <ul className="sidebar-nav mt-2">
               {menuItems.map((item) => (
                 <div key={item.path}>
