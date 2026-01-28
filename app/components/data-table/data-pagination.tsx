@@ -6,16 +6,23 @@ import {
   PaginationEllipsis,
 } from '@shadcn/ui/pagination'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@shadcn/ui/select'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useScopedParams } from '@/utils/helpers/params.helper'
 import { useNavigate } from 'react-router'
 import { Button } from '@shadcn/ui/button'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 
-export const Pagination = ({ meta }: { meta: IPagingInfo }) => {
-  const { getScopedSearch } = useScopedParams()
+interface IProps {
+  meta: IPagingInfo
+  scope?: string
+  callback?: ({ page, size }: { page: number; size: number }) => void // to handle value wihtout send into query params
+}
+
+export const Pagination = ({ meta, scope, callback }: IProps) => {
+  const { getScopedSearch } = useScopedParams(scope)
   const navigate = useNavigate()
-  const { pages, page, total, size } = meta
+  const [pagination, setPagination] = useState<IPagingInfo>(meta)
+  const { pages, page, total, size } = pagination
 
   // Build a sliding window of pages around the active page
   const getVisiblePages = () => {
@@ -50,15 +57,30 @@ export const Pagination = ({ meta }: { meta: IPagingInfo }) => {
   const [row, setRow] = useState<string>(size.toString())
 
   const onChange = (value: string) => {
-    const currentSize = String(Number(value))
+    const currentValue = { size: Number(value), page: 1 }
 
-    navigate(getScopedSearch({ size: currentSize, page: 1 }))
-    setRow(currentSize)
+    if (callback) {
+      callback(currentValue)
+      setPagination({ ...meta, ...currentValue })
+    } else {
+      navigate(getScopedSearch(currentValue))
+    }
+
+    setRow(value)
   }
 
   const onNavigate = (value: number) => {
-    navigate(getScopedSearch({ page: value }))
+    if (callback) {
+      callback({ page: value, size })
+      setPagination({ ...meta, page: value, size })
+    } else {
+      navigate(getScopedSearch({ page: value }))
+    }
   }
+
+  useEffect(() => {
+    setPagination(meta)
+  }, [meta])
 
   return (
     <div className="flex w-full items-center justify-between">

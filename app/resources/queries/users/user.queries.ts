@@ -2,6 +2,7 @@ import { fetchApi } from '@/libraries/fetch'
 import { UserFormData, UserType } from './user.type'
 import { IPaging } from '@/resources/types'
 import { IQueryConfig, IQueryParams } from '..'
+import { ApiKeyFormData, ApiKeyType } from '../api-keys'
 
 /**
  * List all users with pagination.
@@ -55,4 +56,61 @@ export async function updateMe(config: IQueryConfig, updateData: Partial<UserFor
   })
 
   return response
+}
+
+/**
+ * USERS API KEYS
+ */
+
+/**
+ * Get user api-keys
+ */
+export async function fetchUserApiKeys(userId: string, config: IQueryConfig, params: IQueryParams) {
+  const { apiUrl, token, nodeEnv } = config
+  const { page, size } = params
+
+  const response = await fetchApi(`${apiUrl}/users/${userId}/api-keys`, token, nodeEnv, {
+    method: 'GET',
+    pagination: { page, size },
+  })
+
+  return response as IPaging<ApiKeyType>
+}
+
+/**
+ * Create user api-keys
+ */
+export async function createUserApiKey(config: IQueryConfig, userId: string, data: ApiKeyFormData) {
+  const { apiUrl, token, nodeEnv } = config
+
+  // Convert expires_at to end of day (23:59:59.999Z) or null for no expiration
+  const expiresAtEndOfDay =
+    data.expires_at && data.expires_at !== ''
+      ? (() => {
+          const expiresAtDate = new Date(data.expires_at)
+          return new Date(
+            Date.UTC(
+              expiresAtDate.getFullYear(),
+              expiresAtDate.getMonth(),
+              expiresAtDate.getDate(),
+              23,
+              59,
+              59,
+              999
+            )
+          ).toISOString()
+        })()
+      : null
+
+  const payload = {
+    name: data.name,
+    expires_at: expiresAtEndOfDay,
+  }
+
+  const response = await fetchApi(`${apiUrl}/users/${userId}/api-keys`, token, nodeEnv, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+
+  return response as ApiKeyType
 }

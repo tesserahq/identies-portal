@@ -1,8 +1,9 @@
 import { AppPreloader } from '@/components/loader/pre-loader'
 import { useApp } from '@/context/AppContext'
 import { Button } from '@/modules/shadcn/ui/button'
+import { useApiKey } from '@/resources/hooks/api-keys'
 import { useUserById } from '@/resources/hooks/users/use-user'
-import { FileText, Users } from 'lucide-react'
+import { FileText, Key } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Outlet, useLoaderData, useLocation, useNavigate, useParams } from 'react-router'
 import { EmptyContent } from 'tessera-ui/components'
@@ -29,6 +30,11 @@ export default function UserDetailLayout() {
       path: `/users/${params.id}/overview`,
       icon: <FileText size={18} />,
     },
+    {
+      title: 'API Keys',
+      path: `/users/${params.id}/api-keys`,
+      icon: <Key size={18} />,
+    },
   ]
 
   const {
@@ -39,13 +45,26 @@ export default function UserDetailLayout() {
     enabled: !!token,
   })
 
+  const { data: apiKey } = useApiKey(
+    { apiUrl: apiUrl!, token: token!, nodeEnv: nodeEnv },
+    params.apiKeyId as string,
+    {
+      enabled: !!token && !!params.apiKeyId,
+    }
+  )
+
   const generatingBreadcrumb = async () => {
     const breadcrumbItems = []
     const pathParts = pathname.split('/').filter(Boolean)
 
     for (let index = 0; index < pathParts.length; index++) {
       const part = pathParts[index]
-      const label = part === params?.id ? user?.email || '' : part
+      const label =
+        part === params?.id
+          ? user?.email || ''
+          : part === params?.apiKeyId
+            ? apiKey?.name || part
+            : part
 
       breadcrumbItems.push({
         label,
@@ -60,7 +79,7 @@ export default function UserDetailLayout() {
     if (user) {
       generatingBreadcrumb()
     }
-  }, [user, pathname])
+  }, [user, apiKey, pathname])
 
   if (isLoading || !token) {
     return <AppPreloader className="min-h-screen" />

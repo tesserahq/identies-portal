@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IQueryConfig, IQueryParams } from '@/resources/queries'
-import { fetchUsers, getUser } from '@/resources/queries/users/user.queries'
-import { UserType } from '@/resources/queries/users'
-import { useQuery } from '@tanstack/react-query'
+import {
+  createUserApiKey,
+  fetchUserApiKeys,
+  fetchUsers,
+  getUser,
+} from '@/resources/queries/users/user.queries'
+import { ApiKeyFormData, ApiKeyType } from '@/resources/queries/api-keys'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 /**
  * Custom error class for query errors
@@ -29,6 +35,9 @@ export const usersQueryKeys = {
     [...usersQueryKeys.lists(), config, params] as const,
   details: () => [...usersQueryKeys.all, 'detail'] as const,
   detail: (id: string) => [...usersQueryKeys.details(), id] as const,
+  apiKeys: () => [...usersQueryKeys.all, 'api-keys'] as const,
+  apiKeysList: (userId: string) => [...usersQueryKeys.apiKeys(), userId] as const,
+  apiKey: (id: string) => [...usersQueryKeys.apiKeys(), id] as const,
 }
 
 /**
@@ -92,5 +101,68 @@ export function useUserById(
     },
     staleTime: options?.staleTime || 5 * 60 * 1000, // 5 minutes
     enabled: options?.enabled !== false && Boolean(userId),
+  })
+}
+
+/**
+ * USERS API KEYS
+ */
+
+export function useUserApiKeys(
+  config: IQueryConfig,
+  userId: string,
+  params: IQueryParams,
+  options?: {
+    enabled?: boolean
+    staleTime?: number
+  }
+) {
+  return useQuery({
+    queryKey: [...usersQueryKeys.apiKeysList(userId), params],
+    queryFn: async () => {
+      if (!config.token) {
+        throw new QueryError('Token is required', 'TOKEN_REQUIRED')
+      }
+
+      return await fetchUserApiKeys(userId, config, params)
+    },
+    staleTime: options?.staleTime || 5 * 60 * 1000, // 5 minutes
+    enabled: options?.enabled !== false && Boolean(userId),
+  })
+}
+
+export function useCreateUserApiKey(
+  config: IQueryConfig,
+  userId: string,
+  options?: {
+    onSuccess?: (data: ApiKeyType) => void
+    onError?: (error: QueryError) => void
+  }
+) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (data: ApiKeyFormData): Promise<ApiKeyType> => {
+      if (!config.token) {
+        throw new QueryError('Token is required', 'TOKEN_REQUIRED')
+      }
+
+      return await createUserApiKey(config, userId, data)
+    },
+    onSuccess: (data) => {
+      // Invalidate and refetch user API keys list
+      queryClient.invalidateQueries({
+        queryKey: usersQueryKeys.apiKeysList(userId),
+      })
+
+      toast.success('User api-key created successfully!')
+      options?.onSuccess?.(data)
+    },
+    onError: (error: QueryError) => {
+      toast.error('Failed to create user api-key', {
+        description: error?.message || 'Please try again.',
+      })
+      options?.onError?.(error)
+    },
   })
 }

@@ -56,7 +56,8 @@ const ExpirationSelect = () => {
   const handleExpirationTypeChange = (value: string) => {
     setExpirationType(value)
     const expiresAt = calculateExpirationDate(value)
-    form.setValue('expires_at', expiresAt, { shouldValidate: true })
+
+    form.setValue('expires_at', format(expiresAt, 'yyyy-MM-dd HH:mm:ss'), { shouldValidate: true })
   }
 
   // Initialize expiration type based on default value

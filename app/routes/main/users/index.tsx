@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Pagination } from '@/components/data-table/data-pagination'
+import { DataTable } from '@/components/data-table'
 import { AppPreloader } from '@/components/loader'
 import { useApp } from '@/context/AppContext'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
@@ -10,13 +10,12 @@ import type { UserType } from '@/resources/queries/users'
 import { ensureCanonicalPagination } from '@/utils/helpers/pagination.helper'
 import { Badge } from '@shadcn/ui/badge'
 import { Button } from '@shadcn/ui/button'
-import { Card, CardContent } from '@shadcn/ui/card'
 import { Popover, PopoverContent, PopoverTrigger } from '@shadcn/ui/popover'
-import { Separator } from '@shadcn/ui/separator'
-import { EllipsisVertical, Eye, Loader2, Search } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { EllipsisVertical, Eye, EyeIcon, Loader2, Search } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, LoaderFunctionArgs, useLoaderData, useNavigate, useSearchParams } from 'react-router'
 import { EmptyContent, DateTime } from 'tessera-ui/components'
+import type { ColumnDef } from '@tanstack/react-table'
 
 export function loader({ request }: LoaderFunctionArgs) {
   const identiesApiUrl = process.env.API_URL
@@ -81,11 +80,119 @@ export default function Users() {
     }
   }, [debouncedSearchQuery])
 
+  const users = usersData?.items || []
+
+  const columns = useMemo<ColumnDef<UserType>[]>(
+    () => [
+      {
+        accessorKey: 'first_name',
+        header: 'Name',
+        size: 220,
+        cell: ({ row }) => {
+          const { id, first_name, last_name, service_account } = row.original
+          const fullName = `${first_name || ''} ${last_name || ''}`.trim()
+          return (
+            <div className="flex items-center gap-2">
+              <Link to={`/users/${id}`} className="button-link">
+                <div className="max-w-[200px] truncate">{fullName || '-'}</div>
+              </Link>
+              {service_account && (
+                <Badge variant="outline" className="border border-green-500 text-green-600">
+                  <span className="text-xs">service-account</span>
+                </Badge>
+              )}
+            </div>
+          )
+        },
+      },
+      {
+        accessorKey: 'email',
+        header: 'Email',
+        size: 200,
+        cell: ({ row }) => {
+          const { email } = row.original
+          return <div className="max-w-[200px] truncate">{email || '-'}</div>
+        },
+      },
+      {
+        accessorKey: 'provider',
+        header: 'Provider',
+        size: 140,
+      },
+      {
+        accessorKey: 'verified',
+        header: 'Status',
+        size: 120,
+        cell: ({ row }) => {
+          const verified = row.getValue('verified') as boolean
+
+          return verified ? (
+            <Badge variant="outline" className="border border-green-500 text-green-600">
+              <span className="text-xs">Verified</span>
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="border border-red-500 text-red-600">
+              <span className="text-xs">Unverified</span>
+            </Badge>
+          )
+        },
+      },
+      {
+        accessorKey: 'created_at',
+        header: 'Created At',
+        size: 160,
+        cell: ({ row }) => {
+          const date = row.getValue('created_at') as string
+          return <DateTime date={date} formatStr="dd/MM/yyyy HH:mm" />
+        },
+      },
+      {
+        accessorKey: 'updated_at',
+        header: 'Updated At',
+        size: 160,
+        cell: ({ row }) => {
+          const date = row.getValue('updated_at') as string
+          return <DateTime date={date} formatStr="dd/MM/yyyy HH:mm" />
+        },
+      },
+      {
+        id: 'actions',
+        header: '',
+        size: 20,
+        cell: ({ row }) => {
+          const role = row.original
+          return (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="px-0 hover:bg-transparent"
+                  aria-label="Open actions"
+                  tabIndex={0}>
+                  <EllipsisVertical size={18} />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="start" side="left" className="w-40 p-2">
+                <Button
+                  variant="ghost"
+                  className="flex w-full justify-start gap-2"
+                  onClick={() => navigate(`/users/${role.id}`)}>
+                  <EyeIcon size={18} />
+                  <span>Overview</span>
+                </Button>
+              </PopoverContent>
+            </Popover>
+          )
+        },
+      },
+    ],
+    []
+  )
+
   if ((isFetching || isLoading) && !searchQuery) {
     return <AppPreloader className="min-h-screen" />
   }
-
-  const users = usersData?.items || []
 
   return (
     <div className="flex w-full flex-col items-center page-content">
@@ -114,78 +221,30 @@ export default function Users() {
             Searching...
           </span>
         </div>
-      ) : !isLoading && users.length === 0 ? (
-        <EmptyContent
-          image="/images/empty-api-keys.png"
-          title={searchQuery ? 'No users found' : 'No Users found'}
-          description={
-            searchQuery ? 'Try adjusting your search query' : 'There are no users in the system yet'
-          }
-        />
       ) : (
         <div className="space-y-3 w-full animate-slide-up">
-          {users.map((user: UserType) => {
-            const displayName = `${user.first_name} ${user.last_name}`.trim() || 'Unnamed'
-
-            return (
-              <Card key={user.id} className="mb-3 w-full shadow-card">
-                <CardContent className="flex items-center gap-3 pt-4">
-                  <Avatar>
-                    <AvatarImage src={user.avatar_url} />
-                    <AvatarFallback>
-                      <img src="/images/default-user-avatar.jpg" alt="default-user" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-start gap-2">
-                      <Link
-                        to={user.id}
-                        className="mb-1 font-medium text-black hover:text-primary hover:underline
-                          dark:text-primary-foreground">
-                        {displayName}
-                      </Link>
-                      {user.service_account && (
-                        <Badge variant="outline" className="border border-green-500 text-green-600">
-                          <span className="text-xs">Service Account</span>
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center text-xs text-slate-500 dark:text-slate-400">
-                      <span>{user.email}</span>
-                      <Separator orientation="vertical" className="mx-2 h-2" />
-                      <div>
-                        Created <DateTime date={user.created_at} />
-                      </div>
-                    </div>
-                  </div>
-                  <Popover>
-                    <PopoverTrigger>
-                      <Button variant="ghost" size="icon">
-                        <EllipsisVertical />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent align="start" side="left" className="w-44 p-2">
-                      <Button
-                        variant="ghost"
-                        className="flex w-full justify-start"
-                        onClick={() => navigate(`/users/${user.id}`)}>
-                        <Eye />
-                        <span>View</span>
-                      </Button>
-                    </PopoverContent>
-                  </Popover>
-                </CardContent>
-              </Card>
-            )
-          })}
-
-          <Pagination
+          <DataTable
+            columns={columns}
+            data={users}
+            fixed={false}
+            isLoading={isLoading || (isFetching && !searchQuery)}
             meta={{
               page: usersData?.page || 1,
               pages: usersData?.pages || 1,
               size: usersData?.size || 1,
               total: usersData?.total || 1,
             }}
+            empty={
+              <EmptyContent
+                image="/images/empty-api-keys.png"
+                title={searchQuery ? 'No users found' : 'No Users found'}
+                description={
+                  searchQuery
+                    ? 'Try adjusting your search query'
+                    : 'There are no users in the system yet'
+                }
+              />
+            }
           />
         </div>
       )}

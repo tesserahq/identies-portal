@@ -30,6 +30,11 @@ export default [
       route(':id', 'routes/main/users/detail/layout.tsx', [
         index('routes/main/users/detail/index.tsx'),
         route('overview', 'routes/main/users/detail/overview.tsx'),
+
+        route('api-keys', 'routes/main/users/detail/api-keys/index.tsx'),
+        route('api-keys/new', 'routes/main/users/detail/api-keys/new.tsx'),
+        route('api-keys/:apiKeyId', 'routes/main/users/detail/api-keys/detail.tsx'),
+        route('api-keys/:apiKeyId/edit', 'routes/main/users/detail/api-keys/edit.tsx'),
       ]),
     ]),
 
