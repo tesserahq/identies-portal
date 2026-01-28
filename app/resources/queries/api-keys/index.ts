@@ -9,12 +9,7 @@ export {
 } from './api-key.queries'
 
 // Types
-export type {
-  ApiKeyType,
-  ApiKeyFormData,
-  ApiKeyQueryConfig,
-  ApiKeyQueryParams,
-} from './api-key.type'
+export type { ApiKeyType, ApiKeyFormData } from './api-key.type'
 
 // Schemas
 export {

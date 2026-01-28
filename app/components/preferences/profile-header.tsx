@@ -6,7 +6,7 @@ import { userProviders } from '@/constants/user-providers'
 import { cn } from '@shadcn/lib/utils'
 import { Mail, PenTool } from 'lucide-react'
 import { FetcherWithComponents } from 'react-router'
-import { UserType } from '@/resources/queries/user'
+import { UserType } from '@/resources/queries/users'
 
 interface ProfileHeaderProps {
   user: UserType

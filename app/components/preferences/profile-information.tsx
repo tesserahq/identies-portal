@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle } from '@shadcn/ui/card'
 import { UserForm } from './user-form'
-import { UserFormData, UserFormValue } from '@/resources/queries/user'
+import { UserFormData, UserFormValue } from '@/resources/queries/users'
 
 interface Props {
   defaultValues: UserFormValue
