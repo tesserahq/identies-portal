@@ -54,4 +54,7 @@ export default [
       ]),
     ]),
   ]),
+
+  // Logout Route
+  route('logout', 'routes/logout.tsx', { id: 'logout' }),
 ] satisfies RouteConfig
