@@ -353,7 +353,7 @@ nav.header .header-container {
 }
 
 .button-link {
-  @apply text-primary font-medium underline-offset-4 hover:underline;
+  @apply hover:text-primary font-medium hover:underline;
 }
 
 .content-center {
