@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ServiceAccountForm } from '@/components/crud-form/service-account-form'
-import { useApp } from '@/context/AppContext'
+import { useApp } from 'tessera-ui'
 import { useCreateServiceAccount } from '@/resources/hooks/service-accounts'
 import { ServiceAccountFormData, ServiceAccountType } from '@/resources/queries/service-accounts'
 import { defaultServiceAccountFormValues } from '@/resources/queries/service-accounts/service-account.schema'

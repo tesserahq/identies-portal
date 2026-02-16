@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DataTable } from '@/components/data-table'
 import { AppPreloader } from '@/components/loader'
-import { useApp } from '@/context/AppContext'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/modules/shadcn/ui/avatar'
 import { Input } from '@/modules/shadcn/ui/input'
@@ -16,6 +15,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, LoaderFunctionArgs, useLoaderData, useNavigate, useSearchParams } from 'react-router'
 import { EmptyContent, DateTime } from 'tessera-ui/components'
 import type { ColumnDef } from '@tanstack/react-table'
+import { useApp } from 'tessera-ui'
 
 export function loader({ request }: LoaderFunctionArgs) {
   const identiesApiUrl = process.env.API_URL

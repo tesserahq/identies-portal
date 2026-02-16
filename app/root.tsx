@@ -24,15 +24,15 @@ import { csrf } from '@/utils/cookies/csrf.server'
 import { getHints } from '@/hooks/useHints'
 import { getTheme, Theme, useTheme } from '@/hooks/useTheme'
 import i18nServer, { localeCookie } from '@/modules/i18n/i18n.server'
-import { Toaster } from '@shadcn/ui/sonner'
+// import { Toaster } from '@shadcn/ui/sonner'
 import { ClientHintCheck } from '@/components/misc/ClientHints'
 import { useNonce } from '@/hooks/useNonce'
 import { useToast } from '@/hooks/useToast'
 import { GenericErrorBoundary } from '@/components/misc/ErrorBoundary'
 import { ProgressBar } from '@/components/loader/progress-bar'
 import { metaObject } from '@/utils/helpers/meta.helper'
-import { AppProvider } from '@/context/AppContext'
 import { ReactQueryProvider } from './modules/react-query'
+import { Toaster } from 'tessera-ui'
 
 export const handle = { i18n: ['translation'] }
 
@@ -74,8 +74,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const domain = process.env.AUTH0_DOMAIN
   const audience = process.env.AUTH0_AUDIENCE
   const hostUrl = process.env.HOST_URL
-  const identiesApiUrl = process.env.API_URL
-  const nodeEnv = process.env.NODE_ENV
   const organizationID = process.env.AUTH0_ORGANIZATION_ID
 
   return data(
@@ -88,8 +86,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
       clientID,
       domain,
       audience,
-      identiesApiUrl,
-      nodeEnv,
       organizationID,
       requestInfo: {
         hints: getHints(request),
@@ -150,18 +146,8 @@ function Document({
 }
 
 export default function AppWithProviders() {
-  const {
-    locale,
-    toast,
-    csrfToken,
-    clientID,
-    domain,
-    audience,
-    hostUrl,
-    identiesApiUrl,
-    nodeEnv,
-    organizationID,
-  } = useLoaderData<typeof loader>()
+  const { locale, toast, csrfToken, clientID, domain, audience, hostUrl, organizationID } =
+    useLoaderData<typeof loader>()
 
   const nonce = useNonce()
   const theme = useTheme()
@@ -185,11 +171,9 @@ export default function AppWithProviders() {
             organization: organizationID,
             audience: audience,
           }}>
-          <AppProvider identiesApiUrl={identiesApiUrl!} nodeEnv={nodeEnv}>
-            <ReactQueryProvider>
-              <Outlet />
-            </ReactQueryProvider>
-          </AppProvider>
+          <ReactQueryProvider>
+            <Outlet />
+          </ReactQueryProvider>
         </Auth0Provider>
       </AuthenticityTokenProvider>
     </Document>

@@ -9,7 +9,7 @@ import CreateButton from '@/components/new-button/new-button'
 import RevokeConfirmation, {
   type RevokeConfirmationHandle,
 } from '@/components/revoke-confirmation/revoke-confirmation'
-import { useApp } from '@/context/AppContext'
+import { useApp } from 'tessera-ui'
 import { useDeleteApiKey, useRevokeApiKey } from '@/resources/hooks/api-keys'
 import { useUserApiKeys, usersQueryKeys } from '@/resources/hooks/users'
 import type { ApiKeyType } from '@/resources/queries/api-keys'

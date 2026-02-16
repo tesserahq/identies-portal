@@ -6,7 +6,7 @@ import DeleteConfirmation, {
 import EmptyContent from '@/components/empty-content/empty-content'
 import { AppPreloader } from '@/components/loader'
 import { type RevokeConfirmationHandle } from '@/components/revoke-confirmation/revoke-confirmation'
-import { useApp } from '@/context/AppContext'
+import { useApp } from 'tessera-ui'
 import { useApiKey, useDeleteApiKey, useRevokeApiKey } from '@/resources/hooks/api-keys'
 import type { ApiKeyType } from '@/resources/queries/api-keys'
 import { Badge } from '@shadcn/ui/badge'

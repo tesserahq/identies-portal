@@ -5,7 +5,7 @@ import DeleteConfirmation, {
 } from '@/components/delete-confirmation/delete-confirmation'
 import { DetailContent } from '@/components/detail-content'
 import { AppPreloader } from '@/components/loader'
-import { useApp } from '@/context/AppContext'
+import { useApp } from 'tessera-ui'
 import { useDeleteServiceAccount, useServiceAccount } from '@/resources/hooks/service-accounts'
 import type { ServiceAccountType } from '@/resources/queries/service-accounts'
 import { Badge } from '@shadcn/ui/badge'

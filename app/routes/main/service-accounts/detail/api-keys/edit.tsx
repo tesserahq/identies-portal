@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AppPreloader } from '@/components/loader'
 import { ApiKeyForm } from '@/components/crud-form/api-key-form'
-import { useApp } from '@/context/AppContext'
+import { useApp } from 'tessera-ui'
 import { useApiKey, useUpdateApiKey } from '@/resources/hooks/api-keys'
 import { ApiKeyFormData, ApiKeyType, apiKeyToFormValues } from '@/resources/queries/api-keys'
 import { LoaderFunctionArgs, useLoaderData, useNavigate, useParams } from 'react-router'

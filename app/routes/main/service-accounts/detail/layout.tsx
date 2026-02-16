@@ -1,6 +1,6 @@
 import EmptyContent from '@/components/empty-content/empty-content'
 import { AppPreloader } from '@/components/loader/pre-loader'
-import { useApp } from '@/context/AppContext'
+import { useApp } from 'tessera-ui'
 import { Button } from '@/modules/shadcn/ui/button'
 import { useApiKey } from '@/resources/hooks/api-keys'
 import { useServiceAccount, useServiceAccountApiKeys } from '@/resources/hooks/service-accounts'
@@ -29,12 +29,12 @@ export default function DetailLayout() {
     {
       title: 'Overview',
       path: `/service-accounts/${params.id}/overview`,
-      icon: <FileText size={18} />,
+      icon: FileText,
     },
     {
       title: 'API Keys',
       path: `/service-accounts/${params.id}/api-keys`,
-      icon: <Key size={18} />,
+      icon: Key,
     },
   ]
   const config = { apiUrl: apiUrl!, token: token!, nodeEnv: nodeEnv }

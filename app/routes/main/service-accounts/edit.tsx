@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AppPreloader } from '@/components/loader'
 import { ServiceAccountForm } from '@/components/crud-form/service-account-form'
-import { useApp } from '@/context/AppContext'
+import { useApp } from 'tessera-ui'
 import { useServiceAccount, useUpdateServiceAccount } from '@/resources/hooks/service-accounts'
 import {
   ServiceAccountFormData,

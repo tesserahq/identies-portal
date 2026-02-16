@@ -1,6 +1,6 @@
 import { AppPreloader } from '@/components/loader/pre-loader'
 import { DetailContent } from '@/components/detail-content'
-import { useApp } from '@/context/AppContext'
+import { useApp } from 'tessera-ui'
 import { useUserById } from '@/resources/hooks/users/use-user'
 import { useLoaderData } from 'react-router'
 import { DateTime } from 'tessera-ui/components'

@@ -3,34 +3,24 @@ import { AppPreloader } from '@/components/loader'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@shadcn/ui/card'
 import { MAX_AVATAR_FILE_SIZE } from '@/constants/file'
 import { useTheme } from '@/hooks/useTheme'
-import { fetchApi } from '@/libraries/fetch'
 import { ROUTE_PATH as THEME_PATH } from '@/routes/resources/update-theme'
 import { handleFetcherData } from '@/utils/helpers/fetcher.helper'
-import { ActionFunctionArgs, useLoaderData } from 'react-router'
+import { ActionFunctionArgs } from 'react-router'
 import { useActionData, useFetcher, useSubmit } from 'react-router'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { useApp } from '@/context/AppContext'
 import { TAsset } from '@/resources/types/asset'
-import { useUpdateUser, useUpdateTheme } from '@/resources/hooks/users'
 import { UserFormData, userToFormValues } from '@/resources/queries/users'
 import { ProfileInformation, Appearance, ProfileHeader } from '@/components/preferences'
-
-export function loader() {
-  const apiUrl = process.env.API_URL
-  const nodeEnv = process.env.NODE_ENV
-
-  return { apiUrl, nodeEnv }
-}
+import { useApp } from 'tessera-ui'
 
 export default function Index() {
-  const { apiUrl, nodeEnv } = useLoaderData<typeof loader>()
   const submit = useSubmit()
   const avatarFetcher = useFetcher()
   const userFetcher = useFetcher()
   const actionData = useActionData<typeof action>()
   const systemTheme = useTheme()
-  const { user, token, isLoading, setUser } = useApp()
+  const { user, token, isLoadingIdenties, updateUser } = useApp()
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({})
   const [formData, setFormData] = useState({ first_name: '', last_name: '' })
   const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark' | 'system'>('light')
@@ -74,18 +64,19 @@ export default function Index() {
   useEffect(() => {
     if (avatarFetcher.data) {
       handleFetcherData(avatarFetcher.data, (response) => {
-        setUser(response)
+        void updateUser({ avatar_asset_id: response })
       })
     }
-  }, [avatarFetcher.data])
+  }, [avatarFetcher.data, updateUser])
 
   useEffect(() => {
     if (userFetcher.data) {
       handleFetcherData(userFetcher.data, (response) => {
-        setUser(response)
+        // Prefer using the tessera-ui context updater to keep header/profile in sync.
+        void updateUser(response)
       })
     }
-  }, [userFetcher.data])
+  }, [userFetcher.data, updateUser])
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -135,47 +126,50 @@ export default function Index() {
     })
   }
 
-  // Hooks must be called unconditionally
-  // Token check is now in the mutation function, so hook can be called even if token is null
-  const config = {
-    apiUrl: apiUrl!,
-    nodeEnv,
-    token: token || '', // Fallback to empty string for type safety
-  }
-
-  const { mutateAsync: updateUser } = useUpdateUser(config, {
-    onSuccess(data) {
-      setUser(data)
-    },
-  })
-
-  const { updateTheme } = useUpdateTheme(config, {
-    onSuccess(data) {
-      setUser(data)
-      setSelectedTheme(data.theme_preference as 'light' | 'dark' | 'system')
-    },
-  })
-
   const handleUserSubmit = async (user: UserFormData) => {
-    await updateUser(user)
+    try {
+      await updateUser({ first_name: user.first_name, last_name: user.last_name })
+    } catch (error: any) {
+      toast.error(error?.detail || error?.message || 'Failed to update user')
+    }
   }
 
   const handleThemeChange = async (theme: 'light' | 'dark' | 'system') => {
     setSelectedTheme(theme)
-    await updateTheme(theme)
+    submit(
+      { theme },
+      {
+        method: 'POST',
+        action: THEME_PATH,
+        navigate: false,
+        fetcherKey: 'theme-fetcher',
+      }
+    )
+    try {
+      await updateUser({ theme_preference: theme })
+    } catch (error: any) {
+      toast.error(error?.detail || error?.message || 'Failed to update theme')
+    }
   }
 
   // Early return after hooks are called
-  if (isLoading || !token || !user) {
+  if (isLoadingIdenties || !token || !user) {
     return <AppPreloader />
   }
 
-  const defaultValues = userToFormValues(user!)
+  // The lint error indicates userToFormValues expects a UserType, not a User.
+  // Plus, the 'email' field must not be undefined.
+  // We defensively normalize user.email to "" if missing.
+  const safeUser = { ...user, email: user.email ?? '' }
+  const defaultValues = userToFormValues(safeUser as any)
 
   return (
-    <div className="flex flex-col items-center px-[2%]">
+    <div className="flex flex-col items-center">
       <ProfileHeader
-        user={user}
+        user={{
+          ...safeUser,
+          theme_preference: safeUser.theme_preference as 'light' | 'dark' | 'system' | undefined,
+        }}
         avatarFetcher={avatarFetcher}
         loaded={loaded}
         fileInputRef={fileInputRef}
@@ -191,9 +185,7 @@ export default function Index() {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const apiUrl = process.env.API_URL
   const vaultaApiUrl = process.env.VAULTA_API_URL
-  const nodeEnv = process.env.NODE_ENV
   const formData = await request.formData()
   const { _method, token } = Object.fromEntries(formData)
 
@@ -248,21 +240,14 @@ export async function action({ request }: ActionFunctionArgs) {
 
         const assetData: TAsset = await assetResponse.json()
 
-        const userResponse = await fetchApi(`${apiUrl}/user`, token.toString(), nodeEnv, {
-          method: 'PUT',
-          body: JSON.stringify({
-            avatar_asset_id: assetData.asset_id,
-          }),
-        })
-
         return Response.json(
           {
             toast: {
               type: 'success',
               title: 'Success',
-              description: 'Successfully update user data',
+              description: 'Successfully uploaded avatar',
             },
-            response: userResponse,
+            response: assetData.asset_id,
           },
           { status: 200 }
         )
