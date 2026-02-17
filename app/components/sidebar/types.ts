@@ -13,5 +13,4 @@ export interface IMenuItemProps {
 
 export interface ISidebarPanelProps {
   menuItems: IMenuItemProps[]
-  type: 'accounts' | 'main'
 }

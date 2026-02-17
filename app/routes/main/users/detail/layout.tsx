@@ -1,5 +1,5 @@
 import { AppPreloader } from '@/components/loader/pre-loader'
-import { useApp } from '@/context/AppContext'
+import { useApp } from 'tessera-ui'
 import { Button } from '@/modules/shadcn/ui/button'
 import { useApiKey } from '@/resources/hooks/api-keys'
 import { useUserById } from '@/resources/hooks/users/use-user'
@@ -28,12 +28,12 @@ export default function UserDetailLayout() {
     {
       title: 'Overview',
       path: `/users/${params.id}/overview`,
-      icon: <FileText size={18} />,
+      icon: FileText,
     },
     {
       title: 'API Keys',
       path: `/users/${params.id}/api-keys`,
-      icon: <Key size={18} />,
+      icon: Key,
     },
   ]
 

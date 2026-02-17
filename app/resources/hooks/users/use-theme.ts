@@ -23,16 +23,23 @@ export function useUpdateTheme(
     onSuccess: (data) => {
       // Update web theme cookie
       // Use current system theme value (it's reactive)
-      const actualTheme = data.theme_preference === 'system' ? systemTheme : data.theme_preference
-      submit(
-        { theme: actualTheme },
-        {
-          method: 'POST',
-          action: THEME_PATH,
-          navigate: false,
-          fetcherKey: 'theme-fetcher',
-        }
-      )
+      const actualTheme =
+        data.theme_preference === 'system'
+          ? (systemTheme ?? undefined)
+          : (data.theme_preference ?? undefined)
+
+      // Only submit if a valid theme is present
+      if (actualTheme) {
+        submit(
+          { theme: actualTheme },
+          {
+            method: 'POST',
+            action: THEME_PATH,
+            navigate: false,
+            fetcherKey: 'theme-fetcher',
+          }
+        )
+      }
 
       options?.onSuccess?.(data)
     },

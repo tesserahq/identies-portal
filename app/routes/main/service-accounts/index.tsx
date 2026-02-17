@@ -7,7 +7,7 @@ import DeleteConfirmation, {
 import EmptyContent from '@/components/empty-content/empty-content'
 import { AppPreloader } from '@/components/loader'
 import CreateButton from '@/components/new-button/new-button'
-import { useApp } from '@/context/AppContext'
+import { useApp } from 'tessera-ui'
 import { Avatar, AvatarFallback, AvatarImage } from '@/modules/shadcn/ui/avatar'
 import { useDeleteServiceAccount, useServiceAccounts } from '@/resources/hooks/service-accounts'
 import type { ServiceAccountType } from '@/resources/queries/service-accounts'

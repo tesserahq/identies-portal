@@ -8,7 +8,7 @@ import CreateButton from '@/components/new-button/new-button'
 import RevokeConfirmation, {
   type RevokeConfirmationHandle,
 } from '@/components/revoke-confirmation/revoke-confirmation'
-import { useApp } from '@/context/AppContext'
+import { useApp } from 'tessera-ui'
 import { useApiKeys, useDeleteApiKey, useRevokeApiKey } from '@/resources/hooks/api-keys'
 import type { ApiKeyType } from '@/resources/queries/api-keys'
 import { ensureCanonicalPagination } from '@/utils/helpers/pagination.helper'
@@ -144,7 +144,7 @@ export default function APIKeys() {
   }
 
   return (
-    <div className="flex w-full flex-col items-center page-content">
+    <div className="flex flex-col items-center mx-auto max-w-5xl mt-5">
       <div className="mb-5 flex w-full items-center justify-between">
         <h1 className="page-title">API Keys</h1>
         {apiKeys.length > 0 && <CreateButton label="New API Key" onClick={() => navigate('new')} />}

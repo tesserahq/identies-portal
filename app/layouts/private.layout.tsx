@@ -1,138 +1,139 @@
-import Header from '@/components/header/header'
 import { AppPreloader } from '@/components/loader'
-import { SidebarPanel, SidebarPanelMin } from '@/components/sidebar'
-import { IMenuItemProps } from '@/components/sidebar/types'
-import '@/styles/sidebar.css'
-import { useApp } from '@/context/AppContext'
-import { cn } from '@shadcn/lib/utils'
-import { Key, User, UserCog, Users } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Outlet, useLoaderData, useLocation } from 'react-router'
+import { useHandleApiError } from '@/hooks/useHandleApiError'
+import { useRequestInfo } from '@/hooks/useRequestInfo'
+import { ROUTE_PATH as THEME_PATH } from '@/routes/resources/update-theme'
+import { SITE_CONFIG } from '@/utils/config/site.config'
+import { useAuth0 } from '@auth0/auth0-react'
+import { KeyRound, Settings, User, UserCog, Users } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { Outlet, useLoaderData, useLocation, useNavigate, useSubmit } from 'react-router'
+import { Layout, MainItemProps, TesseraProvider } from 'tessera-ui'
 
 export function loader() {
-  // App host URL
+  const identiesApiUrl = process.env.IDENTIES_API_URL || process.env.API_URL
+  // app host urls
   const quoreHostUrl = process.env.QUORE_HOST_URL
-  const custosHostUrl = process.env.CUSTOS_HOST_URL
-  const vaultaHostUrl = process.env.VAULTA_HOST_URL
   const looplyHostUrl = process.env.LOOPLY_HOST_URL
+  const vaultaHostUrl = process.env.VAULTA_HOST_URL
+  const identiesHostUrl = process.env.IDENTIES_HOST_URL || process.env.HOST_URL
   const orchaHostUrl = process.env.ORCHA_HOST_URL
+  const custosHostUrl = process.env.CUSTOS_HOST_URL
+  const indexaHostUrl = process.env.INDEXA_HOST_URL
+  const sendlyHostUrl = process.env.SENDLY_HOST_URL
 
   return {
+    identiesApiUrl,
     quoreHostUrl,
-    custosHostUrl,
-    vaultaHostUrl,
     looplyHostUrl,
+    vaultaHostUrl,
+    identiesHostUrl,
     orchaHostUrl,
+    custosHostUrl,
+    indexaHostUrl,
+    sendlyHostUrl,
   }
 }
 
-export default function Layout() {
-  const { quoreHostUrl, custosHostUrl, vaultaHostUrl, looplyHostUrl, orchaHostUrl } =
-    useLoaderData<typeof loader>()
-  const [isExpanded, setIsExpanded] = useState(true)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const { isLoading } = useApp()
-  const location = useLocation()
+export default function PrivateLayout() {
+  const {
+    identiesApiUrl,
+    quoreHostUrl,
+    looplyHostUrl,
+    vaultaHostUrl,
+    custosHostUrl,
+    identiesHostUrl,
+    orchaHostUrl,
+    indexaHostUrl,
+    sendlyHostUrl,
+  } = useLoaderData<typeof loader>()
 
-  const isAccounts = location.pathname.startsWith('/accounts')
+  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const [token, setToken] = useState<string>('')
+  const handleApiError = useHandleApiError()
+  const requestInfo = useRequestInfo()
+  const submit = useSubmit()
+  const navigate = useNavigate()
+  const pathName = useLocation()
 
-  const menuItems: IMenuItemProps[] = [
+  const onSetTheme = (theme: string) => {
+    submit(
+      { theme },
+      {
+        method: 'POST',
+        action: THEME_PATH,
+        navigate: false,
+        fetcherKey: 'theme-fetcher',
+      }
+    )
+  }
+
+  const fetchToken = async () => {
+    try {
+      const token = await getAccessTokenSilently()
+      setToken(token)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      handleApiError!(error)
+    }
+  }
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      fetchToken()
+    }
+  }, [isLoading, isAuthenticated])
+
+  const isAccountPage = useMemo(() => {
+    return pathName.pathname.includes('/accounts')
+  }, [pathName])
+
+  const appHostUrls = {
+    quore: quoreHostUrl ?? '',
+    looply: looplyHostUrl ?? '',
+    vaulta: vaultaHostUrl ?? '',
+    identies: identiesHostUrl ?? '',
+    orcha: orchaHostUrl ?? '',
+    custos: custosHostUrl ?? '',
+    indexa: indexaHostUrl ?? '',
+    sendly: sendlyHostUrl ?? '',
+  }
+
+  // NOTE: Keep identies-portal menuItems as-is (per request).
+  const menuItems: MainItemProps[] = [
     {
       title: 'Users',
       path: '/users',
-      icon: <Users size={18} />,
+      icon: Users,
     },
     {
       title: 'Service Accounts',
       path: '/service-accounts',
-      icon: <UserCog size={18} />,
+      icon: UserCog,
     },
   ]
-
-  const accountsMenuItems: IMenuItemProps[] = [
-    {
-      title: 'Preferences',
-      path: '/accounts/preferences',
-      icon: <User size={18} />,
-    },
-    {
-      title: 'API Keys',
-      path: '/accounts/api-keys',
-      icon: <Key size={18} />,
-    },
-  ]
-
-  const apps = useMemo(() => {
-    return [
-      {
-        name: 'quore',
-        link: `${quoreHostUrl}?autologin=true`,
-      },
-      {
-        name: 'custos',
-        link: `${custosHostUrl}?autologin=true`,
-      },
-      {
-        name: 'vaulta',
-        link: `${vaultaHostUrl}?autologin=true`,
-      },
-      {
-        name: 'looply',
-        link: `${looplyHostUrl}?autologin=true`,
-      },
-      {
-        name: 'orcha',
-        link: `${orchaHostUrl}?autologin=true`,
-      },
-    ]
-  }, [vaultaHostUrl, custosHostUrl, looplyHostUrl, orchaHostUrl, quoreHostUrl])
-
-  const onResize = useCallback(() => {
-    if (containerRef.current) {
-      if (containerRef.current.offsetWidth <= 1280) {
-        setIsExpanded(false)
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    onResize()
-
-    window.addEventListener('resize', onResize)
-
-    return () => {
-      window.removeEventListener('resize', onResize)
-    }
-  }, [onResize])
 
   if (isLoading) {
     return <AppPreloader className="min-h-screen" />
   }
 
   return (
-    <div
-      ref={containerRef}
-      className={cn('has-min-sidebar is-header-blur', isExpanded && 'is-sidebar-open')}>
-      <div id="root" className="min-h-100vh flex grow">
-        <div className="sidebar print:hidden">
-          <SidebarPanel
-            menuItems={isAccounts ? accountsMenuItems : menuItems}
-            type={isAccounts ? 'accounts' : 'main'}
-          />
-          <SidebarPanelMin
-            menuItems={isAccounts ? accountsMenuItems : menuItems}
-            type={isAccounts ? 'accounts' : 'main'}
-          />
-        </div>
-
-        <Header withSidebar isExpanded={isExpanded} setIsExpanded={setIsExpanded} apps={apps} />
-
-        <main className="main-content w-full">
-          <div className="max-width-screen h-full">
-            <Outlet key={location.pathname} />
-          </div>
-        </main>
-      </div>
-    </div>
+    <TesseraProvider identiesApiUrl={identiesApiUrl!} token={token}>
+      <Layout.Header
+        appHostUrls={appHostUrls}
+        actionLogout={() => navigate('/logout')}
+        actionProfile={() => navigate('/accounts')}
+        defaultAvatar=""
+        onSetTheme={(theme) => onSetTheme(theme)}
+        selectedTheme={requestInfo.userPrefs.theme || 'system'}
+        title={SITE_CONFIG.siteTitle}
+      />
+      {isAccountPage ? (
+        <Outlet />
+      ) : (
+        <Layout.Main menuItems={menuItems}>
+          <Outlet />
+        </Layout.Main>
+      )}
+    </TesseraProvider>
   )
 }

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiKeyForm } from '@/components/crud-form/api-key-form'
-import { useApp } from '@/context/AppContext'
+import { useApp } from 'tessera-ui'
 import { useCreateApiKey } from '@/resources/hooks/api-keys'
 import { ApiKeyFormData, ApiKeyType } from '@/resources/queries/api-keys'
 import { defaultApiKeyFormValues } from '@/resources/queries/api-keys/api-key.schema'
