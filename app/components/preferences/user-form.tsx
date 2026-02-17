@@ -26,7 +26,33 @@ export const UserForm = ({ onSubmit, defaultValues, submitLabel = 'Save' }: User
 
     try {
       const userData = formValuesToUserData(data)
-      await onSubmit(userData)
+      // Ensure email is non-undefined string to satisfy UserFormData type
+      if (userData.email === undefined) {
+        throw new Error('Email is required')
+      }
+
+      // Ensure required fields are present and conform to UserFormData types
+      const {
+        first_name = '',
+        last_name = '',
+        avatar_url,
+        avatar_asset_id,
+        provider,
+        verified,
+        theme_preference,
+        email,
+      } = userData
+
+      await onSubmit({
+        email,
+        first_name,
+        last_name,
+        avatar_url,
+        avatar_asset_id,
+        provider,
+        verified,
+        theme_preference,
+      })
     } catch {
       // Error handling is done by parent component
     } finally {

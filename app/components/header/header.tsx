@@ -75,8 +75,6 @@ export default function Header({
             {/* Right content */}
             <div className="-mr-1 flex items-center space-x-5">
               {/* Apps Menu */}
-              <AppMenu apps={apps || []} />
-
               <ProfileMenu
                 selectedTheme={requestInfo.userPrefs.theme || 'system'}
                 onSetTheme={(theme) => onSetTheme(theme)}
