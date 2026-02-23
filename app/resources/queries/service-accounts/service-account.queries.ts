@@ -25,7 +25,7 @@ export async function fetchServiceAccounts(config: IQueryConfig, params: IQueryP
 /**
  * Get a service account by ID.
  */
-export async function fetchServiceAccountDetail(serviceAccountId: string, config: IQueryConfig) {
+export async function fetchServiceAccountDetail(config: IQueryConfig, serviceAccountId: string) {
   const { apiUrl, token, nodeEnv } = config
 
   const response = await fetchApi(`${apiUrl}/service-accounts/${serviceAccountId}`, token, nodeEnv)

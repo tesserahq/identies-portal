@@ -48,7 +48,7 @@ export default function ServiceAccountApiKeyEdit() {
     params.apiKeyId!,
     {
       onSuccess: (data: ApiKeyType) => {
-        navigate(`/api-keys/${data.id}`)
+        navigate(`/service-accounts/${params.serviceAccountID}/api-keys/${data.id}`)
       },
     }
   )
@@ -67,7 +67,7 @@ export default function ServiceAccountApiKeyEdit() {
         title="Error Fetching API Key Detail"
         image="/images/empty-api-keys.png"
         description={error?.message}>
-        <Button onClick={() => navigate(`/service-accounts/${params.id}/api-keys`)}>
+        <Button onClick={() => navigate(`/service-accounts/${params.serviceAccountID}/api-keys`)}>
           Back to API Keys
         </Button>
       </EmptyContent>

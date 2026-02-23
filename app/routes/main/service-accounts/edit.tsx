@@ -21,7 +21,7 @@ export default function ServiceAccountEdit() {
   const { apiUrl, nodeEnv } = useLoaderData<typeof loader>()
   const { token } = useApp()
   const navigate = useNavigate()
-  const { id: serviceAccountId } = useParams()
+  const params = useParams()
 
   // Fetch service account detail
   const { data: serviceAccount, isLoading } = useServiceAccount(
@@ -30,9 +30,9 @@ export default function ServiceAccountEdit() {
       token: token!,
       nodeEnv: nodeEnv as any,
     },
-    serviceAccountId!,
+    params.serviceAccountID!,
     {
-      enabled: !!token && !!serviceAccountId,
+      enabled: !!token && !!params.serviceAccountID,
     }
   )
 
@@ -43,7 +43,7 @@ export default function ServiceAccountEdit() {
       token: token!,
       nodeEnv: nodeEnv as any,
     },
-    serviceAccountId!,
+    params.serviceAccountID!,
     {
       onSuccess: (data: ServiceAccountType) => {
         navigate(`/service-accounts/${data.id}`)

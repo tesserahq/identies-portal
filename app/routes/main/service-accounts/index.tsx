@@ -7,7 +7,7 @@ import DeleteConfirmation, {
 import EmptyContent from '@/components/empty-content/empty-content'
 import { AppPreloader } from '@/components/loader'
 import CreateButton from '@/components/new-button/new-button'
-import { useApp } from 'tessera-ui'
+import { ResourceID, useApp } from 'tessera-ui'
 import { Avatar, AvatarFallback, AvatarImage } from '@/modules/shadcn/ui/avatar'
 import { useDeleteServiceAccount, useServiceAccounts } from '@/resources/hooks/service-accounts'
 import type { ServiceAccountType } from '@/resources/queries/service-accounts'
@@ -161,36 +161,40 @@ export default function ServiceAccounts() {
                       </div>
                     </div>
                   </div>
-                  <Popover>
-                    <PopoverTrigger>
-                      <Button variant="ghost" size="icon">
-                        <EllipsisVertical />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent align="start" side="left" className="w-44 p-2">
-                      <Button
-                        variant="ghost"
-                        className="flex w-full justify-start"
-                        onClick={() => navigate(`/service-accounts/${serviceAccount.id}`)}>
-                        <Eye />
-                        <span>View</span>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="flex w-full justify-start"
-                        onClick={() => navigate(`/service-accounts/${serviceAccount.id}/edit`)}>
-                        <Pencil />
-                        <span>Edit</span>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="flex w-full justify-start hover:bg-destructive hover:text-white"
-                        onClick={() => openServiceAccountDeletion(serviceAccount)}>
-                        <Trash2 />
-                        <span>Remove</span>
-                      </Button>
-                    </PopoverContent>
-                  </Popover>
+                  <div className="flex items-center gap-1">
+                    <ResourceID value={serviceAccount.id} />
+                    <Popover>
+                      <PopoverTrigger>
+                        <Button variant="ghost" size="icon">
+                          <EllipsisVertical />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent align="start" side="left" className="w-44 p-2">
+                        <Button
+                          variant="ghost"
+                          className="flex w-full justify-start"
+                          onClick={() => navigate(`/service-accounts/${serviceAccount.id}`)}>
+                          <Eye />
+                          <span>View</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="flex w-full justify-start"
+                          onClick={() => navigate(`/service-accounts/${serviceAccount.id}/edit`)}>
+                          <Pencil />
+                          <span>Edit</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="flex w-full justify-start hover:bg-destructive
+                            hover:text-white"
+                          onClick={() => openServiceAccountDeletion(serviceAccount)}>
+                          <Trash2 />
+                          <span>Remove</span>
+                        </Button>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </CardContent>
               </Card>
             )

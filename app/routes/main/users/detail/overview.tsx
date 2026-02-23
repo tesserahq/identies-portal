@@ -6,11 +6,11 @@ import { useLoaderData } from 'react-router'
 import { DateTime } from 'tessera-ui/components'
 import { Badge } from '@/modules/shadcn/ui/badge'
 
-export async function loader({ params }: { params: { id: string } }) {
+export async function loader({ params }: { params: { userID: string } }) {
   const apiUrl = process.env.API_URL
   const nodeEnv = process.env.NODE_ENV
 
-  return { apiUrl, nodeEnv, id: params.id }
+  return { apiUrl, nodeEnv, id: params.userID }
 }
 
 export default function UserOverview() {

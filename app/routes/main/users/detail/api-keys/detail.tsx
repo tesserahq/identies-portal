@@ -3,6 +3,7 @@ import { DateTime } from 'tessera-ui'
 import DeleteConfirmation, {
   type DeleteConfirmationHandle,
 } from '@/components/delete-confirmation/delete-confirmation'
+import { DetailContent } from '@/components/detail-content'
 import EmptyContent from '@/components/empty-content/empty-content'
 import { AppPreloader } from '@/components/loader'
 import { type RevokeConfirmationHandle } from '@/components/revoke-confirmation/revoke-confirmation'
@@ -11,7 +12,6 @@ import { useApiKey, useDeleteApiKey, useRevokeApiKey } from '@/resources/hooks/a
 import type { ApiKeyType } from '@/resources/queries/api-keys'
 import { Badge } from '@shadcn/ui/badge'
 import { Button } from '@shadcn/ui/button'
-import { Card, CardContent, CardHeader } from '@shadcn/ui/card'
 import { Popover, PopoverContent, PopoverTrigger } from '@shadcn/ui/popover'
 import { EllipsisVertical, Pencil, ShieldX, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -45,9 +45,9 @@ export default function UserApiKeyDetail() {
       token: token || '',
       nodeEnv: nodeEnv as any,
     },
-    params.apiKeyId!,
+    params.apiKeyID!,
     {
-      enabled: !!token && !!params.apiKeyId,
+      enabled: !!token && !!params.apiKeyID,
     }
   )
 
@@ -142,81 +142,74 @@ export default function UserApiKeyDetail() {
   }
 
   return (
-    <div className="flex flex-col items-center">
-      <Card className="m-5 w-full border lg:max-w-3xl">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold">{apiKey?.name}</h1>
-              {apiKey?.revoked && <Badge variant="destructive">Revoked</Badge>}
-            </div>
-            <div className="flex items-center gap-2">
-              <Popover>
-                <PopoverTrigger>
-                  <Button variant="ghost" size="icon">
-                    <EllipsisVertical />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent side="left" align="start" className="w-44 p-2">
-                  <Button
-                    variant="ghost"
-                    className="flex w-full justify-start"
-                    onClick={() => navigate(`/users/${params.id}/api-keys/${apiKey?.id}/edit`)}>
-                    <Pencil />
-                    <span>Edit</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="flex w-full justify-start"
-                    disabled={
-                      !!apiKey?.revoked || !!apiKey?.expires_at || revokeApiKeyMutation.isPending
-                    }
-                    onClick={() => apiKey && openApiKeyRevoke(apiKey)}>
-                    <ShieldX />
-                    <span>
-                      {revokeApiKeyMutation.isPending
-                        ? 'Revoking...'
-                        : apiKey?.revoked
-                          ? 'Revoked'
-                          : 'Revoke'}
-                    </span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="flex w-full justify-start hover:bg-destructive hover:text-white"
-                    onClick={() => apiKey && openApiKeyDeletion(apiKey)}>
-                    <Trash2 />
-                    <span>Remove</span>
-                  </Button>
-                </PopoverContent>
-              </Popover>
-            </div>
+    <div className="space-y-5">
+      <DetailContent
+        title={apiKey?.name || ''}
+        actions={
+          <div className="flex items-center gap-2">
+            {apiKey?.revoked && <Badge variant="destructive">Revoked</Badge>}
+            <Popover>
+              <PopoverTrigger>
+                <Button variant="ghost" size="icon">
+                  <EllipsisVertical />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent side="left" align="start" className="w-44 p-2">
+                <Button
+                  variant="ghost"
+                  className="flex w-full justify-start"
+                  onClick={() => navigate(`/users/${params.id}/api-keys/${apiKey?.id}/edit`)}>
+                  <Pencil />
+                  <span>Edit</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="flex w-full justify-start"
+                  disabled={
+                    !!apiKey?.revoked || !!apiKey?.expires_at || revokeApiKeyMutation.isPending
+                  }
+                  onClick={() => apiKey && openApiKeyRevoke(apiKey)}>
+                  <ShieldX />
+                  <span>
+                    {revokeApiKeyMutation.isPending
+                      ? 'Revoking...'
+                      : apiKey?.revoked
+                        ? 'Revoked'
+                        : 'Revoke'}
+                  </span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="flex w-full justify-start hover:bg-destructive hover:text-white"
+                  onClick={() => apiKey && openApiKeyDeletion(apiKey)}>
+                  <Trash2 />
+                  <span>Remove</span>
+                </Button>
+              </PopoverContent>
+            </Popover>
           </div>
-        </CardHeader>
-        <CardContent className="p-6 pt-0">
-          <div className="d-list">
-            <div className="d-item">
-              <dt className="d-label">Expires At</dt>
-              <dd className="d-content">
-                {apiKey?.expires_at ? <DateTime date={apiKey?.expires_at} /> : 'No expiration'}
-              </dd>
-            </div>
-            <div className="d-item">
-              <dt className="d-label">Last Used At</dt>
-              <dd className="d-content">
-                {apiKey?.last_used_at ? <DateTime date={apiKey?.last_used_at} /> : 'Never'}
-              </dd>
-            </div>
-            <div className="d-item">
-              <dt className="d-label">Created At</dt>
-              <dd className="d-content">
-                {apiKey?.created_at && <DateTime date={apiKey?.created_at} />}
-              </dd>
-            </div>
+        }>
+        <div className="d-list">
+          <div className="d-item">
+            <dt className="d-label">Expires At</dt>
+            <dd className="d-content">
+              {apiKey?.expires_at ? <DateTime date={apiKey?.expires_at} /> : 'No expiration'}
+            </dd>
           </div>
-        </CardContent>
-      </Card>
-
+          <div className="d-item">
+            <dt className="d-label">Last Used At</dt>
+            <dd className="d-content">
+              {apiKey?.last_used_at ? <DateTime date={apiKey?.last_used_at} /> : 'Never'}
+            </dd>
+          </div>
+          <div className="d-item">
+            <dt className="d-label">Created At</dt>
+            <dd className="d-content">
+              {apiKey?.created_at && <DateTime date={apiKey?.created_at} />}
+            </dd>
+          </div>
+        </div>
+      </DetailContent>
       <DeleteConfirmation ref={deleteConfirmationRef} />
     </div>
   )
