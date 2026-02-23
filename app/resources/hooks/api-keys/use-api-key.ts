@@ -93,7 +93,7 @@ export function useApiKey(
           throw new QueryError('Token is required', 'TOKEN_REQUIRED')
         }
 
-        return await fetchApiKeyDetail(apiKeyId, config)
+        return await fetchApiKeyDetail(config, apiKeyId)
       } catch (error: any) {
         throw new QueryError(error.message)
       }

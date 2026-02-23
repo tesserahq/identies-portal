@@ -24,7 +24,7 @@ export async function fetchApiKeys(config: IQueryConfig, params: IQueryParams) {
 /**
  * Get an API key by ID.
  */
-export async function fetchApiKeyDetail(apiKeyId: string, config: IQueryConfig) {
+export async function fetchApiKeyDetail(config: IQueryConfig, apiKeyId: string) {
   const { apiUrl, token, nodeEnv } = config
 
   const response = await fetchApi(`${apiUrl}/api-keys/${apiKeyId}`, token, nodeEnv)

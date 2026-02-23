@@ -9,7 +9,7 @@ import CreateButton from '@/components/new-button/new-button'
 import RevokeConfirmation, {
   type RevokeConfirmationHandle,
 } from '@/components/revoke-confirmation/revoke-confirmation'
-import { useApp } from 'tessera-ui'
+import { ResourceID, useApp } from 'tessera-ui'
 import { useDeleteApiKey, useRevokeApiKey } from '@/resources/hooks/api-keys'
 import {
   serviceAccountQueryKeys,
@@ -41,7 +41,7 @@ export default function ServiceAccountApiKeys() {
   const params = useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const serviceAccountId = params.id as string
+  const serviceAccountId = params.serviceAccountID as string
 
   const revokeConfirmationRef = useRef<RevokeConfirmationHandle>(null)
   const deleteConfirmationRef = useRef<DeleteConfirmationHandle>(null)
@@ -227,56 +227,60 @@ export default function ServiceAccountApiKeys() {
                       </div>
                     </div>
                   </div>
-                  <Popover>
-                    <PopoverTrigger>
-                      <Button variant="ghost" size="icon">
-                        <EllipsisVertical />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent align="start" side="left" className="w-44 p-2">
-                      <Button
-                        variant="ghost"
-                        className="flex w-full justify-start"
-                        onClick={() =>
-                          navigate(`/service-accounts/${serviceAccountId}/api-keys/${apiKey.id}`)
-                        }>
-                        <Eye />
-                        <span>View</span>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="flex w-full justify-start"
-                        onClick={() =>
-                          navigate(
-                            `/service-accounts/${serviceAccountId}/api-keys/${apiKey.id}/edit`
-                          )
-                        }>
-                        <Pencil />
-                        <span>Edit</span>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="flex w-full justify-start"
-                        disabled={isRevoked || isExpired || revokeApiKeyMutation.isPending}
-                        onClick={() => openApiKeyRevoke(apiKey)}>
-                        <ShieldX />
-                        <span>
-                          {revokeApiKeyMutation.isPending
-                            ? 'Revoking...'
-                            : isRevoked
-                              ? 'Revoked'
-                              : 'Revoke'}
-                        </span>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="flex w-full justify-start hover:bg-destructive hover:text-white"
-                        onClick={() => openApiKeyDeletion(apiKey)}>
-                        <Trash2 />
-                        <span>Remove</span>
-                      </Button>
-                    </PopoverContent>
-                  </Popover>
+                  <div className="flex items-center gap-1">
+                    <ResourceID value={apiKey.id} />
+                    <Popover>
+                      <PopoverTrigger>
+                        <Button variant="ghost" size="icon">
+                          <EllipsisVertical />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent align="start" side="left" className="w-44 p-2">
+                        <Button
+                          variant="ghost"
+                          className="flex w-full justify-start"
+                          onClick={() =>
+                            navigate(`/service-accounts/${serviceAccountId}/api-keys/${apiKey.id}`)
+                          }>
+                          <Eye />
+                          <span>View</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="flex w-full justify-start"
+                          onClick={() =>
+                            navigate(
+                              `/service-accounts/${serviceAccountId}/api-keys/${apiKey.id}/edit`
+                            )
+                          }>
+                          <Pencil />
+                          <span>Edit</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="flex w-full justify-start"
+                          disabled={isRevoked || isExpired || revokeApiKeyMutation.isPending}
+                          onClick={() => openApiKeyRevoke(apiKey)}>
+                          <ShieldX />
+                          <span>
+                            {revokeApiKeyMutation.isPending
+                              ? 'Revoking...'
+                              : isRevoked
+                                ? 'Revoked'
+                                : 'Revoke'}
+                          </span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="flex w-full justify-start hover:bg-destructive
+                            hover:text-white"
+                          onClick={() => openApiKeyDeletion(apiKey)}>
+                          <Trash2 />
+                          <span>Remove</span>
+                        </Button>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </CardContent>
               </Card>
             )

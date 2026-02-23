@@ -20,37 +20,37 @@ export default [
       route('api-keys', 'routes/main/accounts/api-keys/layout.tsx', [
         index('routes/main/accounts/api-keys/index.tsx'),
         route('new', 'routes/main/accounts/api-keys/new.tsx'),
-        route(':id', 'routes/main/accounts/api-keys/detail.tsx'),
-        route(':id/edit', 'routes/main/accounts/api-keys/edit.tsx'),
+        route(':apiKeyID', 'routes/main/accounts/api-keys/detail.tsx'),
+        route(':apiKeyID/edit', 'routes/main/accounts/api-keys/edit.tsx'),
       ]),
     ]),
 
     route('/users', 'routes/main/users/layout.tsx', [
       index('routes/main/users/index.tsx'),
-      route(':id', 'routes/main/users/detail/layout.tsx', [
+      route(':userID', 'routes/main/users/detail/layout.tsx', [
         index('routes/main/users/detail/index.tsx'),
         route('overview', 'routes/main/users/detail/overview.tsx'),
 
         route('api-keys', 'routes/main/users/detail/api-keys/index.tsx'),
         route('api-keys/new', 'routes/main/users/detail/api-keys/new.tsx'),
-        route('api-keys/:apiKeyId', 'routes/main/users/detail/api-keys/detail.tsx'),
-        route('api-keys/:apiKeyId/edit', 'routes/main/users/detail/api-keys/edit.tsx'),
+        route('api-keys/:apiKeyID', 'routes/main/users/detail/api-keys/detail.tsx'),
+        route('api-keys/:apiKeyID/edit', 'routes/main/users/detail/api-keys/edit.tsx'),
       ]),
     ]),
 
     route('/service-accounts', 'routes/main/service-accounts/layout.tsx', [
       index('routes/main/service-accounts/index.tsx'),
       route('new', 'routes/main/service-accounts/new.tsx'),
-      route(':id/edit', 'routes/main/service-accounts/edit.tsx'),
-      route(':id', 'routes/main/service-accounts/detail/layout.tsx', [
+      route(':serviceAccountID/edit', 'routes/main/service-accounts/edit.tsx'),
+      route(':serviceAccountID', 'routes/main/service-accounts/detail/layout.tsx', [
         index('routes/main/service-accounts/detail/index.tsx'),
         route('overview', 'routes/main/service-accounts/detail/overview.tsx'),
 
         // Api Keys
         route('api-keys', 'routes/main/service-accounts/detail/api-keys/index.tsx'),
         route('api-keys/new', 'routes/main/service-accounts/detail/api-keys/new.tsx'),
-        route('api-keys/:apiKeyId', 'routes/main/service-accounts/detail/api-keys/detail.tsx'),
-        route('api-keys/:apiKeyId/edit', 'routes/main/service-accounts/detail/api-keys/edit.tsx'),
+        route('api-keys/:apiKeyID', 'routes/main/service-accounts/detail/api-keys/detail.tsx'),
+        route('api-keys/:apiKeyID/edit', 'routes/main/service-accounts/detail/api-keys/edit.tsx'),
       ]),
     ]),
   ]),

@@ -33,6 +33,7 @@ export default function ServiceAccountApiKeyDetail() {
   const deleteConfirmationRef = useRef<DeleteConfirmationHandle>(null)
   const [apiKeyRevoke, setApiKeyRevoke] = useState<ApiKeyType>()
   const [apiKeyDelete, setApiKeyDelete] = useState<ApiKeyType>()
+  console.log('params ', params)
 
   // React Query hooks
   const {
@@ -45,9 +46,9 @@ export default function ServiceAccountApiKeyDetail() {
       token: token || '',
       nodeEnv: nodeEnv as any,
     },
-    params.apiKeyId!,
+    params.apiKeyID!,
     {
-      enabled: !!token && !!params.apiKeyId,
+      enabled: !!token && !!params.apiKeyID,
     }
   )
 
@@ -136,7 +137,7 @@ export default function ServiceAccountApiKeyDetail() {
         title="Error Fetching API Key Detail"
         image="/images/empty-api-keys.png"
         description={error.message}>
-        <Button onClick={() => navigate(`/service-accounts/${params.id}/api-keys`)}>
+        <Button onClick={() => navigate(`/service-accounts/${params.serviceAccountID}/api-keys`)}>
           Back to API Keys
         </Button>
       </EmptyContent>

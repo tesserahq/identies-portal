@@ -103,7 +103,7 @@ export function useServiceAccount(
           throw new QueryError('Token is required', 'TOKEN_REQUIRED')
         }
 
-        return await fetchServiceAccountDetail(serviceAccountId, config)
+        return await fetchServiceAccountDetail(config, serviceAccountId)
       } catch (error: any) {
         throw new QueryError(error.message)
       }

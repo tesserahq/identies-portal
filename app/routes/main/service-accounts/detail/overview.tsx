@@ -38,9 +38,9 @@ export default function ServiceAccountDetail() {
       token: token || '',
       nodeEnv: nodeEnv as any,
     },
-    params.id!,
+    params.serviceAccountID!,
     {
-      enabled: !!token && !!params.id,
+      enabled: !!token && !!params.serviceAccountID,
     }
   )
 

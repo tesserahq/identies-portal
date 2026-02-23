@@ -2,7 +2,6 @@
 import { DataTable } from '@/components/data-table'
 import { AppPreloader } from '@/components/loader'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
-import { Avatar, AvatarFallback, AvatarImage } from '@/modules/shadcn/ui/avatar'
 import { Input } from '@/modules/shadcn/ui/input'
 import { useUsers } from '@/resources/hooks/users'
 import type { UserType } from '@/resources/queries/users'
@@ -10,12 +9,12 @@ import { ensureCanonicalPagination } from '@/utils/helpers/pagination.helper'
 import { Badge } from '@shadcn/ui/badge'
 import { Button } from '@shadcn/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@shadcn/ui/popover'
-import { EllipsisVertical, Eye, EyeIcon, Loader2, Search } from 'lucide-react'
+import type { ColumnDef } from '@tanstack/react-table'
+import { EllipsisVertical, EyeIcon, Loader2, Search } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, LoaderFunctionArgs, useLoaderData, useNavigate, useSearchParams } from 'react-router'
-import { EmptyContent, DateTime } from 'tessera-ui/components'
-import type { ColumnDef } from '@tanstack/react-table'
 import { useApp } from 'tessera-ui'
+import { DateTime, EmptyContent, ResourceID } from 'tessera-ui/components'
 
 export function loader({ request }: LoaderFunctionArgs) {
   const identiesApiUrl = process.env.API_URL
@@ -153,6 +152,15 @@ export default function Users() {
         cell: ({ row }) => {
           const date = row.getValue('updated_at') as string
           return <DateTime date={date} formatStr="dd/MM/yyyy HH:mm" />
+        },
+      },
+      {
+        accessorKey: 'id',
+        header: 'ID',
+        size: 150,
+        cell: ({ row }) => {
+          const id = row.getValue('id') as string
+          return <ResourceID value={id} />
         },
       },
       {
