@@ -155,7 +155,9 @@ export function useCreateUserApiKey(
         queryKey: usersQueryKeys.apiKeysList(userId),
       })
 
-      toast.success('User api-key created successfully!')
+      toast.success('User api-key created successfully!', {
+        duration: 3000,
+      })
       options?.onSuccess?.(data)
     },
     onError: (error: QueryError) => {

@@ -6,6 +6,7 @@ import { IQueryConfig } from '@/resources/queries'
 import { getUser } from '@/resources/queries/users/user.queries'
 import { generateBreadcrumbs } from '@/utils/helpers/breadcumb.helper'
 import { fetchApiKeyDetail } from '@/resources/queries/api-keys'
+import { fetchApplicationDetail } from '@/resources/queries/applications'
 import { fetchServiceAccountDetail } from '@/resources/queries/service-accounts'
 
 /**
@@ -46,6 +47,7 @@ const breadcrumbFetchers = {
   userID: (config: IQueryConfig, id: string) => getUser(config, id),
   apiKeyID: (config: IQueryConfig, id: string) => fetchApiKeyDetail(config, id),
   serviceAccountID: (config: IQueryConfig, id: string) => fetchServiceAccountDetail(config, id),
+  applicationID: (config: IQueryConfig, id: string) => fetchApplicationDetail(config, id),
 }
 
 export default function useBreadcrumb(config: BreadcrumbConfigType): BreadcrumbItemData[] {

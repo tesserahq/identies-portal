@@ -1,9 +1,10 @@
 import { ApiKeyType } from '@/resources/queries/api-keys/api-key.type'
+import { ApplicationType } from '@/resources/queries/applications/application.type'
 import { ServiceAccountType } from '@/resources/queries/service-accounts/service-account.type'
 import { UserType } from '@/resources/queries/users/user.type'
 import { BreadcrumbItemData } from 'tessera-ui/layouts'
 
-export type BreadcrumbResourceData = UserType | ServiceAccountType | ApiKeyType
+export type BreadcrumbResourceData = UserType | ServiceAccountType | ApiKeyType | ApplicationType
 
 export function generateBreadcrumbs({
   pathname,
@@ -58,7 +59,6 @@ export function formatPathPart(part: string): string {
 
 export function getResourceName(resource: BreadcrumbResourceData | undefined): string {
   if (!resource) return ''
-  console.log('resource ', resource)
 
   if ('name' in resource && typeof resource.name === 'string') {
     return resource.name.trim()

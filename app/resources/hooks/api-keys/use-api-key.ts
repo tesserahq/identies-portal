@@ -127,7 +127,9 @@ export function useCreateApiKey(
       // Invalidate and refetch API keys lists
       queryClient.invalidateQueries({ queryKey: apiKeyQueryKeys.lists() })
 
-      toast.success('API key created successfully!')
+      toast.success('API key created successfully!', {
+        duration: 3000,
+      })
 
       options?.onSuccess?.(data)
     },
@@ -169,7 +171,9 @@ export function useUpdateApiKey(
       // Invalidate and refetch API keys lists
       queryClient.invalidateQueries({ queryKey: apiKeyQueryKeys.lists() })
 
-      toast.success('API key updated successfully!')
+      toast.success('API key updated successfully!', {
+        duration: 3000,
+      })
 
       options?.onSuccess?.(data)
     },
@@ -210,7 +214,9 @@ export function useRevokeApiKey(
       // Invalidate and refetch API keys lists
       queryClient.invalidateQueries({ queryKey: apiKeyQueryKeys.lists() })
 
-      toast.success('API key revoked successfully!')
+      toast.success('API key revoked successfully!', {
+        duration: 3000,
+      })
 
       options?.onSuccess?.(data)
     },
@@ -251,7 +257,9 @@ export function useDeleteApiKey(
       // Invalidate and refetch API keys lists
       queryClient.invalidateQueries({ queryKey: apiKeyQueryKeys.lists() })
 
-      toast.success('API key deleted successfully!')
+      toast.success('API key deleted successfully!', {
+        duration: 3000,
+      })
 
       options?.onSuccess?.()
     },

@@ -5,6 +5,10 @@ export default [
   route('/resources/update-theme', 'routes/resources/update-theme.ts'),
   // Update User
   route('/resources/update-user', 'routes/resources/update-user.ts'),
+  // Upload Application Logo
+  route('/resources/upload-application-logo', 'routes/resources/upload-application-logo.ts'),
+  // Proxy Application Logo (avoids cross-origin blocking when displaying external logos)
+  route('/resources/proxy-application-logo', 'routes/resources/proxy-application-logo.ts'),
 
   route('/', 'routes/index.tsx'),
 
@@ -51,6 +55,16 @@ export default [
         route('api-keys/new', 'routes/main/service-accounts/detail/api-keys/new.tsx'),
         route('api-keys/:apiKeyID', 'routes/main/service-accounts/detail/api-keys/detail.tsx'),
         route('api-keys/:apiKeyID/edit', 'routes/main/service-accounts/detail/api-keys/edit.tsx'),
+      ]),
+    ]),
+
+    route('/applications', 'routes/main/applications/layout.tsx', [
+      index('routes/main/applications/index.tsx'),
+      route('new', 'routes/main/applications/new.tsx'),
+      route(':applicationID/edit', 'routes/main/applications/edit.tsx'),
+      route(':applicationID', 'routes/main/applications/detail/layout.tsx', [
+        index('routes/main/applications/detail/index.tsx'),
+        route('overview', 'routes/main/applications/detail/overview.tsx'),
       ]),
     ]),
   ]),

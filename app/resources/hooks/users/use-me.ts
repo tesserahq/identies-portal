@@ -84,7 +84,9 @@ export function useUpdateUser(
       // Update user cache
       queryClient.setQueryData(userQueryKeys.detail(), data)
 
-      toast.success('User updated successfully!')
+      toast.success('User updated successfully!', {
+        duration: 3000,
+      })
 
       options?.onSuccess?.(data)
     },

@@ -137,7 +137,9 @@ export function useCreateServiceAccount(
       // Invalidate and refetch service accounts lists
       queryClient.invalidateQueries({ queryKey: serviceAccountQueryKeys.lists() })
 
-      toast.success('Service account created successfully!')
+      toast.success('Service account created successfully!', {
+        duration: 3000,
+      })
 
       options?.onSuccess?.(data)
     },
@@ -181,7 +183,9 @@ export function useUpdateServiceAccount(
       // Invalidate and refetch service accounts lists
       queryClient.invalidateQueries({ queryKey: serviceAccountQueryKeys.lists() })
 
-      toast.success('Service account updated successfully!')
+      toast.success('Service account updated successfully!', {
+        duration: 3000,
+      })
 
       options?.onSuccess?.(data)
     },
@@ -222,7 +226,9 @@ export function useDeleteServiceAccount(
       // Invalidate and refetch service accounts lists
       queryClient.invalidateQueries({ queryKey: serviceAccountQueryKeys.lists() })
 
-      toast.success('Service account deleted successfully!')
+      toast.success('Service account deleted successfully!', {
+        duration: 3000,
+      })
 
       options?.onSuccess?.()
     },
@@ -288,7 +294,9 @@ export function useCreateServiceAccountApiKey(
 
       console.log('success create api key ', data)
 
-      toast.success('Service account api-key created successfully!')
+      toast.success('Service account api-key created successfully!', {
+        duration: 3000,
+      })
       options?.onSuccess?.(data)
     },
     onError: (error: QueryError) => {
