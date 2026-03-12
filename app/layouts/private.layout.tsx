@@ -5,7 +5,7 @@ import { useRequestInfo } from '@/hooks/useRequestInfo'
 import { ROUTE_PATH as THEME_PATH } from '@/routes/resources/update-theme'
 import { SITE_CONFIG } from '@/utils/config/site.config'
 import { useAuth0 } from '@auth0/auth0-react'
-import { UserCog, Users } from 'lucide-react'
+import { AppWindow, UserCog, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Outlet, useLoaderData, useNavigate, useParams, useSubmit } from 'react-router'
 import { Layout, MainItemProps, TesseraProvider } from 'tessera-ui'
@@ -62,7 +62,7 @@ export default function PrivateLayout() {
   const navigate = useNavigate()
   const params = useParams()
   const shouldCollapseSidebar = Boolean(
-    params['accountID'] || params['userID'] || params['serviceAccountID']
+    params['accountID'] || params['userID'] || params['serviceAccountID'] || params['applicationID']
   )
 
   const onSetTheme = (theme: string) => {
@@ -115,6 +115,11 @@ export default function PrivateLayout() {
       path: '/service-accounts',
       icon: UserCog,
     },
+    {
+      title: 'Applications',
+      path: '/applications',
+      icon: AppWindow,
+    },
   ]
 
   if (isLoading) {
@@ -128,7 +133,7 @@ export default function PrivateLayout() {
           title={SITE_CONFIG.siteTitle}
           appHostUrls={appHostUrls}
           actionLogout={() => navigate('/logout')}
-          actionProfile={() => navigate(identiesHostUrl!)}
+          actionProfile={() => navigate('/accounts')}
           onSetTheme={(theme) => onSetTheme(theme)}
           selectedTheme={requestInfo.userPrefs.theme || 'system'}
         />
