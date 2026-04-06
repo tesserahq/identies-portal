@@ -5,7 +5,7 @@ import DeleteConfirmation, {
 } from '@/components/delete-confirmation/delete-confirmation'
 import { DetailContent } from '@/components/detail-content'
 import { AppPreloader } from '@/components/loader'
-import { useApp } from 'tessera-ui'
+import { ResourceID, useApp } from 'tessera-ui'
 import { useDeleteApplication, useApplication } from '@/resources/hooks/applications'
 import { type ApplicationType, getApplicationLogoSrc } from '@/resources/queries/applications'
 import { Button } from '@shadcn/ui/button'
@@ -125,6 +125,12 @@ export default function ApplicationDetail() {
           </div>
         </div>
         <div className="d-list">
+          <div className="d-item">
+            <dt className="d-label">ID</dt>
+            <dd className="d-content">
+              {application?.id ? <ResourceID value={application.id} /> : 'N/A'}
+            </dd>
+          </div>
           <div className="d-item">
             <dt className="d-label">Name</dt>
             <dd className="d-content">{application?.name || 'N/A'}</dd>

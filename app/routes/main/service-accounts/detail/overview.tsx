@@ -5,7 +5,7 @@ import DeleteConfirmation, {
 } from '@/components/delete-confirmation/delete-confirmation'
 import { DetailContent } from '@/components/detail-content'
 import { AppPreloader } from '@/components/loader'
-import { useApp } from 'tessera-ui'
+import { ResourceID, useApp } from 'tessera-ui'
 import { useDeleteServiceAccount, useServiceAccount } from '@/resources/hooks/service-accounts'
 import type { ServiceAccountType } from '@/resources/queries/service-accounts'
 import { Badge } from '@shadcn/ui/badge'
@@ -125,6 +125,12 @@ export default function ServiceAccountDetail() {
           </Popover>
         }>
         <div className="d-list">
+          <div className="d-item">
+            <dt className="d-label">ID</dt>
+            <dd className="d-content">
+              {serviceAccount?.id ? <ResourceID value={serviceAccount.id} /> : 'N/A'}
+            </dd>
+          </div>
           <div className="d-item">
             <dt className="d-label">Email</dt>
             <dd className="d-content">{serviceAccount!.email}</dd>
