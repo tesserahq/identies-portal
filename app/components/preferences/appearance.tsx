@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@shadcn/ui/card'
-import { DarkSkeleton, LightSkeleton, SystemSkeleton } from 'public/images/skeleton'
+import { DarkSkeleton, LightSkeleton, SystemSkeleton } from '@/public/images/skeleton'
 
 interface AppearanceProps {
   selectedTheme: 'light' | 'dark' | 'system'
