@@ -70,13 +70,17 @@ export function ApiKeyPreview({ apiKey, backTo }: Props) {
           <dl className="d-item">
             <dt className="d-label">Created At</dt>
             <dd className="d-content">
-              {apiKey?.created_at && <DateTime date={apiKey?.created_at} />}
+              {apiKey?.created_at && <DateTime date={apiKey?.created_at} tooltipSide="top" />}
             </dd>
           </dl>
           <dl className="d-item">
             <dt className="d-label">Expires At</dt>
             <dd className="d-content">
-              {apiKey?.expires_at ? <DateTime date={apiKey?.expires_at} /> : 'No expiration'}
+              {apiKey?.expires_at ? (
+                <DateTime date={apiKey?.expires_at} tooltipSide="top" />
+              ) : (
+                'No expiration'
+              )}
             </dd>
           </dl>
         </div>
