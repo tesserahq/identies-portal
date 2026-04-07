@@ -3,7 +3,7 @@ import { DetailContent } from '@/components/detail-content'
 import { useApp } from 'tessera-ui'
 import { useUserById } from '@/resources/hooks/users/use-user'
 import { useLoaderData } from 'react-router'
-import { DateTime } from 'tessera-ui/components'
+import { DateTime, ResourceID } from 'tessera-ui/components'
 import { Badge } from '@/modules/shadcn/ui/badge'
 
 export async function loader({ params }: { params: { userID: string } }) {
@@ -29,6 +29,10 @@ export default function UserOverview() {
     <div className="animate-slide-up space-y-5">
       <DetailContent title={user?.email || ''}>
         <div className="d-list">
+          <div className="d-item">
+            <dt className="d-label">ID</dt>
+            <dd className="d-content">{user?.id ? <ResourceID value={user.id} /> : 'N/A'}</dd>
+          </div>
           <div className="d-item">
             <dt className="d-label">Email</dt>
             <dd className="d-content">{user?.email || 'N/A'}</dd>

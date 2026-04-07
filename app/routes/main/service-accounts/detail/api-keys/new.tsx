@@ -21,12 +21,13 @@ export default function ApiKeyNew() {
   const { token } = useApp()
   const params = useParams()
   const navigate = useNavigate()
+
   const [apiKey, setApiKey] = useState<ApiKeyType>()
 
   // API key create mutation
   const { mutateAsync: createApiKey } = useCreateServiceAccountApiKey(
     { apiUrl: apiUrl!, token: token!, nodeEnv: nodeEnv as any },
-    params.id as string,
+    params.serviceAccountID as string,
     {
       onSuccess: setApiKey,
     }
