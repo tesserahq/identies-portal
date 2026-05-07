@@ -1,10 +1,87 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query'
+import { toast } from 'sonner'
+
+type HttpErrorShape = {
+  status?: number
+  response?: {
+    status?: number
+  }
+  code?: string | number
+  details?: unknown
+  message?: string
+}
+
+const getStatusCode = (error: unknown): number | undefined => {
+  const e = error as HttpErrorShape
+
+  if (typeof e?.status === 'number') return e.status
+  if (typeof e?.response?.status === 'number') return e.response.status
+
+  if (e?.code === 403 || e?.code === '403') return 403
+
+  const details = e?.details as
+    | { status?: number; response?: { status?: number }; code?: string | number }
+    | undefined
+  if (typeof details?.status === 'number') return details.status
+  if (typeof details?.response?.status === 'number') return details.response.status
+  if (details?.code === 403 || details?.code === '403') return 403
+
+  // Fallback for errors like: QueryError: {"status":403,"error":"Access denied"}
+  if (typeof e?.message === 'string') {
+    const jsonStart = e.message.indexOf('{')
+    if (jsonStart !== -1) {
+      try {
+        const parsed = JSON.parse(e.message.slice(jsonStart)) as { status?: number }
+        if (typeof parsed?.status === 'number') return parsed.status
+      } catch {
+        return undefined
+      }
+    }
+  }
+
+  return undefined
+}
+
+const is403 = (error: unknown) => {
+  return getStatusCode(error) === 403
+}
+
+let isHandling403 = false
+
+const handle403 = () => {
+  if (isHandling403) return
+  isHandling403 = true
+
+  toast.error('Access Denied', {
+    description: "You don't have permission to do this. Please contact your administrator.",
+    duration: 5000,
+  })
+
+  // In non-component config code, use a direct redirect.
+  if (typeof window !== 'undefined' && window.location.pathname !== '/403') {
+    window.location.assign('/403')
+  }
+
+  setTimeout(() => {
+    isHandling403 = false
+  }, 1000)
+}
 
 /**
  * React Query Client Configuration
  * Centralized configuration for all queries and mutations
  */
 export const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error) => {
+      if (is403(error)) handle403()
+    },
+  }),
+  mutationCache: new MutationCache({
+    onError: (error) => {
+      if (is403(error)) handle403()
+    },
+  }),
   defaultOptions: {
     queries: {
       // Time before data is considered stale (5 minutes)
