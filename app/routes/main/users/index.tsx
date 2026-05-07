@@ -63,6 +63,7 @@ export default function Users() {
     data: usersData,
     isLoading,
     isFetching,
+    error,
   } = useUsers(queryConfig, queryParams, {
     enabled: !!token,
   })
@@ -197,6 +198,16 @@ export default function Users() {
     ],
     []
   )
+
+  if (error) {
+    return (
+      <EmptyContent
+        image="/images/empty-service-accounts.png"
+        title="Failed to get users"
+        description={error.message}
+      />
+    )
+  }
 
   if ((isFetching || isLoading) && !searchQuery) {
     return <AppPreloader className="min-h-screen" />

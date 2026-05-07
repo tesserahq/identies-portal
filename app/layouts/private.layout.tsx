@@ -12,47 +12,14 @@ import { Layout, MainItemProps, TesseraProvider } from 'tessera-ui'
 
 export function loader() {
   const identiesApiUrl = process.env.IDENTIES_API_URL
-  // app host urls
-  const quoreHostUrl = process.env.QUORE_HOST_URL
-  const looplyHostUrl = process.env.LOOPLY_HOST_URL
-  const vaultaHostUrl = process.env.VAULTA_HOST_URL
-  const identiesHostUrl = process.env.IDENTIES_HOST_URL
-  const orchaHostUrl = process.env.ORCHA_HOST_URL
-  const custosHostUrl = process.env.CUSTOS_HOST_URL
-  const indexaHostUrl = process.env.INDEXA_HOST_URL
-  const sendlyHostUrl = process.env.SENDLY_HOST_URL
-  const algoliaAppId = process.env.ALGOLIA_APP_ID
-  const algoliaApiKey = process.env.ALGOLIA_SEARCH_API_KEY
 
   return {
-    quoreHostUrl,
-    looplyHostUrl,
-    vaultaHostUrl,
-    identiesHostUrl,
-    orchaHostUrl,
-    custosHostUrl,
-    indexaHostUrl,
-    sendlyHostUrl,
     identiesApiUrl,
-    algoliaAppId,
-    algoliaApiKey,
   }
 }
 
 export default function PrivateLayout() {
-  const {
-    identiesApiUrl,
-    quoreHostUrl,
-    looplyHostUrl,
-    vaultaHostUrl,
-    identiesHostUrl,
-    orchaHostUrl,
-    custosHostUrl,
-    indexaHostUrl,
-    sendlyHostUrl,
-    algoliaAppId,
-    algoliaApiKey,
-  } = useLoaderData<typeof loader>()
+  const { identiesApiUrl } = useLoaderData<typeof loader>()
 
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [token, setToken] = useState<string>('')
@@ -92,17 +59,6 @@ export default function PrivateLayout() {
     }
   }, [isLoading, isAuthenticated])
 
-  const appHostUrls = {
-    quore: quoreHostUrl!,
-    looply: looplyHostUrl!,
-    vaulta: vaultaHostUrl!,
-    identies: identiesHostUrl!,
-    orcha: orchaHostUrl!,
-    custos: custosHostUrl!,
-    indexa: indexaHostUrl!,
-    sendly: sendlyHostUrl!,
-  }
-
   // NOTE: Keep identies-portal menuItems as-is (per request).
   const menuItems: MainItemProps[] = [
     {
@@ -131,9 +87,8 @@ export default function PrivateLayout() {
       <Layout.Main menuItems={menuItems} collapseSidebar={shouldCollapseSidebar}>
         <Layout.Header
           title={SITE_CONFIG.siteTitle}
-          appHostUrls={appHostUrls}
           actionLogout={() => navigate('/logout')}
-          actionProfile={() => navigate('/accounts')}
+          actionProfile={() => {}}
           onSetTheme={(theme) => onSetTheme(theme)}
           selectedTheme={requestInfo.userPrefs.theme || 'system'}
         />

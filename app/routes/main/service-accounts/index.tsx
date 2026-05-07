@@ -45,7 +45,11 @@ export default function ServiceAccounts() {
   const [serviceAccountDelete, setServiceAccountDelete] = useState<ServiceAccountType>()
 
   // React Query hooks
-  const { data: serviceAccountsData, isLoading } = useServiceAccounts(
+  const {
+    data: serviceAccountsData,
+    isLoading,
+    error,
+  } = useServiceAccounts(
     {
       apiUrl: identiesApiUrl!,
       token: token!,
@@ -87,6 +91,16 @@ export default function ServiceAccounts() {
 
   if (isLoading || !token) {
     return <AppPreloader />
+  }
+
+  if (error) {
+    return (
+      <EmptyContent
+        image="/images/empty-service-accounts.png"
+        title="Failed to get service accounts"
+        description={error.message}
+      />
+    )
   }
 
   const openServiceAccountDeletion = (deleteThisServiceAccount: ServiceAccountType): void => {

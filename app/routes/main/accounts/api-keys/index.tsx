@@ -48,7 +48,11 @@ export default function APIKeys() {
   const [apiKeyDelete, setApiKeyDelete] = useState<ApiKeyType>()
 
   // React Query hooks
-  const { data: apiKeysData, isLoading } = useApiKeys(
+  const {
+    data: apiKeysData,
+    isLoading,
+    error,
+  } = useApiKeys(
     {
       apiUrl: identiesApiUrl!,
       token: token || '',
@@ -113,6 +117,16 @@ export default function APIKeys() {
 
   if (isLoading || !token) {
     return <AppPreloader className="min-h-screen" />
+  }
+
+  if (error) {
+    return (
+      <EmptyContent
+        image="/images/empty-api-keys.png"
+        title="Failed to get API keys"
+        description={error.message}
+      />
+    )
   }
 
   const openApiKeyRevoke = (revokeThisApiKey: ApiKeyType): void => {
