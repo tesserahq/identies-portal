@@ -1,5 +1,6 @@
 import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { navigateTo } from '@/lib/navigation-bridge'
 
 type HttpErrorShape = {
   status?: number
@@ -57,9 +58,11 @@ const handle403 = () => {
     duration: 5000,
   })
 
-  // In non-component config code, use a direct redirect.
   if (typeof window !== 'undefined' && window.location.pathname !== '/403') {
-    window.location.assign('/403')
+    const navigated = navigateTo('/403')
+    if (!navigated) {
+      window.location.assign('/403')
+    }
   }
 
   setTimeout(() => {

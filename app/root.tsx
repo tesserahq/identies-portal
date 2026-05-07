@@ -33,6 +33,8 @@ import { ProgressBar } from '@/components/loader/progress-bar'
 import { metaObject } from '@/utils/helpers/meta.helper'
 import { ReactQueryProvider } from './modules/react-query'
 import { Toaster } from 'tessera-ui'
+import { useEffect } from 'react'
+import { setNavigator } from '@/lib/navigation-bridge'
 
 export const handle = { i18n: ['translation'] }
 
@@ -152,6 +154,11 @@ export default function AppWithProviders() {
   const nonce = useNonce()
   const theme = useTheme()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    setNavigator((to) => navigate(to))
+    return () => setNavigator(null)
+  }, [navigate])
 
   // Renders toast (if any).
   useToast(toast)
