@@ -58,12 +58,12 @@ const handle403 = () => {
     duration: 5000,
   })
 
-  if (typeof window !== 'undefined' && window.location.pathname !== '/403') {
-    const navigated = navigateTo('/403')
-    if (!navigated) {
-      window.location.assign('/403')
-    }
-  }
+  // if (typeof window !== 'undefined' && window.location.pathname !== '/403') {
+  //   const navigated = navigateTo('/403')
+  //   if (!navigated) {
+  //     window.location.assign('/403')
+  //   }
+  // }
 
   setTimeout(() => {
     isHandling403 = false

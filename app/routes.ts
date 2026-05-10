@@ -11,7 +11,6 @@ export default [
   route('/resources/proxy-application-logo', 'routes/resources/proxy-application-logo.ts'),
 
   route('/', 'routes/index.tsx'),
-  route('/403', 'routes/403.tsx'),
 
   // Private Layout
   layout('layouts/private.layout.tsx', [
