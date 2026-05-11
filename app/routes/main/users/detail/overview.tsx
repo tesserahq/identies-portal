@@ -34,6 +34,12 @@ export default function UserOverview() {
             <dd className="d-content">{user?.id ? <ResourceID value={user.id} /> : 'N/A'}</dd>
           </div>
           <div className="d-item">
+            <dt className="d-label">External ID</dt>
+            <dd className="d-content">
+              {user?.external_id ? <ResourceID value={user.external_id} /> : 'N/A'}
+            </dd>
+          </div>
+          <div className="d-item">
             <dt className="d-label">Email</dt>
             <dd className="d-content">{user?.email || 'N/A'}</dd>
           </div>
