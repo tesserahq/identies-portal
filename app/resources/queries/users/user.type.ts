@@ -15,6 +15,7 @@ export type UserType = {
   id: string
   created_at?: string
   updated_at?: string
+  external_id?: string
   service_account?: boolean
 }
 
