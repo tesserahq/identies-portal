@@ -40,7 +40,11 @@ export default function Applications() {
   const deleteConfirmationRef = useRef<DeleteConfirmationHandle>(null)
   const [applicationDelete, setApplicationDelete] = useState<ApplicationType>()
 
-  const { data: applicationsData, isLoading } = useApplications(
+  const {
+    data: applicationsData,
+    isLoading,
+    error,
+  } = useApplications(
     {
       apiUrl: identiesApiUrl!,
       token: token!,
@@ -81,6 +85,16 @@ export default function Applications() {
 
   if (isLoading || !token) {
     return <AppPreloader />
+  }
+
+  if (error) {
+    return (
+      <EmptyContent
+        image="/images/empty-api-keys.png"
+        title="Failed to get applications"
+        description={error.message}
+      />
+    )
   }
 
   const openApplicationDeletion = (deleteThisApplication: ApplicationType): void => {

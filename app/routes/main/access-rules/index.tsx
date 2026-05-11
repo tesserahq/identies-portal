@@ -1,26 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pagination } from '@/components/data-table/data-pagination'
-import { DateTime } from '@/components/datetime'
 import DeleteConfirmation, {
   type DeleteConfirmationHandle,
 } from '@/components/delete-confirmation/delete-confirmation'
 import EmptyContent from '@/components/empty-content/empty-content'
 import { AppPreloader } from '@/components/loader'
 import CreateButton from '@/components/new-button/new-button'
-import { ResourceID, useApp } from 'tessera-ui'
-import { Avatar, AvatarFallback, AvatarImage } from '@/modules/shadcn/ui/avatar'
-import { useDeleteServiceAccount, useServiceAccounts } from '@/resources/hooks/service-accounts'
-import type { ServiceAccountType } from '@/resources/queries/service-accounts'
+import { DateTime, ResourceID, useApp } from 'tessera-ui'
 import { ensureCanonicalPagination } from '@/utils/helpers/pagination.helper'
-import { Badge } from '@shadcn/ui/badge'
 import { Button } from '@shadcn/ui/button'
 import { Card, CardContent } from '@shadcn/ui/card'
 import { Popover, PopoverContent, PopoverTrigger } from '@shadcn/ui/popover'
 import { Separator } from '@shadcn/ui/separator'
-import { useQueryClient } from '@tanstack/react-query'
 import { EllipsisVertical, Eye, Pencil, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, LoaderFunctionArgs, useLoaderData, useNavigate } from 'react-router'
+import { useAccessRules, useDeleteAccessRule } from '@/resources/hooks/access-rules'
+import { AccessRuleType } from '@/resources/queries/access-rules'
 
 export function loader({ request }: LoaderFunctionArgs) {
   const identiesApiUrl = process.env.API_URL
@@ -35,21 +31,15 @@ export function loader({ request }: LoaderFunctionArgs) {
   return { identiesApiUrl, nodeEnv, pagination }
 }
 
-export default function ServiceAccounts() {
+export default function AccessRules() {
   const { identiesApiUrl, nodeEnv, pagination } = useLoaderData<typeof loader>()
   const { token } = useApp()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
 
   const deleteConfirmationRef = useRef<DeleteConfirmationHandle>(null)
-  const [serviceAccountDelete, setServiceAccountDelete] = useState<ServiceAccountType>()
+  const [resourceToDelete, setResourceToDelete] = useState<AccessRuleType>()
 
-  // React Query hooks
-  const {
-    data: serviceAccountsData,
-    isLoading,
-    error,
-  } = useServiceAccounts(
+  const { data, isLoading, error } = useAccessRules(
     {
       apiUrl: identiesApiUrl!,
       token: token!,
@@ -64,7 +54,7 @@ export default function ServiceAccounts() {
     }
   )
 
-  const deleteServiceAccountMutation = useDeleteServiceAccount(
+  const deleteAccessRule = useDeleteAccessRule(
     {
       apiUrl: identiesApiUrl!,
       token: token!,
@@ -72,22 +62,21 @@ export default function ServiceAccounts() {
     },
     {
       onSuccess: () => {
-        setServiceAccountDelete(undefined)
+        setResourceToDelete(undefined)
         deleteConfirmationRef.current?.close()
       },
     }
   )
 
-  const serviceAccounts = serviceAccountsData?.items || []
+  const accessRules = data?.items || []
 
-  // Update DeleteConfirmation loading state
   useEffect(() => {
-    if (serviceAccountDelete && deleteConfirmationRef.current) {
+    if (resourceToDelete && deleteConfirmationRef.current) {
       deleteConfirmationRef.current.updateConfig({
-        isLoading: deleteServiceAccountMutation.isPending,
+        isLoading: deleteAccessRule.isPending,
       })
     }
-  }, [deleteServiceAccountMutation.isPending, serviceAccountDelete])
+  }, [deleteAccessRule.isPending, resourceToDelete])
 
   if (isLoading || !token) {
     return <AppPreloader />
@@ -96,27 +85,23 @@ export default function ServiceAccounts() {
   if (error) {
     return (
       <EmptyContent
-        image="/images/empty-service-accounts.png"
-        title="Failed to get service accounts"
+        image="/images/empty-api-keys.png"
+        title="Failed to get access rules"
         description={error.message}
       />
     )
   }
 
-  const openServiceAccountDeletion = (deleteThisServiceAccount: ServiceAccountType): void => {
-    const displayName =
-      `${deleteThisServiceAccount.first_name} ${deleteThisServiceAccount.last_name}`.trim() ||
-      'Unnamed'
-
-    setServiceAccountDelete(deleteThisServiceAccount)
+  const openAccessRuleDelete = (data: AccessRuleType): void => {
+    setResourceToDelete(data)
     deleteConfirmationRef.current?.open({
-      title: 'Delete Service Account?',
-      description: `You'll permanently lose the service account "${displayName}", this action cannot be undone.`,
+      title: 'Delete Access Rule?',
+      description: `Are you sure you want to permanently delete this ${data.kind} access rules? This action cannot be undone.`,
       onDelete: () => {
         deleteConfirmationRef.current?.updateConfig({
           isLoading: true,
         })
-        deleteServiceAccountMutation.mutate(deleteThisServiceAccount.id)
+        deleteAccessRule.mutate(data.id)
       },
     })
   }
@@ -124,59 +109,45 @@ export default function ServiceAccounts() {
   return (
     <div className="flex w-full flex-col items-center page-content">
       <div className="mb-5 flex w-full items-center justify-between">
-        <h1 className="page-title">Service Accounts</h1>
-        {serviceAccounts.length > 0 && (
-          <CreateButton label="New Service Account" onClick={() => navigate('new')} />
+        <h1 className="page-title">Access Rules</h1>
+        {accessRules.length > 0 && (
+          <CreateButton label="New Access Rule" onClick={() => navigate('new')} />
         )}
       </div>
-      {serviceAccounts.length === 0 ? (
+      {accessRules.length === 0 ? (
         <EmptyContent
           image="/images/empty-api-keys.png"
-          title="No Service Accounts found"
-          description="Click the button below to start creating Service Accounts">
+          title="No Access Rules found"
+          description="Click the button below to start creating Access Rules">
           <Button variant="black" onClick={() => navigate('new')}>
             Start Now
           </Button>
         </EmptyContent>
       ) : (
         <div className="space-y-3 w-full">
-          {serviceAccounts.map((serviceAccount: ServiceAccountType) => {
-            const displayName =
-              `${serviceAccount.first_name} ${serviceAccount.last_name}`.trim() || 'Unnamed'
-
+          {accessRules.map((accessRule: AccessRuleType) => {
             return (
-              <Card key={serviceAccount.id} className="mb-3 w-full shadow-card">
+              <Card key={accessRule.id} className="mb-3 w-full shadow-card">
                 <CardContent className="flex items-center gap-3 pt-4">
-                  <Avatar>
-                    <AvatarImage src={serviceAccount.avatar_url} />
-                    <AvatarFallback>
-                      <img src="/images/default-user-avatar.jpg" alt="default-user" />
-                    </AvatarFallback>
-                  </Avatar>
                   <div className="flex-1">
                     <div className="flex items-start gap-2">
                       <Link
-                        to={serviceAccount.id}
+                        to={accessRule.id}
                         className="mb-1 font-medium text-black hover:text-primary hover:underline
                           dark:text-primary-foreground">
-                        {displayName}
+                        {accessRule.kind || 'Unnamed'}
                       </Link>
-                      {serviceAccount.verified && (
-                        <Badge variant="outline" className="border border-green-500 text-green-600">
-                          <span className="text-xs">Verified</span>
-                        </Badge>
-                      )}
                     </div>
                     <div className="flex items-center text-xs text-slate-500 dark:text-slate-400">
-                      <span>{serviceAccount.email}</span>
+                      {accessRule.value}
                       <Separator orientation="vertical" className="mx-2 h-4" />
                       <div>
-                        Created <DateTime date={serviceAccount.created_at + 'z'} />
+                        Created <DateTime date={accessRule.created_at} />
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <ResourceID value={serviceAccount.id} />
+                    <ResourceID value={accessRule.id} />
                     <Popover>
                       <PopoverTrigger>
                         <Button variant="ghost" size="icon">
@@ -187,14 +158,14 @@ export default function ServiceAccounts() {
                         <Button
                           variant="ghost"
                           className="flex w-full justify-start"
-                          onClick={() => navigate(`/service-accounts/${serviceAccount.id}`)}>
+                          onClick={() => navigate(`/access-rules/${accessRule.id}`)}>
                           <Eye />
                           <span>View</span>
                         </Button>
                         <Button
                           variant="ghost"
                           className="flex w-full justify-start"
-                          onClick={() => navigate(`/service-accounts/${serviceAccount.id}/edit`)}>
+                          onClick={() => navigate(`/access-rules/${accessRule.id}/edit`)}>
                           <Pencil />
                           <span>Edit</span>
                         </Button>
@@ -202,7 +173,7 @@ export default function ServiceAccounts() {
                           variant="ghost"
                           className="flex w-full justify-start hover:bg-destructive
                             hover:text-white"
-                          onClick={() => openServiceAccountDeletion(serviceAccount)}>
+                          onClick={() => openAccessRuleDelete(accessRule)}>
                           <Trash2 />
                           <span>Remove</span>
                         </Button>
@@ -216,10 +187,10 @@ export default function ServiceAccounts() {
 
           <Pagination
             meta={{
-              page: serviceAccountsData?.page || 1,
-              pages: serviceAccountsData?.pages || 1,
-              size: serviceAccountsData?.size || 1,
-              total: serviceAccountsData?.total || 1,
+              page: data?.page || 1,
+              pages: data?.pages || 1,
+              size: data?.size || 1,
+              total: data?.total || 1,
             }}
           />
         </div>
