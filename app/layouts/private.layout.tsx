@@ -5,7 +5,7 @@ import { useRequestInfo } from '@/hooks/useRequestInfo'
 import { ROUTE_PATH as THEME_PATH } from '@/routes/resources/update-theme'
 import { SITE_CONFIG } from '@/utils/config/site.config'
 import { useAuth0 } from '@auth0/auth0-react'
-import { AppWindow, UserCog, Users } from 'lucide-react'
+import { AppWindow, FileLock, UserCog, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Outlet, useLoaderData, useNavigate, useParams, useSubmit } from 'react-router'
 import { Layout, MainItemProps, TesseraProvider } from 'tessera-ui'
@@ -75,6 +75,11 @@ export default function PrivateLayout() {
       title: 'Applications',
       path: '/applications',
       icon: AppWindow,
+    },
+    {
+      title: 'Access Rules',
+      path: '/access-rules',
+      icon: FileLock,
     },
   ]
 

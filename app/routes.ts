@@ -67,6 +67,16 @@ export default [
         route('overview', 'routes/main/applications/detail/overview.tsx'),
       ]),
     ]),
+
+    route('/access-rules', 'routes/main/access-rules/layout.tsx', [
+      index('routes/main/access-rules/index.tsx'),
+      route('new', 'routes/main/access-rules/new.tsx'),
+      route(':accessRuleID/edit', 'routes/main/access-rules/edit.tsx'),
+      route(':accessRuleID', 'routes/main/access-rules/detail/layout.tsx', [
+        index('routes/main/access-rules/detail/index.tsx'),
+        route('overview', 'routes/main/access-rules/detail/overview.tsx'),
+      ]),
+    ]),
   ]),
 
   // Logout Route
