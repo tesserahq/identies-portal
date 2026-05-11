@@ -1,56 +1,55 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AppPreloader } from '@/components/loader'
-import { ApplicationForm } from '@/components/crud-form/application-form'
 import { useApp } from 'tessera-ui'
-import { useApplication, useUpdateApplication } from '@/resources/hooks/applications'
-import {
-  ApplicationFormData,
-  ApplicationType,
-  applicationToFormValues,
-} from '@/resources/queries/applications'
 import { useLoaderData, useNavigate, useParams } from 'react-router'
+import { useAccessRule, useUpdateAccessRule } from '@/resources/hooks/access-rules'
+import {
+  AccessRuleFormData,
+  accessRuleToFormValues,
+  AccessRuleType,
+} from '@/resources/queries/access-rules'
+import { AccessRuleForm } from '@/components/crud-form/access-rule-form'
 
 export function loader() {
   const apiUrl = process.env.API_URL
   const nodeEnv = process.env.NODE_ENV
-  const vaultaApiUrl = process.env.VAULTA_API_URL
 
-  return { apiUrl, nodeEnv, vaultaApiUrl }
+  return { apiUrl, nodeEnv }
 }
 
 export default function ApplicationEdit() {
-  const { apiUrl, nodeEnv, vaultaApiUrl } = useLoaderData<typeof loader>()
+  const { apiUrl, nodeEnv } = useLoaderData<typeof loader>()
   const { token } = useApp()
   const navigate = useNavigate()
   const params = useParams()
 
-  const { data: application, isLoading } = useApplication(
+  const { data: application, isLoading } = useAccessRule(
     {
       apiUrl: apiUrl!,
       token: token!,
       nodeEnv: nodeEnv as any,
     },
-    params.applicationID!,
+    params.accessRuleID!,
     {
-      enabled: !!token && !!params.applicationID,
+      enabled: !!token && !!params.accessRuleID,
     }
   )
 
-  const { mutateAsync: updateApplication } = useUpdateApplication(
+  const { mutateAsync: updateApplication } = useUpdateAccessRule(
     {
       apiUrl: apiUrl!,
       token: token!,
       nodeEnv: nodeEnv as any,
     },
-    params.applicationID!,
+    params.accessRuleID!,
     {
-      onSuccess: (data: ApplicationType) => {
-        navigate(`/applications/${data.id}`)
+      onSuccess: (data: AccessRuleType) => {
+        navigate(`/access-rule/${data.id}`)
       },
     }
   )
 
-  const handleSubmit = async (data: ApplicationFormData): Promise<void> => {
+  const handleSubmit = async (data: AccessRuleFormData): Promise<void> => {
     await updateApplication(data)
   }
 
@@ -59,12 +58,10 @@ export default function ApplicationEdit() {
   }
 
   return (
-    <ApplicationForm
+    <AccessRuleForm
       onSubmit={handleSubmit}
-      defaultValues={applicationToFormValues(application)}
+      defaultValues={accessRuleToFormValues(application)}
       isEdit={true}
-      token={token || ''}
-      vaultaApiUrl={vaultaApiUrl || ''}
     />
   )
 }

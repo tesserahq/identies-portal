@@ -1,9 +1,9 @@
 import { redirect } from 'react-router'
 
-export async function loader({ params }: { params: { applicationID: string } }) {
-  return redirect(`/applications/${params.applicationID}/overview`)
+export async function loader({ params }: { params: { accessRuleID: string } }) {
+  return redirect(`/access-rules/${params.accessRuleID}/overview`)
 }
 
-export default function ApplicationDetailIndex() {
+export default function AccessRuleDetailIndex() {
   return <></>
 }

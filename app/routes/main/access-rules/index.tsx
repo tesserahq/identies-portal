@@ -7,7 +7,6 @@ import EmptyContent from '@/components/empty-content/empty-content'
 import { AppPreloader } from '@/components/loader'
 import CreateButton from '@/components/new-button/new-button'
 import { DateTime, ResourceID, useApp } from 'tessera-ui'
-import { Avatar, AvatarFallback, AvatarImage } from '@/modules/shadcn/ui/avatar'
 import { ensureCanonicalPagination } from '@/utils/helpers/pagination.helper'
 import { Button } from '@shadcn/ui/button'
 import { Card, CardContent } from '@shadcn/ui/card'
@@ -40,11 +39,7 @@ export default function AccessRules() {
   const deleteConfirmationRef = useRef<DeleteConfirmationHandle>(null)
   const [resourceToDelete, setResourceToDelete] = useState<AccessRuleType>()
 
-  const {
-    data: applicationsData,
-    isLoading,
-    error,
-  } = useAccessRules(
+  const { data, isLoading, error } = useAccessRules(
     {
       apiUrl: identiesApiUrl!,
       token: token!,
@@ -59,7 +54,7 @@ export default function AccessRules() {
     }
   )
 
-  const deleteApplicationMutation = useDeleteAccessRule(
+  const deleteAccessRule = useDeleteAccessRule(
     {
       apiUrl: identiesApiUrl!,
       token: token!,
@@ -73,15 +68,15 @@ export default function AccessRules() {
     }
   )
 
-  const applications = applicationsData?.items || []
+  const accessRules = data?.items || []
 
   useEffect(() => {
     if (resourceToDelete && deleteConfirmationRef.current) {
       deleteConfirmationRef.current.updateConfig({
-        isLoading: deleteApplicationMutation.isPending,
+        isLoading: deleteAccessRule.isPending,
       })
     }
-  }, [deleteApplicationMutation.isPending, resourceToDelete])
+  }, [deleteAccessRule.isPending, resourceToDelete])
 
   if (isLoading || !token) {
     return <AppPreloader />
@@ -91,23 +86,22 @@ export default function AccessRules() {
     return (
       <EmptyContent
         image="/images/empty-api-keys.png"
-        title="Failed to get applications"
+        title="Failed to get access rules"
         description={error.message}
       />
     )
   }
 
-  const openApplicationDeletion = (data: AccessRuleType): void => {
+  const openAccessRuleDelete = (data: AccessRuleType): void => {
     setResourceToDelete(data)
     deleteConfirmationRef.current?.open({
       title: 'Delete Access Rule?',
-      description: `Are you sure you want to permanently delete this ${data.kind}? This action cannot be undone.`,
-
+      description: `Are you sure you want to permanently delete this ${data.kind} access rules? This action cannot be undone.`,
       onDelete: () => {
         deleteConfirmationRef.current?.updateConfig({
           isLoading: true,
         })
-        deleteApplicationMutation.mutate(data.id)
+        deleteAccessRule.mutate(data.id)
       },
     })
   }
@@ -115,53 +109,45 @@ export default function AccessRules() {
   return (
     <div className="flex w-full flex-col items-center page-content">
       <div className="mb-5 flex w-full items-center justify-between">
-        <h1 className="page-title">Applications</h1>
-        {applications.length > 0 && (
-          <CreateButton label="New Application" onClick={() => navigate('new')} />
+        <h1 className="page-title">Access Rules</h1>
+        {accessRules.length > 0 && (
+          <CreateButton label="New Access Rule" onClick={() => navigate('new')} />
         )}
       </div>
-      {applications.length === 0 ? (
+      {accessRules.length === 0 ? (
         <EmptyContent
           image="/images/empty-api-keys.png"
-          title="No Applications found"
-          description="Click the button below to start creating Applications">
+          title="No Access Rules found"
+          description="Click the button below to start creating Access Rules">
           <Button variant="black" onClick={() => navigate('new')}>
             Start Now
           </Button>
         </EmptyContent>
       ) : (
         <div className="space-y-3 w-full">
-          {applications.map((application: AccessRuleType) => {
+          {accessRules.map((accessRule: AccessRuleType) => {
             return (
-              <Card key={application.id} className="mb-3 w-full shadow-card">
+              <Card key={accessRule.id} className="mb-3 w-full shadow-card">
                 <CardContent className="flex items-center gap-3 pt-4">
-                  <Avatar>
-                    <AvatarImage src={getApplicationLogoSrc(application.logo)} />
-                    <AvatarFallback>
-                      <img src="/images/default-user-avatar.jpg" alt="default-logo" />
-                    </AvatarFallback>
-                  </Avatar>
                   <div className="flex-1">
                     <div className="flex items-start gap-2">
                       <Link
-                        to={application.id}
+                        to={accessRule.id}
                         className="mb-1 font-medium text-black hover:text-primary hover:underline
                           dark:text-primary-foreground">
-                        {application.name || 'Unnamed'}
+                        {accessRule.kind || 'Unnamed'}
                       </Link>
                     </div>
                     <div className="flex items-center text-xs text-slate-500 dark:text-slate-400">
-                      <Link to={application.url} target="_blank" className="button-link">
-                        {application.url}
-                      </Link>
+                      {accessRule.value}
                       <Separator orientation="vertical" className="mx-2 h-4" />
                       <div>
-                        Created <DateTime date={application.created_at} />
+                        Created <DateTime date={accessRule.created_at} />
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <ResourceID value={application.id} />
+                    <ResourceID value={accessRule.id} />
                     <Popover>
                       <PopoverTrigger>
                         <Button variant="ghost" size="icon">
@@ -172,14 +158,14 @@ export default function AccessRules() {
                         <Button
                           variant="ghost"
                           className="flex w-full justify-start"
-                          onClick={() => navigate(`/applications/${application.id}`)}>
+                          onClick={() => navigate(`/access-rules/${accessRule.id}`)}>
                           <Eye />
                           <span>View</span>
                         </Button>
                         <Button
                           variant="ghost"
                           className="flex w-full justify-start"
-                          onClick={() => navigate(`/applications/${application.id}/edit`)}>
+                          onClick={() => navigate(`/access-rules/${accessRule.id}/edit`)}>
                           <Pencil />
                           <span>Edit</span>
                         </Button>
@@ -187,7 +173,7 @@ export default function AccessRules() {
                           variant="ghost"
                           className="flex w-full justify-start hover:bg-destructive
                             hover:text-white"
-                          onClick={() => openApplicationDeletion(application)}>
+                          onClick={() => openAccessRuleDelete(accessRule)}>
                           <Trash2 />
                           <span>Remove</span>
                         </Button>
@@ -201,10 +187,10 @@ export default function AccessRules() {
 
           <Pagination
             meta={{
-              page: applicationsData?.page || 1,
-              pages: applicationsData?.pages || 1,
-              size: applicationsData?.size || 1,
-              total: applicationsData?.total || 1,
+              page: data?.page || 1,
+              pages: data?.pages || 1,
+              size: data?.size || 1,
+              total: data?.total || 1,
             }}
           />
         </div>

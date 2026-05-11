@@ -1,5 +1,5 @@
 import useBreadcrumb from '@/hooks/useBreadcrumbs'
-import { FileText } from 'lucide-react'
+import { File, FileText } from 'lucide-react'
 import { Outlet, useLoaderData, useLocation, useParams } from 'react-router'
 import { useApp } from 'tessera-ui'
 import { DetailItemsProps, Layout } from 'tessera-ui/layouts'
@@ -11,7 +11,7 @@ export function loader() {
   return { apiUrl, nodeEnv }
 }
 
-export default function ApplicationDetailLayout() {
+export default function AccessRuleDetailLayout() {
   const { apiUrl, nodeEnv } = useLoaderData<typeof loader>()
   const { token } = useApp()
   const params = useParams()
@@ -25,13 +25,13 @@ export default function ApplicationDetailLayout() {
     nodeEnv,
   })
 
-  const applicationID = params.applicationID
+  const accessRuleID = params.accessRuleID
 
   const menuItems: DetailItemsProps[] = [
     {
       title: 'Overview',
-      path: `/applications/${applicationID}/overview`,
-      icon: FileText as unknown as DetailItemsProps['icon'],
+      path: `/access-rules/${accessRuleID}/overview`,
+      icon: File as unknown as DetailItemsProps['icon'],
     },
   ]
 
@@ -39,7 +39,7 @@ export default function ApplicationDetailLayout() {
     <Layout.Detail
       menuItems={menuItems}
       breadcrumbs={breadcrumbs}
-      isLoading={breadcrumbs.length == 0 || !token || !applicationID}>
+      isLoading={breadcrumbs.length == 0 || !token || !accessRuleID}>
       <div className="max-w-screen-2xl mx-auto">
         <Outlet />
       </div>

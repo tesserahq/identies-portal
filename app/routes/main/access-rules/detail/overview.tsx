@@ -6,79 +6,68 @@ import DeleteConfirmation, {
 import { DetailContent } from '@/components/detail-content'
 import { AppPreloader } from '@/components/loader'
 import { ResourceID, useApp } from 'tessera-ui'
-import { useDeleteApplication, useApplication } from '@/resources/hooks/applications'
-import { type ApplicationType, getApplicationLogoSrc } from '@/resources/queries/applications'
 import { Button } from '@shadcn/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@shadcn/ui/popover'
 import { EllipsisVertical, Pencil, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { Link, useLoaderData, useNavigate, useParams } from 'react-router'
-import { Avatar, AvatarFallback, AvatarImage } from '@/modules/shadcn/ui/avatar'
+import { useLoaderData, useNavigate } from 'react-router'
+import { AccessRuleType } from '@/resources/queries/access-rules'
+import { useAccessRule, useDeleteAccessRule } from '@/resources/hooks/access-rules'
 
-export function loader() {
+export function loader({ params }: { params: { accessRuleID: string } }) {
   const identiesApiUrl = process.env.API_URL
   const nodeEnv = process.env.NODE_ENV
 
-  return { identiesApiUrl, nodeEnv }
+  return { identiesApiUrl, nodeEnv, id: params.accessRuleID }
 }
 
-export default function ApplicationDetail() {
-  const { identiesApiUrl, nodeEnv } = useLoaderData<typeof loader>()
-  const params = useParams()
+export default function AccessRuleDetail() {
+  const { identiesApiUrl, nodeEnv, id } = useLoaderData<typeof loader>()
   const { token } = useApp()
   const navigate = useNavigate()
   const deleteConfirmationRef = useRef<DeleteConfirmationHandle>(null)
-  const [applicationDelete, setApplicationDelete] = useState<ApplicationType>()
+  const [accessDelete, setAccessDelete] = useState<AccessRuleType>()
 
-  const { data: application, isLoading } = useApplication(
-    {
-      apiUrl: identiesApiUrl!,
-      token: token || '',
-      nodeEnv: nodeEnv as any,
-    },
-    params.applicationID!,
-    {
-      enabled: !!token && !!params.applicationID,
-    }
-  )
+  const config = {
+    apiUrl: identiesApiUrl!,
+    token: token || '',
+    nodeEnv: nodeEnv as any,
+  }
 
-  const deleteApplicationMutation = useDeleteApplication(
-    {
-      apiUrl: identiesApiUrl!,
-      token: token!,
-      nodeEnv: nodeEnv as any,
+  const { data, isLoading } = useAccessRule(config, id!, {
+    enabled: !!token && !!id,
+  })
+
+  const deleteAccessRule = useDeleteAccessRule(config, {
+    onSuccess: () => {
+      setAccessDelete(undefined)
+      deleteConfirmationRef.current?.close()
+      navigate('/access-rules')
     },
-    {
-      onSuccess: () => {
-        setApplicationDelete(undefined)
-        deleteConfirmationRef.current?.close()
-        navigate('/applications')
-      },
-    }
-  )
+  })
 
   useEffect(() => {
-    if (applicationDelete && deleteConfirmationRef.current) {
+    if (accessDelete && deleteConfirmationRef.current) {
       deleteConfirmationRef.current.updateConfig({
-        isLoading: deleteApplicationMutation.isPending,
+        isLoading: deleteAccessRule.isPending,
       })
     }
-  }, [deleteApplicationMutation.isPending, applicationDelete])
+  }, [deleteAccessRule.isPending, accessDelete])
 
   if (isLoading || !token) {
     return <AppPreloader />
   }
 
-  const openApplicationDeletion = (deleteThisApplication: ApplicationType): void => {
-    setApplicationDelete(deleteThisApplication)
+  const openAccessRuleDelete = (data: AccessRuleType): void => {
+    setAccessDelete(data)
     deleteConfirmationRef.current?.open({
-      title: 'Delete Application?',
-      description: `You'll permanently lose the application "${deleteThisApplication.name}", this action cannot be undone.`,
+      title: 'Delete Access Rule?',
+      description: `Are you sure you want to permanently delete this ${data.kind}? This action cannot be undone.`,
       onDelete: () => {
         deleteConfirmationRef.current?.updateConfig({
           isLoading: true,
         })
-        deleteApplicationMutation.mutate(deleteThisApplication.id)
+        deleteAccessRule.mutate(data.id)
       },
     })
   }
@@ -86,7 +75,7 @@ export default function ApplicationDetail() {
   return (
     <div className="animate-slide-up space-y-5">
       <DetailContent
-        title={application?.name || 'Unnamed Application'}
+        title={data?.kind || 'Unnamed'}
         actions={
           <Popover>
             <PopoverTrigger>
@@ -98,65 +87,47 @@ export default function ApplicationDetail() {
               <Button
                 variant="ghost"
                 className="flex w-full justify-start"
-                onClick={() => navigate(`/applications/${application?.id}/edit`)}>
+                onClick={() => navigate(`/access-rules/${data?.id}/edit`)}>
                 <Pencil />
                 <span>Edit</span>
               </Button>
               <Button
                 variant="ghost"
                 className="flex w-full justify-start hover:bg-destructive hover:text-white"
-                onClick={() => application && openApplicationDeletion(application)}>
+                onClick={() => data && openAccessRuleDelete(data)}>
                 <Trash2 />
                 <span>Remove</span>
               </Button>
             </PopoverContent>
           </Popover>
         }>
-        <div className="mb-4 flex items-center gap-3">
-          <Avatar className="h-12 w-12">
-            <AvatarImage src={getApplicationLogoSrc(application?.logo)} />
-            <AvatarFallback>
-              <img src="/images/default-user-avatar.jpg" alt="default-logo" />
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <div className="text-sm font-medium">{application?.name || 'Unnamed'}</div>
-            <div className="text-xs text-muted-foreground">{application?.url}</div>
-          </div>
-        </div>
         <div className="d-list">
           <div className="d-item">
             <dt className="d-label">ID</dt>
-            <dd className="d-content">
-              {application?.id ? <ResourceID value={application.id} /> : 'N/A'}
-            </dd>
+            <dd className="d-content">{data?.id ? <ResourceID value={data.id} /> : 'N/A'}</dd>
           </div>
           <div className="d-item">
-            <dt className="d-label">Name</dt>
-            <dd className="d-content">{application?.name || 'N/A'}</dd>
+            <dt className="d-label">Kind</dt>
+            <dd className="d-content">{data?.kind || 'N/A'}</dd>
           </div>
           <div className="d-item">
-            <dt className="d-label">URL</dt>
-            <dd className="d-content">
-              <Link to={application?.url || ''} target="_blank" className="button-link">
-                {application?.url}
-              </Link>
-            </dd>
+            <dt className="d-label">Value</dt>
+            <dd className="d-content">{data?.value || 'N/A'}</dd>
           </div>
           <div className="d-item">
-            <dt className="d-label">Description</dt>
-            <dd className="d-content">{application?.description || 'N/A'}</dd>
+            <dt className="d-label">Note</dt>
+            <dd className="d-content">{data?.note || 'N/A'}</dd>
           </div>
           <div className="d-item">
             <dt className="d-label">Created At</dt>
             <dd className="d-content">
-              {application?.created_at && <DateTime date={application.created_at + 'z'} />}
+              {data?.created_at && <DateTime date={data.created_at + 'z'} />}
             </dd>
           </div>
           <div className="d-item">
             <dt className="d-label">Updated At</dt>
             <dd className="d-content">
-              {application?.updated_at && <DateTime date={application.updated_at + 'z'} />}
+              {data?.updated_at && <DateTime date={data.updated_at + 'z'} />}
             </dd>
           </div>
         </div>

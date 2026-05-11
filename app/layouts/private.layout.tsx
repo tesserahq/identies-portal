@@ -29,7 +29,11 @@ export default function PrivateLayout() {
   const navigate = useNavigate()
   const params = useParams()
   const shouldCollapseSidebar = Boolean(
-    params['accountID'] || params['userID'] || params['serviceAccountID'] || params['applicationID']
+    params['accountID'] ||
+    params['userID'] ||
+    params['serviceAccountID'] ||
+    params['applicationID'] ||
+    params['accessRuleID']
   )
 
   const onSetTheme = (theme: string) => {
