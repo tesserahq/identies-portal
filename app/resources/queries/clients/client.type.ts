@@ -14,4 +14,4 @@ export type ClientType = {
 /**
  * Client form data for API requests
  */
-export type ClientFormData = Partial<Pick<ClientType, 'name'>>
+export type ClientFormData = Pick<ClientType, 'name'>

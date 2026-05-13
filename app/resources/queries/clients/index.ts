@@ -5,6 +5,7 @@ export {
   createClient,
   deleteCliente,
   updateClient,
+  ResourceClientUrlEnum,
 } from './client.queries'
 
 // Types

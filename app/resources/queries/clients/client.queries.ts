@@ -1,9 +1,10 @@
 import { fetchApi } from '@/libraries/fetch'
 import { IQueryConfig } from '..'
 import { ClientFormData, ClientType } from './client.type'
+import { IPaging } from '@/resources/types'
 
 export enum ResourceClientUrlEnum {
-  SERVICE_ACCOUNT = '/service_accounts',
+  SERVICE_ACCOUNT = '/service-accounts',
   USER = '/users',
 }
 
@@ -14,14 +15,14 @@ export async function fetchClients(
   config: IQueryConfig,
   resourceURL: ResourceClientUrlEnum,
   resourceID: string
-): Promise<ClientType[]> {
+): Promise<IPaging<ClientType>> {
   const { apiUrl, token, nodeEnv } = config
 
   const response = await fetchApi(`${apiUrl}${resourceURL}/${resourceID}/clients`, token, nodeEnv, {
     method: 'GET',
   })
 
-  return response as ClientType[]
+  return response as IPaging<ClientType>
 }
 
 /**
