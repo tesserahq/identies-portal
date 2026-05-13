@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useLoaderData } from 'react-router'
 import { ClientNewContent } from '@/components/client-content'
 import { ResourceClientUrlEnum } from '@/resources/queries/clients'

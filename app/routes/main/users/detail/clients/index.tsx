@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ensureCanonicalPagination } from '@/utils/helpers/pagination.helper'
 import { LoaderFunctionArgs, useLoaderData } from 'react-router'
 import { ClientsListingContent } from '@/components/client-content'

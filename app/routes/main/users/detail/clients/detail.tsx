@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoaderFunctionArgs, useLoaderData } from 'react-router'
 import { ClientDetailContent } from '@/components/client-content'
 import { usersQueryKeys } from '@/resources/hooks/users'
