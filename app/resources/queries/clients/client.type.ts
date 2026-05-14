@@ -9,6 +9,7 @@ export type ClientType = {
   client_id: string
   revoked: boolean
   created_at: string
+  client_secret?: string
 }
 
 /**

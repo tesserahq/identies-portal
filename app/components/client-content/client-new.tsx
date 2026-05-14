@@ -5,11 +5,14 @@ import { useCreateClient } from '@/resources/hooks/clients'
 import { ClientForm } from '../crud-form/client-form'
 import {
   ClientFormData,
+  ClientType,
   defaultClientFormValues,
   ResourceClientUrlEnum,
 } from '@/resources/queries/clients'
 import { usersQueryKeys } from '@/resources/hooks/users'
 import { serviceAccountQueryKeys } from '@/resources/hooks/service-accounts'
+import { useState } from 'react'
+import { ClientDetailContent } from './client-detail'
 
 interface Props {
   apiUrl: string
@@ -28,6 +31,8 @@ export function ClientNewContent({
   const { token } = useApp()
   const navigate = useNavigate()
 
+  const [client, setClient] = useState<ClientType>()
+
   const config = {
     apiUrl,
     token: token!,
@@ -41,9 +46,7 @@ export function ClientNewContent({
     resourceID,
     queryKey,
     {
-      onSuccess: (data) => {
-        navigate(`${resourceTypeEnum}/${resourceID}/clients/${data.id}`)
-      },
+      onSuccess: setClient,
     }
   )
 
@@ -53,7 +56,17 @@ export function ClientNewContent({
 
   const onCancel = () => navigate(-1)
 
-  return (
+  return client ? (
+    <ClientDetailContent
+      apiUrl={apiUrl!}
+      nodeEnv={nodeEnv!}
+      resourceClientEnum={resourceTypeEnum}
+      queryKey={serviceAccountQueryKeys}
+      resourceID={resourceID!}
+      clientID={client.id!}
+      clientData={client}
+    />
+  ) : (
     <ClientForm
       onCancel={onCancel}
       defaultValues={defaultClientFormValues}

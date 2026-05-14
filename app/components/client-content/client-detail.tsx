@@ -12,7 +12,7 @@ import { useApp } from 'tessera-ui'
 import { Badge } from '@shadcn/ui/badge'
 import { Button } from '@shadcn/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@shadcn/ui/popover'
-import { EllipsisVertical, Pencil, ShieldX, Trash2 } from 'lucide-react'
+import { Check, CheckCircle2Icon, Copy, EllipsisVertical, ShieldX, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { NodeENVType } from '@/libraries/fetch'
@@ -21,6 +21,13 @@ import { usersQueryKeys } from '@/resources/hooks/users'
 import { useClient, useDeleteClient, useRevokeClient } from '@/resources/hooks/clients'
 import { ClientType, ResourceClientUrlEnum } from '@/resources/queries/clients'
 import { cn } from '@/modules/shadcn/lib/utils'
+import { Alert, AlertDescription, AlertTitle } from '@/modules/shadcn/ui/alert'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/modules/shadcn/ui/tooltip'
 
 interface Props {
   apiUrl: string
@@ -29,6 +36,7 @@ interface Props {
   queryKey: typeof usersQueryKeys | typeof serviceAccountQueryKeys
   resourceID: string
   clientID: string
+  clientData?: ClientType
 }
 
 export function ClientDetailContent({
@@ -38,7 +46,9 @@ export function ClientDetailContent({
   queryKey,
   resourceID,
   clientID,
+  clientData,
 }: Props) {
+  const [isCopied, setIsCopied] = useState<boolean>(false)
   const { token } = useApp()
   const navigate = useNavigate()
   const revokeConfirmationRef = useRef<RevokeConfirmationHandle>(null)
@@ -49,12 +59,12 @@ export function ClientDetailContent({
   const config = { apiUrl, nodeEnv, token: token! }
 
   const {
-    data: client,
+    data: clientGetData,
     isLoading,
     error,
     refetch,
   } = useClient(config, resourceID, clientID, queryKey, {
-    enabled: !!token && !!clientID,
+    enabled: !!token && !!clientID && !clientData,
   })
 
   const revokeClientMutation = useRevokeClient(config, resourceID, queryKey, {
@@ -89,11 +99,11 @@ export function ClientDetailContent({
     }
   }, [deleteClientMutation.isPending, clientDelete])
 
-  if (isLoading || !token) {
+  if (!clientData && (isLoading || !token)) {
     return <AppPreloader className="min-h-screen" />
   }
 
-  if (error) {
+  if (!clientData && error) {
     return (
       <EmptyContent
         title="Oops, Looks like there is problem on serving the data"
@@ -130,42 +140,88 @@ export function ClientDetailContent({
     })
   }
 
+  const client = clientData ?? clientGetData
+
   return (
     <div className="space-y-5">
       <DetailContent
         title={client?.name || ''}
         actions={
-          <Popover>
-            <PopoverTrigger>
-              <Button variant="ghost" size="icon">
-                <EllipsisVertical />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent side="left" align="start" className="w-44 p-2">
-              <Button
-                variant="ghost"
-                className="flex w-full justify-start"
-                disabled={!!client?.revoked || revokeClientMutation.isPending}
-                onClick={() => client && openClientRevoke(client)}>
-                <ShieldX />
-                <span>
-                  {revokeClientMutation.isPending
-                    ? 'Revoking...'
-                    : client?.revoked
-                      ? 'Revoked'
-                      : 'Revoke'}
-                </span>
-              </Button>
-              <Button
-                variant="ghost"
-                className="flex w-full justify-start hover:bg-destructive hover:text-white"
-                onClick={() => client && openClientDeletion(client)}>
-                <Trash2 />
-                <span>Remove</span>
-              </Button>
-            </PopoverContent>
-          </Popover>
+          clientData ? (
+            <></>
+          ) : (
+            <Popover>
+              <PopoverTrigger>
+                <Button variant="ghost" size="icon">
+                  <EllipsisVertical />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent side="left" align="start" className="w-44 p-2">
+                <Button
+                  variant="ghost"
+                  className="flex w-full justify-start"
+                  disabled={!!client?.revoked || revokeClientMutation.isPending}
+                  onClick={() => client && openClientRevoke(client)}>
+                  <ShieldX />
+                  <span>
+                    {revokeClientMutation.isPending
+                      ? 'Revoking...'
+                      : client?.revoked
+                        ? 'Revoked'
+                        : 'Revoke'}
+                  </span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="flex w-full justify-start hover:bg-destructive hover:text-white"
+                  onClick={() => client && openClientDeletion(client)}>
+                  <Trash2 />
+                  <span>Remove</span>
+                </Button>
+              </PopoverContent>
+            </Popover>
+          )
         }>
+        {clientData && (
+          <Alert variant="success" className="mb-5">
+            <CheckCircle2Icon size={18} className="dark:text-green-100" />
+            <AlertTitle>
+              Make sure to copy the client key key now. You won&apos;t be able to see it again!
+            </AlertTitle>
+            <AlertDescription>
+              <div className="flex items-center gap-2">
+                <div
+                  className="mt-2 flex items-center justify-between rounded-lg bg-green-100 px-3
+                    py-2 text-sm dark:bg-green-600">
+                  <span className="font-mono font-medium dark:text-white">
+                    {clientData?.client_secret}
+                  </span>
+                  <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="ml-2 h-5 w-5 dark:bg-transparent dark:text-white"
+                          onClick={() => {
+                            navigator.clipboard.writeText(clientData?.client_secret || '')
+                            setIsCopied(true)
+
+                            setTimeout(() => setIsCopied(false), 2000)
+                          }}>
+                          {isCopied ? <Check /> : <Copy />}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <span className="font-sans">Copy Client Key</span>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
         <div className="d-list">
           <div className="d-item">
             <dt className="d-label">Name</dt>
@@ -215,6 +271,16 @@ export function ClientDetailContent({
             </dd>
           </div>
         </div>
+        {clientData && (
+          <div className="mt-3 flex justify-end">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => navigate(`${resourceClientEnum}/${resourceID}/clients`)}>
+              Back
+            </Button>
+          </div>
+        )}
       </DetailContent>
       <RevokeConfirmation ref={revokeConfirmationRef} />
       <DeleteConfirmation ref={deleteConfirmationRef} />
