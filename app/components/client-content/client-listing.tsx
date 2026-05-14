@@ -63,7 +63,7 @@ export function ClientsListingContent({
   }
 
   // React Query hooks
-  const { data, isLoading, error, refetch } = useClients(
+  const { data, isLoading, isFetching, error, refetch } = useClients(
     config,
     params,
     resourceClientEnum,
@@ -260,7 +260,7 @@ export function ClientsListingContent({
     })
   }
 
-  if (isLoading || !token) {
+  if (isLoading || isFetching || !token) {
     return <AppPreloader className="min-h-screen" />
   }
 
