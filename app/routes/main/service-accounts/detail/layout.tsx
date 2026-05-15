@@ -1,5 +1,5 @@
 import useBreadcrumb from '@/hooks/useBreadcrumbs'
-import { FileText, Key } from 'lucide-react'
+import { FileText, Key, MonitorCheck } from 'lucide-react'
 import { Outlet, useLoaderData, useLocation, useParams } from 'react-router'
 import { useApp } from 'tessera-ui'
 import { DetailItemsProps, Layout } from 'tessera-ui/layouts'
@@ -38,6 +38,11 @@ export default function DetailLayout() {
       title: 'API Keys',
       path: `/service-accounts/${serviceAccountID}/api-keys`,
       icon: Key as unknown as DetailItemsProps['icon'],
+    },
+    {
+      title: 'Clients',
+      path: `/service-accounts/${serviceAccountID}/clients`,
+      icon: MonitorCheck,
     },
   ]
 

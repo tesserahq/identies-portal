@@ -58,6 +58,9 @@ export default function PrivateLayout() {
   }
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/')
+    }
     if (!isLoading && isAuthenticated) {
       fetchToken()
     }

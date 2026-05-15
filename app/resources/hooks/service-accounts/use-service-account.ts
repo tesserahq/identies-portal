@@ -47,6 +47,11 @@ export const serviceAccountQueryKeys = {
   apiKeysList: (serviceAccountId: string) =>
     [...serviceAccountQueryKeys.apiKeys(), serviceAccountId] as const,
   apiKey: (id: string) => [...serviceAccountQueryKeys.apiKeys(), id] as const,
+  clients: (userId: string) => [...serviceAccountQueryKeys.all, 'clients', userId] as const,
+  clientsList: (userId: string, params: IQueryParams) =>
+    [...serviceAccountQueryKeys.clients(userId), params] as const,
+  client: (userId: string, id: string) =>
+    [...serviceAccountQueryKeys.clients(userId), 'detail', id] as const,
 }
 
 /**

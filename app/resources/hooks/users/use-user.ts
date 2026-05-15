@@ -38,6 +38,11 @@ export const usersQueryKeys = {
   apiKeys: () => [...usersQueryKeys.all, 'api-keys'] as const,
   apiKeysList: (userId: string) => [...usersQueryKeys.apiKeys(), userId] as const,
   apiKey: (id: string) => [...usersQueryKeys.apiKeys(), id] as const,
+  clients: (userId: string) => [...usersQueryKeys.all, 'clients', userId] as const,
+  clientsList: (userId: string, params: IQueryParams) =>
+    [...usersQueryKeys.clients(userId), params] as const,
+  client: (userId: string, id: string) =>
+    [...usersQueryKeys.clients(userId), 'detail', id] as const,
 }
 
 /**

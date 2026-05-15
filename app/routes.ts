@@ -39,6 +39,10 @@ export default [
         route('api-keys/new', 'routes/main/users/detail/api-keys/new.tsx'),
         route('api-keys/:apiKeyID', 'routes/main/users/detail/api-keys/detail.tsx'),
         route('api-keys/:apiKeyID/edit', 'routes/main/users/detail/api-keys/edit.tsx'),
+
+        route('clients', 'routes/main/users/detail/clients/index.tsx'),
+        route('clients/new', 'routes/main/users/detail/clients/new.tsx'),
+        route('clients/:clientID', 'routes/main/users/detail/clients/detail.tsx'),
       ]),
     ]),
 
@@ -55,6 +59,10 @@ export default [
         route('api-keys/new', 'routes/main/service-accounts/detail/api-keys/new.tsx'),
         route('api-keys/:apiKeyID', 'routes/main/service-accounts/detail/api-keys/detail.tsx'),
         route('api-keys/:apiKeyID/edit', 'routes/main/service-accounts/detail/api-keys/edit.tsx'),
+
+        route('clients', 'routes/main/service-accounts/detail/clients/index.tsx'),
+        route('clients/new', 'routes/main/service-accounts/detail/clients/new.tsx'),
+        route('clients/:clientID', 'routes/main/service-accounts/detail/clients/detail.tsx'),
       ]),
     ]),
 
