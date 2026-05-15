@@ -186,7 +186,7 @@ export function ClientDetailContent({
           <Alert variant="success" className="mb-5">
             <CheckCircle2Icon size={18} className="dark:text-green-100" />
             <AlertTitle>
-              Make sure to copy the client key key now. You won&apos;t be able to see it again!
+              Make sure to copy the client secret now. You won&apos;t be able to see it again!
             </AlertTitle>
             <AlertDescription>
               <div className="flex items-center gap-2">
