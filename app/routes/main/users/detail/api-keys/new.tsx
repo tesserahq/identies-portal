@@ -25,7 +25,7 @@ export default function UserApiKeyNew() {
   // API key create mutation
   const { mutateAsync: createApiKey } = useCreateUserApiKey(
     { apiUrl: apiUrl!, token: token!, nodeEnv: nodeEnv as any },
-    params.id as string,
+    params.userID as string,
     {
       onSuccess: setApiKey,
     }
@@ -38,7 +38,7 @@ export default function UserApiKeyNew() {
   const onCancel = () => navigate(-1)
 
   return apiKey ? (
-    <ApiKeyPreview apiKey={apiKey} backTo={`/users/${params.id}/api-keys`} />
+    <ApiKeyPreview apiKey={apiKey} backTo={`/users/${params.userID}/api-keys`} />
   ) : (
     <ApiKeyForm
       onSubmit={handleSubmit}

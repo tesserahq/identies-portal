@@ -32,9 +32,9 @@ export default function ServiceAccountApiKeyEdit() {
       token: token!,
       nodeEnv: nodeEnv as any,
     },
-    params.apiKeyId!,
+    params.apiKeyID!,
     {
-      enabled: !!token && !!params.apiKeyId,
+      enabled: !!token && !!params.apiKeyID,
     }
   )
 
@@ -45,7 +45,7 @@ export default function ServiceAccountApiKeyEdit() {
       token: token!,
       nodeEnv: nodeEnv as any,
     },
-    params.apiKeyId!,
+    params.apiKeyID!,
     {
       onSuccess: (data: ApiKeyType) => {
         navigate(`/service-accounts/${params.serviceAccountID}/api-keys/${data.id}`)
@@ -75,6 +75,11 @@ export default function ServiceAccountApiKeyEdit() {
   }
 
   return (
-    <ApiKeyForm onSubmit={handleSubmit} defaultValues={apiKeyToFormValues(apiKey)} isEdit={true} />
+    <ApiKeyForm
+      onSubmit={handleSubmit}
+      defaultValues={apiKeyToFormValues(apiKey)}
+      isEdit={true}
+      onCancel={() => navigate(`/service-accounts/${params.serviceAccountID}/api-keys`)}
+    />
   )
 }

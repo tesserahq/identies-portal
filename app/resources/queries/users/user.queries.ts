@@ -69,7 +69,7 @@ export async function fetchUserApiKeys(userId: string, config: IQueryConfig, par
   const { apiUrl, token, nodeEnv } = config
   const { page, size } = params
 
-  const response = await fetchApi(`${apiUrl}/users/${userId}/api-keys`, token, nodeEnv, {
+  const response = await fetchApi(`${apiUrl}/api-keys/users/${userId}`, token, nodeEnv, {
     method: 'GET',
     pagination: { page, size },
   })
@@ -107,7 +107,7 @@ export async function createUserApiKey(config: IQueryConfig, userId: string, dat
     expires_at: expiresAtEndOfDay,
   }
 
-  const response = await fetchApi(`${apiUrl}/users/${userId}/api-keys`, token, nodeEnv, {
+  const response = await fetchApi(`${apiUrl}/api-keys/users/${userId}`, token, nodeEnv, {
     method: 'POST',
     body: JSON.stringify(payload),
   })
