@@ -40,7 +40,10 @@ export default function ApiKeyNew() {
   const onCancel = () => navigate(-1)
 
   return apiKey ? (
-    <ApiKeyPreview apiKey={apiKey} backTo={`/service-accounts/${params.id}/api-keys`} />
+    <ApiKeyPreview
+      apiKey={apiKey}
+      backTo={`/service-accounts/${params.serviceAccountID}/api-keys`}
+    />
   ) : (
     <ApiKeyForm
       onSubmit={handleSubmit}

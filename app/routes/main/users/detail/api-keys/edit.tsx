@@ -32,9 +32,9 @@ export default function UserApiKeyEdit() {
       token: token!,
       nodeEnv: nodeEnv as any,
     },
-    params.apiKeyId!,
+    params.apiKeyID!,
     {
-      enabled: !!token && !!params.apiKeyId,
+      enabled: !!token && !!params.apiKeyID,
     }
   )
 
@@ -45,10 +45,10 @@ export default function UserApiKeyEdit() {
       token: token!,
       nodeEnv: nodeEnv as any,
     },
-    params.apiKeyId!,
+    params.apiKeyID!,
     {
       onSuccess: (data: ApiKeyType) => {
-        navigate(`/users/${params.id}/api-keys/${data.id}`)
+        navigate(`/users/${params.userID}/api-keys/${data.id}`)
       },
     }
   )
@@ -67,12 +67,19 @@ export default function UserApiKeyEdit() {
         title="Error Fetching API Key Detail"
         image="/images/empty-api-keys.png"
         description={error?.message}>
-        <Button onClick={() => navigate(`/users/${params.id}/api-keys`)}>Back to API Keys</Button>
+        <Button onClick={() => navigate(`/users/${params.userID}/api-keys`)}>
+          Back to API Keys
+        </Button>
       </EmptyContent>
     )
   }
 
   return (
-    <ApiKeyForm onSubmit={handleSubmit} defaultValues={apiKeyToFormValues(apiKey)} isEdit={true} />
+    <ApiKeyForm
+      onSubmit={handleSubmit}
+      defaultValues={apiKeyToFormValues(apiKey)}
+      isEdit={true}
+      onCancel={() => navigate(`/users/${params.userID}/api-keys`)}
+    />
   )
 }

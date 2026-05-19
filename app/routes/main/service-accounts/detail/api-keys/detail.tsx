@@ -164,7 +164,11 @@ export default function ServiceAccountApiKeyDetail() {
                   <Button
                     variant="ghost"
                     className="flex w-full justify-start"
-                    onClick={() => navigate(`/api-keys/${apiKey?.id}/edit`)}>
+                    onClick={() =>
+                      navigate(
+                        `/service-accounts/${params.serviceAccountID}/api-keys/${apiKey?.id}/edit`
+                      )
+                    }>
                     <Pencil />
                     <span>Edit</span>
                   </Button>

@@ -75,7 +75,7 @@ export default function UserApiKeyDetail() {
       onSuccess: () => {
         setApiKeyDelete(undefined)
         deleteConfirmationRef.current?.close()
-        navigate(`/users/${params.id}/api-keys`)
+        navigate(`/users/${params.userID}/api-keys`)
       },
     }
   )
@@ -136,7 +136,9 @@ export default function UserApiKeyDetail() {
         title="Error Fetching API Key Detail"
         image="/images/empty-api-keys.png"
         description={error.message}>
-        <Button onClick={() => navigate(`/users/${params.id}/api-keys`)}>Back to API Keys</Button>
+        <Button onClick={() => navigate(`/users/${params.userID}/api-keys`)}>
+          Back to API Keys
+        </Button>
       </EmptyContent>
     )
   }
@@ -158,7 +160,7 @@ export default function UserApiKeyDetail() {
                 <Button
                   variant="ghost"
                   className="flex w-full justify-start"
-                  onClick={() => navigate(`/users/${params.id}/api-keys/${apiKey?.id}/edit`)}>
+                  onClick={() => navigate(`/users/${params.userID}/api-keys/${apiKey?.id}/edit`)}>
                   <Pencil />
                   <span>Edit</span>
                 </Button>
