@@ -6,6 +6,7 @@ import { Input } from '@/modules/shadcn/ui/input'
 import { useUsers } from '@/resources/hooks/users'
 import type { UserType } from '@/resources/queries/users'
 import { ensureCanonicalPagination } from '@/utils/helpers/pagination.helper'
+import { getUserProviderIcon } from '@/utils/helpers/user-provider.helper'
 import { Badge } from '@shadcn/ui/badge'
 import { Button } from '@shadcn/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@shadcn/ui/popover'
@@ -118,6 +119,23 @@ export default function Users() {
         accessorKey: 'provider',
         header: 'Provider',
         size: 140,
+        cell: ({ row }) => {
+          const { provider } = row.original
+          const src = getUserProviderIcon(provider)
+          return (
+            <div className="flex items-center gap-2">
+              {provider ? (
+                src ? (
+                  <img src={src} alt={provider} className="h-7 w-7" />
+                ) : (
+                  <span className="truncate">{provider}</span>
+                )
+              ) : (
+                <span>-</span>
+              )}
+            </div>
+          )
+        },
       },
       {
         accessorKey: 'verified',

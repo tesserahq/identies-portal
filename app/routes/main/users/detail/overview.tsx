@@ -5,6 +5,7 @@ import { useUserById } from '@/resources/hooks/users/use-user'
 import { useLoaderData } from 'react-router'
 import { DateTime, ResourceID } from 'tessera-ui/components'
 import { Badge } from '@/modules/shadcn/ui/badge'
+import { getUserProviderIcon } from '@/utils/helpers/user-provider.helper'
 
 export async function loader({ params }: { params: { userID: string } }) {
   const apiUrl = process.env.API_URL
@@ -20,6 +21,8 @@ export default function UserOverview() {
   const config = { apiUrl: apiUrl!, token: token!, nodeEnv: nodeEnv }
 
   const { data: user, isLoading } = useUserById(config, id)
+
+  const providerImgSrc = getUserProviderIcon(user?.provider)
 
   if (isLoading || !token) {
     return <AppPreloader className="min-h-screen" />
@@ -51,7 +54,17 @@ export default function UserOverview() {
           </div>
           <div className="d-item">
             <dt className="d-label">Provider</dt>
-            <dd className="d-content">{user?.provider || 'N/A'}</dd>
+            <dd className="d-content">
+              {user?.provider ? (
+                providerImgSrc ? (
+                  <img src={providerImgSrc} alt={user?.provider} className="h-7 w-7" />
+                ) : (
+                  <span className="truncate">{user?.provider}</span>
+                )
+              ) : (
+                <span>N/A</span>
+              )}
+            </dd>
           </div>
           <div className="d-item">
             <dt className="d-label">Status</dt>
