@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AppPreloader } from '@/components/loader'
 import { useApp } from 'tessera-ui'
 import { useLoaderData, useNavigate, useParams } from 'react-router'
