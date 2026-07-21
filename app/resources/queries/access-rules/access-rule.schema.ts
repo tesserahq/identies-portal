@@ -1,11 +1,20 @@
 import { z } from 'zod/v4'
-import { AccessRuleType } from './access-rule.type'
+import { AccessRuleKindTypes, AccessRuleType } from './access-rule.type'
 
-export const accessRuleSchema = z.object({
-  kind: z.string().min(1, 'Kind is required'),
-  value: z.string().min(1, 'Value is required'),
-  note: z.string().optional(),
-})
+export const accessRuleSchema = z.discriminatedUnion('kind', [
+  z.object({
+    kind: z.literal<AccessRuleKindTypes['id']>('email'),
+    value: z.string().min(1, 'Value is required').email({ message: 'Invalid email address' }),
+    note: z.string().optional(),
+  }),
+  z.object({
+    kind: z.literal<AccessRuleKindTypes['id']>('domain'),
+    value: z.string().min(1, 'Value is required').regex(z.regexes.domain, {
+      message: 'Invalid domain name. Must include a valid domain extension',
+    }),
+    note: z.string().optional(),
+  }),
+])
 
 export type AccessRuleFormValue = z.infer<typeof accessRuleSchema>
 
@@ -14,7 +23,7 @@ export type AccessRuleFormValue = z.infer<typeof accessRuleSchema>
  */
 export function accessRuleToFormValues(data: AccessRuleType): AccessRuleFormValue {
   return {
-    kind: data.kind || '',
+    kind: (data.kind as AccessRuleKindTypes['id']) || 'email',
     value: data.value || '',
     note: data.note || '',
   }
@@ -37,7 +46,7 @@ export function formValuesToAccessRuleData(
  * Default form values for AccessRule form
  */
 export const defaultAccessRuleFormValues: AccessRuleFormValue = {
-  kind: '',
+  kind: 'email',
   value: '',
   note: '',
 }

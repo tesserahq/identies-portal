@@ -1,7 +1,7 @@
 import { fetchApi } from '@/libraries/fetch'
 import { IPaging } from '@/resources/types'
 import { IQueryConfig, IQueryParams } from '..'
-import { AccessRuleFormData, AccessRuleType } from './access-rule.type'
+import { AccessRuleFormData, AccessRuleKindTypes, AccessRuleType } from './access-rule.type'
 
 /**
  * List all resource with pagination.
@@ -84,4 +84,19 @@ export async function deleteAccessRule(config: IQueryConfig, accessRuleID: strin
   })
 
   return response
+}
+
+/**
+ * List all access rule types
+ */
+export async function fetchAccessRuleKindTypes(config: IQueryConfig, params: IQueryParams) {
+  const { apiUrl, token, nodeEnv } = config
+  const { page, size } = params
+
+  const response = await fetchApi(`${apiUrl}/access-rules/types`, token, nodeEnv, {
+    method: 'GET',
+    pagination: { page, size },
+  })
+
+  return response as IPaging<AccessRuleKindTypes>
 }

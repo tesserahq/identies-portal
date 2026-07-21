@@ -5,4 +5,5 @@ export {
   useUpdateAccessRule,
   useDeleteAccessRule,
   accessRuleQueryKeys,
+  useAccessRuleKinds,
 } from './use-access-rule'

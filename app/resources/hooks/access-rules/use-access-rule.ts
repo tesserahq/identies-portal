@@ -6,6 +6,7 @@ import {
   createAccessRule,
   deleteAccessRule,
   fetchAccessRuleDetail,
+  fetchAccessRuleKindTypes,
   fetchAccessRules,
   updateAccessRule,
 } from '@/resources/queries/access-rules'
@@ -37,6 +38,8 @@ export const accessRuleQueryKeys = {
     [...accessRuleQueryKeys.lists(), config, params] as const,
   details: () => [...accessRuleQueryKeys.all, 'detail'] as const,
   detail: (id: string) => [...accessRuleQueryKeys.details(), id] as const,
+  kinds: () => [...accessRuleQueryKeys.all, 'kinds'] as const,
+  kindTypes: (params: IQueryParams) => [...accessRuleQueryKeys.kinds(), params] as const,
 }
 
 /**
@@ -219,5 +222,34 @@ export function useDeleteAccessRule(
 
       options?.onError?.(error)
     },
+  })
+}
+
+/**
+ * Hook for fetching paginated access rule kinds
+ */
+export function useAccessRuleKinds(
+  config: IQueryConfig,
+  params: IQueryParams,
+  options?: {
+    enabled?: boolean
+    staleTime?: number
+  }
+) {
+  return useQuery({
+    queryKey: accessRuleQueryKeys.kindTypes(params),
+    queryFn: async () => {
+      try {
+        if (!config.token) {
+          throw new QueryError('Token is required', 'TOKEN_REQUIRED')
+        }
+
+        return await fetchAccessRuleKindTypes(config, params)
+      } catch (error: any) {
+        throw new QueryError(error.message)
+      }
+    },
+    staleTime: options?.staleTime || 5 * 60 * 1000, // 5 minutes
+    enabled: options?.enabled !== false,
   })
 }

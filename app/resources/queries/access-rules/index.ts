@@ -5,10 +5,11 @@ export {
   createAccessRule,
   updateAccessRule,
   deleteAccessRule,
+  fetchAccessRuleKindTypes,
 } from './access-rule.queries'
 
 // Types
-export type { AccessRuleType, AccessRuleFormData } from './access-rule.type'
+export type { AccessRuleType, AccessRuleFormData, AccessRuleKindTypes } from './access-rule.type'
 
 // Schemas
 export {
