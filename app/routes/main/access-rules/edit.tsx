@@ -1,14 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AppPreloader } from '@/components/loader'
 import { useApp } from 'tessera-ui'
 import { useLoaderData, useNavigate, useParams } from 'react-router'
-import { useAccessRule, useUpdateAccessRule } from '@/resources/hooks/access-rules'
+import {
+  useAccessRule,
+  useAccessRuleKinds,
+  useUpdateAccessRule,
+} from '@/resources/hooks/access-rules'
 import {
   AccessRuleFormData,
   accessRuleToFormValues,
   AccessRuleType,
 } from '@/resources/queries/access-rules'
 import { AccessRuleForm } from '@/components/crud-form/access-rule-form'
+import { NodeENVType } from '@/libraries/fetch'
 
 export function loader() {
   const apiUrl = process.env.API_URL
@@ -22,32 +26,23 @@ export default function ApplicationEdit() {
   const { token } = useApp()
   const navigate = useNavigate()
   const params = useParams()
+  const config = {
+    apiUrl: apiUrl!,
+    token: token!,
+    nodeEnv: nodeEnv as NodeENVType,
+  }
 
-  const { data: application, isLoading } = useAccessRule(
-    {
-      apiUrl: apiUrl!,
-      token: token!,
-      nodeEnv: nodeEnv as any,
-    },
-    params.accessRuleID!,
-    {
-      enabled: !!token && !!params.accessRuleID,
-    }
-  )
+  const { data: application, isLoading } = useAccessRule(config, params.accessRuleID!, {
+    enabled: !!token && !!params.accessRuleID,
+  })
 
-  const { mutateAsync: updateApplication } = useUpdateAccessRule(
-    {
-      apiUrl: apiUrl!,
-      token: token!,
-      nodeEnv: nodeEnv as any,
+  const { mutateAsync: updateApplication } = useUpdateAccessRule(config, params.accessRuleID!, {
+    onSuccess: (data: AccessRuleType) => {
+      navigate(`/access-rules/${data.id}`)
     },
-    params.accessRuleID!,
-    {
-      onSuccess: (data: AccessRuleType) => {
-        navigate(`/access-rule/${data.id}`)
-      },
-    }
-  )
+  })
+
+  const { data } = useAccessRuleKinds(config, { page: 1, size: 100 })
 
   const handleSubmit = async (data: AccessRuleFormData): Promise<void> => {
     await updateApplication(data)
@@ -61,6 +56,7 @@ export default function ApplicationEdit() {
     <AccessRuleForm
       onSubmit={handleSubmit}
       defaultValues={accessRuleToFormValues(application)}
+      accessRuleKinds={data?.items ?? []}
       isEdit={true}
     />
   )
