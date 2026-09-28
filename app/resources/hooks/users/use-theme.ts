@@ -2,7 +2,7 @@ import { useUpdateUser } from './use-me'
 import { UserType } from '@/resources/queries/users/user.type'
 import { useSubmit } from 'react-router'
 import { ROUTE_PATH as THEME_PATH } from '@/routes/resources/update-theme'
-import { useTheme as useSystemTheme } from '@/hooks/useTheme'
+import { useTheme as useSystemTheme } from 'tessera-ui/react-router'
 import { IQueryConfig } from '@/resources/queries'
 
 /**

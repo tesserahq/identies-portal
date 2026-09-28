@@ -1,9 +1,8 @@
-import type { Theme, ThemeExtended } from '@/hooks/useTheme'
+import { type Theme, type ThemeExtended, useOptimisticThemeMode } from 'tessera-ui/react-router'
 import { useSubmit, useFetcher } from 'react-router'
 import { Sun, Moon, Monitor } from 'lucide-react'
 import { ROUTE_PATH as THEME_PATH } from '@/routes/resources/update-theme'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@shadcn/ui/select'
-import { useOptimisticThemeMode } from '@/hooks/useTheme'
 
 export function ThemeSwitcher({
   userPreference,

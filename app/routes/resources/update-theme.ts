@@ -1,13 +1,12 @@
 import type { ActionFunctionArgs } from 'react-router'
 import { redirect } from 'react-router'
 import { safeRedirect } from 'remix-utils/safe-redirect'
-import { ThemeSchema, setTheme } from '@/hooks/useTheme'
+import { parseThemeFormData, setTheme } from 'tessera-ui/server'
 
 export const ROUTE_PATH = '/resources/update-theme' as const
 
 export async function action({ request }: ActionFunctionArgs) {
-  const formData = Object.fromEntries(await request.formData())
-  const { theme, redirectTo } = ThemeSchema.parse(formData)
+  const { theme, redirectTo } = parseThemeFormData(await request.formData())
 
   const responseInit = {
     headers: { 'Set-Cookie': setTheme(theme) },

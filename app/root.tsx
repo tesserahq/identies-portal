@@ -17,21 +17,25 @@ import { AuthenticityTokenProvider } from 'remix-utils/csrf/react'
 import SpinnerCSS from '@/styles/spinner.css?url'
 import RootCSS from '@/styles/root.css?url'
 import 'react-day-picker/style.css'
-import { combineHeaders, getDomainUrl } from '@/utils/helpers/misc.helper'
+import { combineHeaders } from '@/utils/helpers/misc.helper'
 import { getToastSession } from '@/utils/cookies/toast.server'
 import { csrf } from '@/utils/cookies/csrf.server'
-import { getHints } from '@/hooks/useHints'
-import { getTheme, Theme, useTheme } from '@/hooks/useTheme'
 import i18nServer, { localeCookie } from '@/modules/i18n/i18n.server'
 // import { Toaster } from '@shadcn/ui/sonner'
-import { ClientHintCheck } from '@/components/misc/ClientHints'
-import { useNonce } from '@/hooks/useNonce'
 import { useToast } from '@/hooks/useToast'
-import { GenericErrorBoundary } from '@/components/misc/ErrorBoundary'
 import { ProgressBar } from '@/components/loader/progress-bar'
 import { metaObject } from '@/utils/helpers/meta.helper'
 import { ReactQueryProvider } from './modules/react-query'
-import { AuthProvider, Toaster } from 'tessera-ui'
+import { AuthProvider, NotFound, Toaster } from 'tessera-ui'
+import {
+  ClientHintCheck,
+  GenericErrorBoundary,
+  type Theme,
+  useNonce,
+  useOptionalTheme,
+  useTheme,
+} from 'tessera-ui/react-router'
+import { getRequestInfo } from 'tessera-ui/server'
 import { useEffect } from 'react'
 import { setNavigator } from '@/lib/navigation-bridge'
 
@@ -90,12 +94,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       audience,
       identiesApiUrl,
       organizationID,
-      requestInfo: {
-        hints: getHints(request),
-        origin: getDomainUrl(request),
-        path: new URL(request.url).pathname,
-        userPrefs: { theme: getTheme(request) },
-      },
+      requestInfo: getRequestInfo(request),
     } as const,
     {
       headers: combineHeaders(
@@ -204,14 +203,12 @@ export default function AppWithProviders() {
 
 export function ErrorBoundary() {
   const nonce = useNonce()
-  const theme = useTheme()
+  const theme = useOptionalTheme()
 
   return (
     <Document nonce={nonce} theme={theme}>
       <GenericErrorBoundary
-        statusHandlers={{
-          403: ({ error }) => <p>You are not allowed to do that: {error?.data.message}</p>,
-        }}
+        statusHandlers={{ 404: () => <NotFound image="/images/errors/404.svg" /> }}
       />
     </Document>
   )

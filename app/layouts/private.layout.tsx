@@ -1,4 +1,4 @@
-import { useRequestInfo } from '@/hooks/useRequestInfo'
+import { useRequestInfo } from 'tessera-ui/react-router'
 import { ROUTE_PATH as THEME_PATH } from '@/routes/resources/update-theme'
 import { SITE_CONFIG } from '@/utils/config/site.config'
 import { AppWindow, FileLock, UserCog, Users } from 'lucide-react'
