@@ -17,7 +17,7 @@ export default defineConfig((config) => {
   return {
     resolve: {
       alias: aliases,
-      dedupe: ['react', 'react-dom', '@auth0/auth0-react'],
+      dedupe: ['react', 'react-dom', 'react-router', '@auth0/auth0-react'],
     },
     server: {
       port: 3000,

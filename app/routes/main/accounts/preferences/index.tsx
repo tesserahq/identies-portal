@@ -2,7 +2,7 @@
 import { AppPreloader } from '@/components/loader'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@shadcn/ui/card'
 import { MAX_AVATAR_FILE_SIZE } from '@/constants/file'
-import { useTheme } from '@/hooks/useTheme'
+import { useTheme } from 'tessera-ui/react-router'
 import { ROUTE_PATH as THEME_PATH } from '@/routes/resources/update-theme'
 import { handleFetcherData } from '@/utils/helpers/fetcher.helper'
 import { ActionFunctionArgs } from 'react-router'

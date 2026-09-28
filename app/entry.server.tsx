@@ -1,4 +1,5 @@
-import { NonceProvider } from '@/hooks/useNonce'
+import { NonceProvider, RequestThemeProvider } from 'tessera-ui/react-router'
+import { getRequestTheme } from 'tessera-ui/server'
 import { initEnvs } from '@/utils/config/env.config'
 import { createReadableStreamFromReadable } from '@react-router/node'
 import { isbot } from 'isbot'
@@ -43,7 +44,9 @@ export default async function handleRequest(
     let shellRendered = false
     const { pipe, abort } = renderToPipeableStream(
       <NonceProvider value={nonce}>
-        <ServerRouter context={reactRouterContext} url={request.url} />
+        <RequestThemeProvider value={getRequestTheme(request)}>
+          <ServerRouter context={reactRouterContext} url={request.url} />
+        </RequestThemeProvider>
       </NonceProvider>,
       {
         [callbackName]: () => {
