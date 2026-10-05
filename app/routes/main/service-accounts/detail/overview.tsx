@@ -116,7 +116,8 @@ export default function ServiceAccountDetail() {
               </Button>
               <Button
                 variant="ghost"
-                className="flex w-full justify-start hover:bg-destructive hover:text-white"
+                className="flex w-full justify-start hover:bg-destructive
+                  hover:text-destructive-foreground"
                 onClick={() => serviceAccount && openServiceAccountDeletion(serviceAccount)}>
                 <Trash2 />
                 <span>Remove</span>

@@ -69,20 +69,16 @@ const DeleteConfirmation = forwardRef<DeleteConfirmationHandle, DeleteConfirmati
             <div
               className="bg-destructive -mt-16 flex h-16 w-16 items-center justify-center
                 rounded-full p-3">
-              <Trash2 size={100} className="text-white" />
+              <Trash2 size={100} className="text-destructive-foreground" />
             </div>
             <DialogTitle className="hidden"></DialogTitle>
           </DialogHeader>
           <DialogDescription className="px-3" asChild>
             <div className="flex flex-col items-center max-w-md wrap-break-word">
-              <h1
-                className="dark:text-secondary-foreground text-center text-3xl font-semibold
-                  text-black">
-                {config.title}
-              </h1>
+              <h1 className="text-center text-3xl font-semibold text-foreground">{config.title}</h1>
               <p
-                className="dark:text-secondary-foreground mt-3 text-center text-base text-black
-                  max-w-sm wrap-break-word overflow-hidden text-ellipsis">
+                className="mt-3 text-center text-base text-foreground max-w-sm wrap-break-word
+                  overflow-hidden text-ellipsis">
                 {config.description}
               </p>
             </div>

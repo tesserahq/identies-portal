@@ -190,7 +190,8 @@ export default function ServiceAccountApiKeyDetail() {
                   </Button>
                   <Button
                     variant="ghost"
-                    className="flex w-full justify-start hover:bg-destructive hover:text-white"
+                    className="flex w-full justify-start hover:bg-destructive
+                      hover:text-destructive-foreground"
                     onClick={() => apiKey && openApiKeyDeletion(apiKey)}>
                     <Trash2 />
                     <span>Remove</span>
