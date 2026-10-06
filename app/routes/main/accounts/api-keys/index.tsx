@@ -185,8 +185,8 @@ export default function APIKeys() {
                     <div className="flex items-start gap-2">
                       <Link
                         to={apiKey.id}
-                        className="mb-1 text-base font-medium text-black hover:text-primary
-                          hover:underline dark:text-primary-foreground">
+                        className="mb-1 text-base font-medium text-foreground hover:text-primary
+                          hover:underline">
                         {apiKey.name}
                       </Link>
                       {apiKey?.revoked && (
@@ -197,7 +197,7 @@ export default function APIKeys() {
                         </Badge>
                       )}
                     </div>
-                    <div className="flex items-center text-xs text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center text-xs text-muted-foreground">
                       {isExpired ? (
                         <TooltipProvider delayDuration={100}>
                           <Tooltip>
@@ -265,7 +265,8 @@ export default function APIKeys() {
                       </Button>
                       <Button
                         variant="ghost"
-                        className="flex w-full justify-start hover:bg-destructive hover:text-white"
+                        className="flex w-full justify-start hover:bg-destructive
+                          hover:text-destructive-foreground"
                         onClick={() => openApiKeyDeletion(apiKey)}>
                         <Trash2 />
                         <span>Remove</span>

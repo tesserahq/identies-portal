@@ -25,15 +25,15 @@ export const Appearance = ({ selectedTheme, onThemeChange }: AppearanceProps) =>
             <div className="grid grid-cols-3 grid-rows-1 gap-4">
               <button
                 onClick={() => onThemeChange('light')}
-                className={`group flex w-48 flex-col gap-2 rounded-md border bg-gray-400/30 p-3
+                className={`group flex w-48 flex-col gap-2 rounded-md border bg-muted p-3
                   shadow-card hover:border-foreground/50
-                  ${selectedTheme === 'light' ? 'border-foreground/50' : 'border-gray-500/30'}`}>
+                  ${selectedTheme === 'light' ? 'border-foreground/50' : 'border-border'}`}>
                 <LightSkeleton />
                 <div className="flex items-center gap-2">
                   <div
                     className={`h-3 w-3 rounded-full border group-hover:border-foreground/50
-                      ${selectedTheme === 'light' ? 'border-foreground/50' : 'border-gray-500/30'}
-                      flex items-center justify-center`}>
+                      ${selectedTheme === 'light' ? 'border-foreground/50' : 'border-border'} flex
+                      items-center justify-center`}>
                     <div
                       className={`h-2 w-2 rounded-full
                         ${selectedTheme === 'light' ? 'bg-foreground' : ''}`}
@@ -44,15 +44,15 @@ export const Appearance = ({ selectedTheme, onThemeChange }: AppearanceProps) =>
               </button>
               <button
                 onClick={() => onThemeChange('dark')}
-                className={`group flex w-48 flex-col gap-2 rounded-md border bg-gray-400/30 p-3
+                className={`group flex w-48 flex-col gap-2 rounded-md border bg-muted p-3
                   shadow-card hover:border-foreground/50
-                  ${selectedTheme === 'dark' ? 'border-foreground/50' : 'border-gray-500/30'}`}>
+                  ${selectedTheme === 'dark' ? 'border-foreground/50' : 'border-border'}`}>
                 <DarkSkeleton />
                 <div className="flex items-center gap-2">
                   <div
                     className={`h-3 w-3 rounded-full border group-hover:border-foreground/50
-                      ${selectedTheme === 'dark' ? 'border-foreground/50' : 'border-gray-500/30'}
-                      flex items-center justify-center`}>
+                      ${selectedTheme === 'dark' ? 'border-foreground/50' : 'border-border'} flex
+                      items-center justify-center`}>
                     <div
                       className={`h-2 w-2 rounded-full
                         ${selectedTheme === 'dark' ? 'bg-foreground' : ''}`}
@@ -63,15 +63,15 @@ export const Appearance = ({ selectedTheme, onThemeChange }: AppearanceProps) =>
               </button>
               <button
                 onClick={() => onThemeChange('system')}
-                className={`group flex w-48 flex-col gap-2 rounded-md border bg-gray-400/30 p-3
+                className={`group flex w-48 flex-col gap-2 rounded-md border bg-muted p-3
                   shadow-card hover:border-foreground/50
-                  ${selectedTheme === 'system' ? 'border-foreground/50' : 'border-gray-500/30'}`}>
+                  ${selectedTheme === 'system' ? 'border-foreground/50' : 'border-border'}`}>
                 <SystemSkeleton />
                 <div className="flex items-center gap-2">
                   <div
                     className={`h-3 w-3 rounded-full border group-hover:border-foreground/50
-                      ${selectedTheme === 'system' ? 'border-foreground/50' : 'border-gray-500/30'}
-                      flex items-center justify-center`}>
+                      ${selectedTheme === 'system' ? 'border-foreground/50' : 'border-border'} flex
+                      items-center justify-center`}>
                     <div
                       className={`h-2 w-2 rounded-full
                         ${selectedTheme === 'system' ? 'bg-foreground' : ''}`}

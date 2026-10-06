@@ -84,16 +84,14 @@ export function DataTable<TData, TValue>({
       <div className="flex-1 overflow-hidden">
         <div ref={scrollContainerRef} className="no-scrollbar h-full overflow-y-auto">
           <Table>
-            <TableHeader
-              className="sticky top-0 z-10 w-full bg-slate-100/20 backdrop-blur-md
-                dark:bg-slate-800/50">
+            <TableHeader className="sticky top-0 z-10 w-full bg-muted/50 backdrop-blur-md">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="border-border dark:hover:bg-navy-700">
+                <TableRow key={headerGroup.id} className="border-border">
                   {headerGroup.headers.map((header) => {
                     return (
                       <TableHead
                         key={header.id}
-                        className="text-navy-800 dark:text-navy-100 py-2 font-semibold"
+                        className="text-foreground py-2 font-semibold"
                         style={{ width: header.column.columnDef.size }}>
                         {header.column.columnDef.header ? (
                           header.isPlaceholder ? null : (
@@ -108,7 +106,7 @@ export function DataTable<TData, TValue>({
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody className="bg-white dark:bg-transparent">
+            <TableBody>
               {isLoading && <TableCellSkeletons table={table} count={skeletonRowCount} />}
 
               {!isLoading &&
@@ -117,11 +115,9 @@ export function DataTable<TData, TValue>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
-                    className="dark:border-border dark:hover:bg-navy-600 hover:bg-slate-50">
+                    className="hover:bg-foreground/5">
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        className="text-navy-800 dark:text-navy-100 py-2 ps-4">
+                      <TableCell key={cell.id} className="text-foreground py-2 ps-4">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
@@ -140,7 +136,7 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
       {meta?.size && (
-        <div className="border-input bg-card dark:bg-navy-800 sticky bottom-0 z-10 border-t p-3">
+        <div className="border-input bg-card sticky bottom-0 z-10 border-t p-3">
           <Pagination meta={meta} scope={paginationScope} callback={callbackPagination} />
         </div>
       )}

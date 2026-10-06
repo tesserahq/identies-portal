@@ -190,8 +190,8 @@ export default function UserApiKeys() {
                   <div className="flex-1">
                     <div className="flex items-start gap-2">
                       <div
-                        className="mb-1 text-base font-medium text-black hover:text-primary
-                          hover:underline dark:text-primary-foreground cursor-pointer"
+                        className="mb-1 text-base font-medium text-foreground hover:text-primary
+                          hover:underline cursor-pointer"
                         onClick={() => navigate(`/users/${userId}/api-keys/${apiKey.id}`)}>
                         {apiKey.name}
                       </div>
@@ -203,7 +203,7 @@ export default function UserApiKeys() {
                         </Badge>
                       )}
                     </div>
-                    <div className="flex items-center text-xs text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center text-xs text-muted-foreground">
                       {isExpired ? (
                         <TooltipProvider delayDuration={100}>
                           <Tooltip>
@@ -276,7 +276,7 @@ export default function UserApiKeys() {
                         <Button
                           variant="ghost"
                           className="flex w-full justify-start hover:bg-destructive
-                            hover:text-white"
+                            hover:text-destructive-foreground"
                           onClick={() => openApiKeyDeletion(apiKey)}>
                           <Trash2 />
                           <span>Remove</span>
