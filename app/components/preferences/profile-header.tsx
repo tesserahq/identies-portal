@@ -74,7 +74,7 @@ export const ProfileHeader = ({
               type="button"
               onClick={() => fileInputRef.current?.click()}
               className="absolute -bottom-1 -right-1 z-20 flex items-center rounded-full border-2
-                border-border bg-white px-2 py-2 shadow-lg transition-all duration-300 dark:bg-card">
+                border-border bg-card px-2 py-2 shadow-lg transition-all duration-300">
               <div className="flex items-center transition-all duration-300">
                 <PenTool className="h-4 w-4 shrink-0 scale-y-[-1] text-primary" />
                 <span

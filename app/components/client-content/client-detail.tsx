@@ -173,7 +173,8 @@ export function ClientDetailContent({
                 </Button>
                 <Button
                   variant="ghost"
-                  className="flex w-full justify-start hover:bg-destructive hover:text-white"
+                  className="flex w-full justify-start hover:bg-destructive
+                    hover:text-destructive-foreground"
                   onClick={() => client && openClientDeletion(client)}>
                   <Trash2 />
                   <span>Remove</span>
@@ -193,7 +194,7 @@ export function ClientDetailContent({
                 <div
                   className="mt-2 flex items-center justify-between rounded-lg bg-green-100 px-3
                     py-2 text-sm dark:bg-green-600">
-                  <span className="font-mono font-medium dark:text-white">
+                  <span className="font-mono font-medium dark:text-foreground">
                     {clientData?.client_secret}
                   </span>
                   <TooltipProvider delayDuration={100}>
@@ -202,7 +203,7 @@ export function ClientDetailContent({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="ml-2 h-5 w-5 dark:bg-transparent dark:text-white"
+                          className="ml-2 h-5 w-5 dark:bg-transparent dark:text-foreground"
                           onClick={() => {
                             navigator.clipboard.writeText(clientData?.client_secret || '')
                             setIsCopied(true)

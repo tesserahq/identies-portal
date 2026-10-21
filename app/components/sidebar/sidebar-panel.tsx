@@ -15,7 +15,7 @@ export function SidebarPanel({ menuItems }: ISidebarPanelProps) {
   return (
     <div
       className="sidebar-panel bg-peat-50 dark:bg-sidebar-background flex h-full grow flex-col
-        justify-between bg-white">
+        justify-between bg-sidebar-background">
       <div className="flex w-full flex-col">
         {/* Sidebar Panel Body */}
         <div className="sidebar-body">
@@ -45,9 +45,7 @@ export function SidebarPanel({ menuItems }: ISidebarPanelProps) {
                     </Link>
                   </li>
 
-                  {item.divider && (
-                    <hr className="my-2 border-t border-slate-200 dark:border-slate-700" />
-                  )}
+                  {item.divider && <hr className="my-2 border-border border-t" />}
                 </div>
               ))}
             </ul>

@@ -35,14 +35,16 @@ export function ApiKeyPreview({ apiKey, backTo }: Props) {
               <div
                 className="mt-2 flex items-center justify-between rounded-lg bg-green-100 px-3 py-2
                   text-sm dark:bg-green-600">
-                <span className="font-mono font-medium dark:text-white">{apiKey?.full_key}</span>
+                <span className="font-mono font-medium dark:text-foreground">
+                  {apiKey?.full_key}
+                </span>
                 <TooltipProvider delayDuration={100}>
                   <Tooltip>
                     <TooltipTrigger>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="ml-2 h-5 w-5 dark:bg-transparent dark:text-white"
+                        className="ml-2 h-5 w-5 dark:bg-transparent dark:text-foreground"
                         onClick={() => {
                           navigator.clipboard.writeText(apiKey?.full_key || '')
                           setIsCopied(true)

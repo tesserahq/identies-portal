@@ -144,12 +144,12 @@ export default function Applications() {
                     <div className="flex items-start gap-2">
                       <Link
                         to={application.id}
-                        className="mb-1 font-medium text-black hover:text-primary hover:underline
-                          dark:text-primary-foreground">
+                        className="mb-1 font-medium text-foreground hover:text-primary
+                          hover:underline">
                         {application.name || 'Unnamed'}
                       </Link>
                     </div>
-                    <div className="flex items-center text-xs text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center text-xs text-muted-foreground">
                       <Link to={application.url} target="_blank" className="button-link">
                         {application.url}
                       </Link>
@@ -185,7 +185,7 @@ export default function Applications() {
                         <Button
                           variant="ghost"
                           className="flex w-full justify-start hover:bg-destructive
-                            hover:text-white"
+                            hover:text-destructive-foreground"
                           onClick={() => openApplicationDeletion(application)}>
                           <Trash2 />
                           <span>Remove</span>

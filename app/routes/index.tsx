@@ -38,8 +38,8 @@ export default function Index() {
 
   return (
     <div
-      className="flex h-screen w-full flex-col items-center justify-center gap-5 bg-white
-        dark:bg-background lg:flex-row">
+      className="flex h-screen w-full flex-col items-center justify-center gap-5 bg-background
+        lg:flex-row">
       <img src="/images/login.png" alt="login" className="w-72 rounded-lg lg:w-96" />
       <div className="max-w-[500px] flex-col items-center lg:items-start">
         <h1 className="mt-3 text-3xl font-semibold dark:text-foreground">Welcome back!</h1>

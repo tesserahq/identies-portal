@@ -93,7 +93,8 @@ export default function AccessRuleDetail() {
               </Button>
               <Button
                 variant="ghost"
-                className="flex w-full justify-start hover:bg-destructive hover:text-white"
+                className="flex w-full justify-start hover:bg-destructive
+                  hover:text-destructive-foreground"
                 onClick={() => data && openAccessRuleDelete(data)}>
                 <Trash2 />
                 <span>Remove</span>

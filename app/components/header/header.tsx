@@ -64,10 +64,7 @@ export default function Header({
               )}
 
               {action && (
-                <Separator
-                  orientation="vertical"
-                  className="mr-1.5 h-3 bg-slate-400 dark:bg-slate-500"
-                />
+                <Separator orientation="vertical" className="mr-1.5 h-3 bg-muted-foreground/40" />
               )}
               {action}
             </div>
