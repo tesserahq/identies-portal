@@ -73,7 +73,8 @@ const breadcrumbFetchers: Record<string, BreadcrumbFetcher> = {
   clientID: {
     queryKey: (id, params) => {
       if (params.userID) return usersQueryKeys.client(params.userID, id)
-      if (params.serviceAccountID) return serviceAccountQueryKeys.client(params.serviceAccountID, id)
+      if (params.serviceAccountID)
+        return serviceAccountQueryKeys.client(params.serviceAccountID, id)
       return ['breadcrumb', 'clientID', id]
     },
     fetch: fetchClient,
