@@ -3,8 +3,14 @@ import { ApplicationType } from '@/resources/queries/applications/application.ty
 import { ServiceAccountType } from '@/resources/queries/service-accounts/service-account.type'
 import { UserType } from '@/resources/queries/users/user.type'
 import { BreadcrumbItemData } from 'tessera-ui/layouts'
+import { ClientType } from '@/resources/queries/clients/client.type'
 
-export type BreadcrumbResourceData = UserType | ServiceAccountType | ApiKeyType | ApplicationType
+export type BreadcrumbResourceData =
+  | UserType
+  | ServiceAccountType
+  | ApiKeyType
+  | ApplicationType
+  | ClientType
 
 export function generateBreadcrumbs({
   pathname,
@@ -69,6 +75,10 @@ export function getResourceName(resource: BreadcrumbResourceData | undefined): s
     const last = typeof resource.last_name === 'string' ? resource.last_name : ''
     const fullName = `${first} ${last}`.trim()
     if (fullName) return fullName
+  }
+
+  if ('client_id' in resource && typeof resource.client_id === 'string') {
+    return resource.client_id.trim()
   }
 
   if ('email' in resource && typeof resource.email === 'string') {
