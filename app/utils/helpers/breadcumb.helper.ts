@@ -6,11 +6,7 @@ import { BreadcrumbItemData } from 'tessera-ui/layouts'
 import { ClientType } from '@/resources/queries/clients/client.type'
 
 export type BreadcrumbResourceData =
-  | UserType
-  | ServiceAccountType
-  | ApiKeyType
-  | ApplicationType
-  | ClientType
+  UserType | ServiceAccountType | ApiKeyType | ApplicationType | ClientType
 
 export function generateBreadcrumbs({
   pathname,
