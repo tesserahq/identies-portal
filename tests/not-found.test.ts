@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { createRequestHandler, type ServerBuild } from 'react-router'
+import { createRequestHandler, RouterContextProvider, type ServerBuild } from 'react-router'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 
 /**
@@ -12,7 +12,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
  */
 const BUILD_PATH = resolve(__dirname, '../build/server/index.js')
 
-let handler: (request: Request) => Promise<Response>
+let handler: (request: Request, context?: RouterContextProvider) => Promise<Response>
 
 beforeAll(async () => {
   if (!existsSync(BUILD_PATH)) {
@@ -32,7 +32,10 @@ describe('unknown URLs', () => {
     async (path) => {
       const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      const response = await handler(new Request(`http://localhost${path}`))
+      const response = await handler(
+        new Request(`http://localhost${path}`),
+        new RouterContextProvider()
+      )
 
       expect(response.status).toBe(404)
 
