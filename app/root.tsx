@@ -20,7 +20,7 @@ import 'react-day-picker/style.css'
 import { combineHeaders } from '@/utils/helpers/misc.helper'
 import { getToastSession } from '@/utils/cookies/toast.server'
 import { csrf } from '@/utils/cookies/csrf.server'
-import i18nServer, { localeCookie } from '@/modules/i18n/i18n.server'
+import { getLocale, i18nextMiddleware, localeCookie } from '@/modules/i18n/i18n.server'
 // import { Toaster } from '@shadcn/ui/sonner'
 import { useToast } from '@/hooks/useToast'
 import { ProgressBar } from '@/components/loader/progress-bar'
@@ -40,8 +40,9 @@ import { useEffect } from 'react'
 import { setNavigator } from '@/lib/navigation-bridge'
 
 export const handle = { i18n: ['translation'] }
+export const middleware = [i18nextMiddleware]
 
-export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
+export const meta: MetaFunction<typeof loader> = ({ loaderData, location }) => {
   // Get the current page title from the pathname
   const getPageTitle = () => {
     const path = location.pathname
@@ -57,7 +58,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
 
   const pageTitle = getPageTitle()
 
-  return metaObject(data ? pageTitle : 'Error')
+  return metaObject(loaderData ? pageTitle : 'Error')
 }
 
 export const links: LinksFunction = () => {
@@ -69,10 +70,10 @@ export const links: LinksFunction = () => {
 
 export type LoaderData = Exclude<Awaited<ReturnType<typeof loader>>, Response>
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request, context }: LoaderFunctionArgs) {
   const user = null
 
-  const locale = await i18nServer.getLocale(request)
+  const locale = getLocale(context)
   const { toast, headers: toastHeaders } = await getToastSession(request)
   const [csrfToken, csrfCookieHeader] = await csrf.commitToken()
   const clientID = process.env.AUTH0_CLIENT_ID
