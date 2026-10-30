@@ -76,7 +76,7 @@
   "devDependencies": {
     "@eslint/compat": "^2.1.1",
     "@eslint/eslintrc": "^3.3.7",
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^10.0.1",
     "@react-router/dev": "^8.5.0",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-query-devtools": "^5.105.0",
@@ -91,7 +91,7 @@
     "@typescript-eslint/eslint-plugin": "^8.72.0",
     "@typescript-eslint/parser": "^8.72.0",
     "autoprefixer": "^10.6.2",
-    "eslint": "^9.39.1",
+    "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-import-resolver-typescript": "^4.4.5",
     "eslint-plugin-import": "^2.30.0",
