@@ -1,11 +1,16 @@
 import { NonceProvider, RequestThemeProvider } from 'tessera-ui/react-router'
+import { I18nextProvider } from 'react-i18next'
+import { createInstance } from 'i18next'
+import { initReactI18next } from 'react-i18next'
+import { getInstance } from '@/modules/i18n/i18n.server'
+import * as i18n from '@/modules/i18n/i18n'
 import { getRequestTheme } from 'tessera-ui/server'
 import { initEnvs } from '@/utils/config/env.config'
 import { createReadableStreamFromReadable } from '@react-router/node'
 import { isbot } from 'isbot'
 import { PassThrough } from 'node:stream'
 import { renderToPipeableStream } from 'react-dom/server.node'
-import type { AppLoadContext, EntryContext } from 'react-router'
+import type { EntryContext, RouterContextProvider } from 'react-router'
 import { ServerRouter } from 'react-router'
 
 /**
@@ -14,21 +19,37 @@ import { ServerRouter } from 'react-router'
 initEnvs()
 
 const ABORT_DELAY = 5_000
+const fallbackI18n = createInstance()
+const fallbackI18nReady = fallbackI18n.use(initReactI18next).init({
+  ...i18n,
+  resources: i18n.resources,
+  defaultNS: i18n.defaultNS,
+  fallbackLng: i18n.fallbackLng,
+  interpolation: { escapeValue: false },
+})
 
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   reactRouterContext: EntryContext,
-  loadContext: AppLoadContext
+  routerContext: RouterContextProvider
 ) {
   const callbackName = isbot(request.headers.get('user-agent')) ? 'onAllReady' : 'onShellReady'
+  let requestI18n
+  try {
+    requestI18n = getInstance(routerContext)
+  } catch (error) {
+    if (!(error instanceof Error) || error.message !== 'No value found for context') throw error
+    await fallbackI18nReady
+    requestI18n = fallbackI18n
+  }
 
   /**
    * Content Security Policy.
    * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
    */
-  const nonce = String(loadContext.cspNonce) ?? undefined
+  const nonce = request.headers.get('x-identies-csp-nonce') ?? ''
 
   /**
    * Currently, we're not setting the CSP headers due to lack of support on deferred scripts.
@@ -44,9 +65,11 @@ export default async function handleRequest(
     let shellRendered = false
     const { pipe, abort } = renderToPipeableStream(
       <NonceProvider value={nonce}>
-        <RequestThemeProvider value={getRequestTheme(request)}>
-          <ServerRouter context={reactRouterContext} url={request.url} />
-        </RequestThemeProvider>
+        <I18nextProvider i18n={requestI18n}>
+          <RequestThemeProvider value={getRequestTheme(request)}>
+            <ServerRouter context={reactRouterContext} url={request.url} />
+          </RequestThemeProvider>
+        </I18nextProvider>
       </NonceProvider>,
       {
         [callbackName]: () => {
