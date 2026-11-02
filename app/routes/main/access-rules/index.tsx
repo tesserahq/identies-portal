@@ -17,7 +17,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, LoaderFunctionArgs, useLoaderData, useNavigate } from 'react-router'
 import { useAccessRules, useDeleteAccessRule } from '@/resources/hooks/access-rules'
 import { AccessRuleType } from '@/resources/queries/access-rules'
-import { ColumnDef } from '@tanstack/react-table'
+import type { LegacyColumnDef as ColumnDef } from '@tanstack/react-table/legacy'
 import { DataTable } from '@/components/data-table'
 
 export function loader({ request }: LoaderFunctionArgs) {
