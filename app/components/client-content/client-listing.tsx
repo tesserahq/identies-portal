@@ -20,7 +20,7 @@ import { NodeENVType } from '@/libraries/fetch'
 import { serviceAccountQueryKeys } from '@/resources/hooks/service-accounts'
 import { usersQueryKeys } from '@/resources/hooks/users'
 import { DataTable } from '../data-table'
-import { ColumnDef } from '@tanstack/react-table'
+import type { LegacyColumnDef as ColumnDef } from '@tanstack/react-table/legacy'
 import { cn } from '@/modules/shadcn/lib/utils'
 
 interface Props {
